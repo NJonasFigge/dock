@@ -2,7 +2,7 @@
 
 # Paths
 SRC_DIR := src
-DC := docker compose -f $(SRC_DIR)/docker_compose.yml
+DC := docker compose -f $(SRC_DIR)/docker-compose.yml
 
 # Default target
 .PHONY: help
