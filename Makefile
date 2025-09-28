@@ -5,7 +5,6 @@ SRC_DIR := src
 DC := docker compose -f $(SRC_DIR)/docker-compose.yml
 
 # Defaults
-ATTACH ?= false
 SERVICES ?=
 
 # Default target
@@ -14,7 +13,8 @@ help:
 	@echo "Available targets:"
 	@echo "  build    - Build all Docker services"
 	@echo "             You can restrict services with SERVICES='service1 service2', also in targets 'up' and 'logs'"
-	@echo "  up       - Start all services in detached mode (use ATTACH=true for attached)"
+	@echo "  up       - Start all services in detached mode"
+	@echo "  up-logs  - Start all services in detached mode and open logs"
 	@echo "  down     - Stop all services"
 	@echo "  restart  - Recreate containers"
 	@echo "  logs     - Follow logs of all services"
@@ -28,11 +28,7 @@ build:
 	$(DC) build $(SERVICES)
 
 up:
-ifeq ($(ATTACH),true)
-	$(DC) up $(SERVICES)
-else
 	$(DC) up -d $(SERVICES)
-endif
 
 down:
 	$(DC) down
@@ -41,6 +37,8 @@ restart: down up
 
 logs:
 	$(DC) logs -f $(SERVICES)
+
+up-logs: up logs
 
 clean:
 	$(DC) down --rmi all --volumes --remove-orphans
