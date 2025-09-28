@@ -1,0 +1,203 @@
+
+name: dock
+
+# Todo: Can I actually restrict clients (-> revproxy)?
+
+
+services:
+
+  # ############################################ WEBHOSTING INTERFACE ##################################################
+
+  # === THE REVERSE PROXY SERVICE ===
+  # - This container's main task is to take requests from the www and serve the correct content. It does not include
+  #   any servable contents itself, but retrieves them from the other containers.
+  reverse-proxy:
+    # --- Static definitions ---
+    # restart: always
+    depends_on:  # Services that should start before this
+      - papsite-live
+      - papsite-stage
+      - papsite-devtest
+      - webdav
+
+    # --- For build-time ---
+    build:
+      context: ./reverse-proxy  # Build in here, also use this Dockerfile
+
+    # --- For runtime ---
+    container_name: reverse-proxy
+    hostname: reverse-proxy  # "Computer name" from within container
+    ports:  # Exposed container ports (mapping "<actual_server_port>:<container_port>")
+      - "80:80"    # HTTP
+      - "443:443"  # HTTPS
+
+  # ################################################### PAPSITES #######################################################
+
+  # === THE LIVE PAPSITE ===
+  # - This container will clone the papsite repo's latest version branch, render the contents, deploy them to a certain
+  #   directory and serve that directory to the reverse proxy.
+  papsite-live:
+    # --- For build-time ---
+    build:
+      context: ./papsite  # Build in here, also use this Dockerfile
+      args:  # Build arguments that steer the build process
+        ACCESS: www  # No password required
+        FIXEDBRANCH: latest  # Always only use the latest version branch
+
+    # --- For runtime ---
+    container_name: papsite-live
+    hostname: papsite-live  # "Computer name" from within container
+    expose: # Won't publish ports to the host machine, only between services
+      - "80"   # HTTP
+      - "443"  # HTTPS
+    volumes:
+      - ./papsite/venvs/live-venv:/venv  # Pre-supply a virtualenv (that might be updated by the container)
+      - ~/.ssh:/root/.ssh:ro  # - For fetching git repos via SSH
+    environment:  # Environment variables that are only necessary when running
+      IS_LIVE: true  # Activates live mode
+
+  # === THE STAGED PAPSITE ===
+  # - This container will clone the papsite repo's main branch, render the contents, deploy them to a certain
+  #   directory and serve that directory to the reverse proxy.
+  papsite-stage:
+    # --- For build-time ---
+    build:
+      context: ./papsite  # Build in here, also use this Dockerfile
+      args:  # Build arguments that steer the build process
+        ACCESS: devs, testers  # Access granted to users in these htpasswd-files
+        FIXEDBRANCH: main  # Always only use main branch
+
+    # --- For runtime ---
+    container_name: papsite-stage
+    hostname: papsite-stage  # "Computer name" from within container
+    expose: # Won't publish ports to the host machine, only between services
+      - "80"   # HTTP
+      - "443"  # HTTPS
+    volumes:
+      - ./papsite/venvs/stage-venv:/venv  # Pre-supply a virtualenv (that might be updated by the container)
+      - ~/.ssh:/root/.ssh:ro  # - For fetching git repos via SSH
+
+  # === THE DEVTEST PAPSITE ===
+  # - This container will clone an arbitrary branch of the papsite repo, render the contents, deploy them to a certain
+  #   directory and serve that directory to the reverse proxy.
+  papsite-devtest:
+    # --- For build-time ---
+    build:
+      context: ./papsite  # Build in here, also use this Dockerfile
+      args:  # Build arguments that steer the build process
+        ACCESS: devs  # Access granted to users in these htpasswd-files
+        CGI_SCRIPTS: deploy.cgi
+
+    # --- For runtime ---
+    container_name: papsite-devtest
+    hostname: papsite-devtest  # "Computer name" from within container
+    expose: # Won't publish ports to the host machine, only between services
+      - "80"   # HTTP
+      - "443"  # HTTPS
+    volumes:
+      - ./papsite/venvs/devtest-venv:/venv  # Pre-supply a virtualenv (that might be updated by the container)
+      - ~/.ssh:/root/.ssh:ro  # - For fetching git repos via SSH
+    environment:  # Environment variables that are only necessary when running
+      BRANCH: nginx
+
+  # ############################################### FAMILY STORAGE #####################################################
+
+  # === THE WEBDAV ===
+  # - This container will serve the family storage via WedDAV.
+  webdav:
+    # --- Static definitions ---
+    # restart: always
+
+    # --- For build-time ---
+    build:
+      context: ./webdav
+
+    # --- For runtime ---
+    container_name: webdav
+    hostname: webdav  # "Computer name" from within container
+    expose:  # Won't publish ports to the host machine, only between services
+      - "80"   # HTTP
+    environment:
+      AUTH_TYPE: Digest  # Todo: These parameters are currently predetermined by the image used to build "FROM"
+      USERNAME: test
+      PASSWORD: test
+    volumes:
+      - :/var/lib/dav  # Todo: Add how this is supposed to work
+
+  # ############################################### TELEGRAM BOTS ######################################################
+
+  # === The Zettelbot ===
+  # - This container will clone and run the main branch of the zettelbot repo.
+  zettelbot:
+    # --- Static definitions ---
+    # restart: always
+
+    # --- For build-time ---
+    build:
+      context: ./telegram-bot  # Build in here, also use this Dockerfile
+
+    # --- For runtime ---
+    container_name: zettelbot
+    hostname: zettelbot  # "Computer name" from within container
+    volumes:
+      - ./telegram-bot/venvs/zettelbot-venv:/venv  # Pre-supply a virtualenv (that might be updated by the container)
+      - ~/.ssh:/root/.ssh:ro  # - For fetching git repos via SSH
+    environment:  # Environment variables that are only necessary when running
+      REPO: "git@github.com:NJonasFigge/Zettelbot.git"
+
+  # === The SchaluppenBot ===
+  # - This container will clone and run the main branch of the zettelbot repo.
+  schaluppenbot:
+    # --- Static definitions ---
+    # restart: always
+
+    # --- For build-time ---
+    build:
+      context: ./telegram-bot  # Build in here, also use this Dockerfile
+
+    # --- For runtime ---
+    container_name: schaluppenbot
+    hostname: schaluppenbot  # "Computer name" from within container
+    volumes:
+      - ./telegram-bot/venvs/schaluppenbot-venv:/venv  # Pre-supply a virtualenv (that might be updated by the container)
+      - ~/.ssh:/root/.ssh:ro  # - For fetching git repos via SSH
+    environment:  # Environment variables that are only necessary when running
+      REPO: "git@github.com:NJonasFigge/SchaluppenBot.git"
+
+  # === The AlpacaBot ===
+  # - This container will clone and run the main branch of the zettelbot repo.
+  alpacabot:
+    # --- Static definitions ---
+    # restart: always
+
+    # --- For build-time ---
+    build:
+      context: ./telegram-bot  # Build in here, also use this Dockerfile
+
+    # --- For runtime ---
+    container_name: alpacabot
+    hostname: alpacabot  # "Computer name" from within container
+    volumes:
+      - ./telegram-bot/venvs/alpacabot-venv:/venv  # Pre-supply a virtualenv (that might be updated by the container)
+      - ~/.ssh:/root/.ssh:ro  # - For fetching git repos via SSH
+    environment:  # Environment variables that are only necessary when running
+      REPO: "git@github.com:NJonasFigge/AlpacaBot.git"
+
+  # === The EheBoostBot ===
+  # - This container will clone and run the main branch of the zettelbot repo.
+  eheboostbot:
+    # --- Static definitions ---
+    # restart: always
+
+    # --- For build-time ---
+    build:
+      context: ./telegram-bot  # Build in here, also use this Dockerfile
+
+    # --- For runtime ---
+    container_name: eheboostbot
+    hostname: eheboostbot  # "Computer name" from within container
+    volumes:
+      - ./telegram-bot/venvs/eheboostbot-venv:/venv  # Pre-supply a virtualenv (that might be updated by the container)
+      - ~/.ssh:/root/.ssh:ro  # - For fetching git repos via SSH
+    environment:  # Environment variables that are only necessary when running
+      REPO: "git@github.com:NJonasFigge/EheBoostBot.git"
