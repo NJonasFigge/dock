@@ -35,7 +35,7 @@ COPY nginx.conf /etc/nginx/nginx.conf
 # - Activate password protection if required
 COPY auth /etc/nginx/
 COPY add-auth.sh /app/add_auth.sh
-RUN if [ "$PROTECTION" != "off" ]; then chmod +x /app/add-auth.sh && /app/add-auth.sh "$PROTECTION"; if
+RUN if [ "$PROTECTION" != "off" ]; then chmod +x /app/add-auth.sh && /app/add-auth.sh "$PROTECTION"; fi
 
 # - Deploy deployment script
 COPY deploy.sh /app/deploy.sh
