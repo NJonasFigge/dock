@@ -2,8 +2,13 @@
 
 # Check if argument is provided
 if [ -z "$1" ]; then
-    echo "Usage: $0 group1,group2,..."
-    exit 1
+  echo "Usage: $0 group1,group2,..."
+  exit 1
+fi
+
+if [ "$1" = "www" ]; then
+  echo "Argument is \"www\": Not injecting any auth files, serving publicly."
+  exit 0
 fi
 
 # Backup Nginx config
