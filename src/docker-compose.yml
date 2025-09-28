@@ -121,8 +121,8 @@ services:
       AUTH_TYPE: Digest  # Todo: These parameters are currently predetermined by the image used to build "FROM"
       USERNAME: test
       PASSWORD: test
-    volumes:
-      - :/var/lib/dav  # Todo: Add how this is supposed to work
+    # volumes:
+    #   - :/var/lib/dav  # Todo: Add how this is supposed to work
 
   # ############################################### TELEGRAM BOTS ######################################################
 
