@@ -47,6 +47,8 @@ class ColorPalette:
 
     @property
     def colors(self): return self._colors
+    @property
+    def as_format_dict(self): return {f'_{i + 1}': c.as_hex for i, c in enumerate(reversed(self._colors))}
 
     def print(self):
         for color in self._colors:
@@ -80,8 +82,7 @@ if __name__ == "__main__":
     if not args.preview_only:
         with open(args.template, 'r', encoding='utf-8') as f:
             template = f.read()
-        color_hexes = [color.as_hex for color in palette._colors]
-        starship_toml_content = template.format(**{f'_{i + 1}': hx for i, hx in enumerate(color_hexes)})
+        starship_toml_content = template.format(**palette.as_format_dict)
         with open(args.output_file, 'w', encoding='utf-8') as f:
             f.write(starship_toml_content)
         print(f"Generated starship.toml at {args.output_file}")
