@@ -53,7 +53,9 @@ class ColorPalette:
 
     @property
     def as_format_dict(self):
-        return {f'color_{i + 1}': c.as_hex for i, c in enumerate(reversed(self._colors)) if i not in self._spacers}
+        toml_colors = reversed(self._colors)
+        hex_codes = [c.as_hex for i, c in enumerate(toml_colors) if i not in self._spacers]
+        return {f'color_{i + 1}': hex_code for i, hex_code in enumerate(hex_codes)}
 
     def print_color_codes(self):
         for color in self._colors:
@@ -106,13 +108,14 @@ if __name__ == "__main__":
     # - Output results
     print("Generated color palette:")
     palette.print_color_codes()
+    print("Color table:")
+    palette.print_table()
+    print("This will look something like this in your terminal:")
+    palette.print_preview()
 
-    if args.preview:
-        print("Color table:")
-        palette.print_table()
-        print("This will look something like this in your terminal:")
-        palette.print_preview()
-    else:
+    print(palette.as_format_dict)
+
+    if not args.preview:
         with open(args.template, 'r', encoding='utf-8') as f:
             template = f.read()
         starship_toml_content = template.format(**palette.as_format_dict)
