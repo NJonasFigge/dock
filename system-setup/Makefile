@@ -4,6 +4,9 @@
 
 # Set fish installation and usage to true, if not specified otherwise
 KEEPBASH ?= false
+# Set starship prompt color hue (0-360), default is blueish
+PROMPTHUE ?= 210
+
 
 help:
 	@echo "Available targets:"
@@ -85,7 +88,7 @@ endif
 
 starship:
 	curl -sS https://starship.rs/install.sh | sh
-	cp ./starship.toml ~/.config/starship.toml
+	python ../utils/generate_starship_toml.py $(PROMPTHUE) -o ~/.config/starship.toml
 ifeq ($(KEEPBASH),false)
 	echo 'starship init fish | source' >> ~/.config/fish/config.fish
 else
@@ -95,5 +98,3 @@ endif
 all: docker auth tmux cheatsheets shell starship
 
 required: docker auth
-
-
