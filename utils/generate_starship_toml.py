@@ -78,7 +78,7 @@ class ColorPalette:
         set_colors = lambda i, j: usable_colors[i].ansi_code_fg + usable_colors[j].ansi_code_bg
         print(f'{usable_colors[5].ansi_code_fg}░▒▓{set_colors(0, 5)}  {set_colors(5, 4)}▄'
               f'{set_colors(0, 4)} ~/dock/system-setup {set_colors(4, 3)}▄{set_colors(5, 3)}  main ? '
-              f'{set_colors(3, 2)}▄{set_colors(2, 1)}▄{set_colors(5, 1)}  13: 49 '
+              f'{set_colors(3, 2)}▄{set_colors(2, 1)}▄{set_colors(5, 1)}  13:49 '
               f'{self.ANSI_RESET}{usable_colors[0].ansi_code_fg}▄{self.ANSI_RESET}')
 
 
