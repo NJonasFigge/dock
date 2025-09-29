@@ -104,7 +104,7 @@ starship: python-is-python3
 	@if [ ! -e /usr/local/bin/starship ]; then \
   		curl -sS https://starship.rs/install.sh | sh; \
 	fi
-	python ../utils/generate_starship_toml.py $(PROMPTHUE) -o ~/.config/starship.toml
+	python ../utils/generate_starship_toml.py $(PROMPTHUE) -o ~/.config/starship.toml --spacers 4 5 6 9
 ifeq ($(KEEPBASH),false)
 	echo 'starship init fish | source' >> ~/.config/fish/config.fish
 else
