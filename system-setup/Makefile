@@ -7,8 +7,9 @@ KEEPBASH ?= false
 
 help:
 	@echo "Available targets:"
-	@echo "  docker       - Install Docker and Docker Compose"
-	@echo "  auth         - Set up authentication files"
+	@echo "  docker       - Install Docker and Docker Compose (if not existing)"
+	@echo "  auth         - Set up authentication files (if not existing)"
+	@echo "  reauth       - Recreate authentication files (will remove existing ones)"
 	@echo "  tmux         - Install and configure tmux"
 	@echo "  cheatsheets  - Copy cheatsheets to the home directory"
 	@echo "  shell        - Set up the shell (Fish by default or Bash, if KEEPBASH=false)"
@@ -16,7 +17,7 @@ help:
 	@echo "  all          - Set up all of the above"
 	@echo "  required     - Set up functionally required things (which are docker and auth)"
 
-.PHONY: all required tmux docker auth tmux cheatsheets shell starship
+.PHONY: all required tmux docker auth reauth tmux cheatsheets shell starship
 
 docker:
 	@if [ ! -e /usr/bin/docker ]; then \
@@ -36,14 +37,30 @@ docker:
 	fi
 
 auth:
-	sudo apt install apache2-utils
-	@echo "--- USER INTERACTION REQUIRED ---"
-	@echo "Please set Papsite-Devs password for user 'jonas':"
-	htpasswd -c ../src/papsite/auth/devs.htpasswd jonas
-	@echo "Please set Papsite-Devs password for user 'tim':"
-	htpasswd ../src/papsite/auth/devs.htpasswd tim
-	@echo "Please set Papsite-Testers password for user 'betatester':"
-	htpasswd -c ../src/papsite/auth/testers.htpasswd betatester
+	@if [ ! -e /usr/bin/htpasswd ]; then \
+  		sudo apt install apache2-utils; \
+	fi
+	@if [ ! -e ../src/papsite/auth/devs.htpasswd ]; then \
+		echo "--- USER INTERACTION REQUIRED ---"; \
+		echo "Please set Papsite-Devs password for user 'jonas':"; \
+		htpasswd -c ../src/papsite/auth/devs.htpasswd jonas; \
+		echo "Please set Papsite-Devs password for user 'tim':"; \
+		htpasswd ../src/papsite/auth/devs.htpasswd tim; \
+	fi
+	@if [ ! -e ../src/papsite/auth/testers.htpasswd ]; then \
+		@echo "Please set Papsite-Testers password for user 'betatester':"; \
+		htpasswd -c ../src/papsite/auth/testers.htpasswd betatester; \
+	fi
+	@if [ ! -e ../src/webdav/auth/.htpasswd ]; then \
+		@echo "Please set WebDAV password for user 'jonasundchristine':"; \
+		htpasswd -c ../src/webdav/auth/.htpasswd jonasundchristine; \
+	fi
+
+reauth:
+	rm -f ../src/papsite/auth/devs.htpasswd
+	rm -f ../src/papsite/auth/testers.htpasswd
+	rm -f ../src/webdav/auth/.htpasswd
+	$(MAKE) auth
 
 tmux:
 	sudo apt update
@@ -69,6 +86,7 @@ starship:
 	curl -sS https://starship.rs/install.sh | sh
 	cp ./starship.toml ~/.config/starfish.toml
 ifeq ($(KEEPBASH),false)
+	mkdir -p ~/.config/fish
 	echo 'starship init fish | source' >> ~/.config/fish/config.fish
 	source ~/.config/fish/config.fish
 else
