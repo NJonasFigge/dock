@@ -22,7 +22,7 @@ COPY ../../../system-setup/config.fish ~/.config/fish/
 RUN curl -sS https://starship.rs/install.sh | sh -s -- -y
 COPY ../../../utils/generate_starship_toml.py /tmp/generate_starship_toml.py
 COPY ../../../utils/starship_template.toml /tmp/starship_template.toml
-RUN python /tmp/generate_starship_toml.py $PROMPTHUE -o ~/.config/starship.toml --spacers 4 5 6 9
+RUN python /tmp/generate_starship_toml.py $PROMPTHUE -o ~/.config/starship.toml --good-spacers
 
 # - Entry by starting the nginx server
 CMD ["nginx", "-g", "daemon off;"]
