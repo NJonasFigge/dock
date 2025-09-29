@@ -1,6 +1,6 @@
 format = """
 [░▒▓]({c5})\
-[  $user@$hostname ](fg:{c0} bg:{c5})\
+[  $username@$hostname ](fg:{c0} bg:{c5})\
 [](fg:{c5} bg:{c4})\
 $directory\
 [](fg:{c4} bg:{c3})\
@@ -16,6 +16,11 @@ $python\
 $time\
 [ ](fg:{c1})\
 \n$character"""
+
+[username]
+show_always = true
+format = "$user"
+disabled = false
 
 [hostname]
 ssh_only = false
