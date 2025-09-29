@@ -19,7 +19,6 @@ $time\
 
 
 [username]
-show_always = true
 format = "$username"
 
 [hostname]
