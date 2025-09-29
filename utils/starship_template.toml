@@ -1,0 +1,72 @@
+format = """
+[░▒▓]({c5})\
+[  ](fg:{c0} bg:{c5})\
+[](fg:{c5} bg:{c4})\
+$directory\
+[](fg:{c4} bg:{c3})\
+$git_branch\
+$git_status\
+[](fg:{c3} bg:{c2})\
+$nodejs\
+$rust\
+$golang\
+$php\
+$python\
+[](fg:{c2} bg:{c1})\
+$time\
+[ ](fg:{c1})\
+\n$character"""
+
+[directory]
+style = "fg:{c0} bg:{c4}"
+format = "[ $path ]($style)"
+truncation_length = 100
+truncate_to_repo = false
+truncation_symbol = "…/"
+
+[directory.substitutions]
+"Documents" = "󰈙 "
+"Downloads" = " "
+"Music" = " "
+"Pictures" = " "
+
+[git_branch]
+symbol = ""
+style = "bg:{c3}"
+format = '[[ $symbol $branch ](fg:{c5} bg:{c3})]($style)'
+
+[git_status]
+style = "bg:{c3}"
+format = '[[($all_status$ahead_behind )](fg:{c5} bg:{c3})]($style)'
+
+[nodejs]
+symbol = ""
+style = "bg:{c2}"
+format = '[[ $symbol ($version) ](fg:{c5} bg:{c2})]($style)'
+
+[rust]
+symbol = ""
+style = "bg:{c2}"
+format = '[[ $symbol ($version) ](fg:{c5} bg:{c2})]($style)'
+
+[golang]
+symbol = ""
+style = "bg:{c2}"
+format = '[[ $symbol ($version) ](fg:{c5} bg:{c2})]($style)'
+
+[php]
+symbol = ""
+style = "bg:{c2}"
+format = '[[ $symbol ($version) ](fg:{c5} bg:{c2})]($style)'
+
+[python]
+symbol = ""
+style = 'bg:{c2}'
+pyenv_version_name = false
+format = '[ via $symbol $virtualenv]($style)'
+
+[time]
+disabled = false
+time_format = "%R" # Hour:Minute Format
+style = "bg:{color_6}"
+format = '[[  $time ](fg:{color_1} bg:{color_6})]($style)'

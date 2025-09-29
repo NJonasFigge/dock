@@ -53,9 +53,8 @@ class ColorPalette:
 
     @property
     def as_format_dict(self):
-        toml_colors = reversed(self._colors)
-        hex_codes = [c.as_hex for i, c in enumerate(toml_colors) if i not in self._spacers]
-        return {f'color_{i + 1}': hex_code for i, hex_code in enumerate(hex_codes)}
+        usable_colors = [c for i, c in enumerate(self._colors) if i not in self._spacers]
+        return {f'c{i}': color.as_hex for i, color in enumerate(usable_colors)}
 
     def print_color_codes(self):
         for color in self._colors:
@@ -85,7 +84,7 @@ class ColorPalette:
 if __name__ == "__main__":
     parser = ArgumentParser(description="Generate a starship.toml file based on requirements.")
     parser.add_argument("hue", type=int, help="Hue value (0-360)")
-    parser.add_argument("-t", "--template", type=Path, default=Path(__file__).parent / "starship_toml_template.txt",
+    parser.add_argument("-t", "--template", type=Path, default=Path(__file__).parent / "starship_template.toml",
                         help="Path to the starship.toml template file")
     parser.add_argument("-o", "--output-file", type=Path, default=Path(__file__).parent / "starship.toml",
                         help="Path to output the generated starship.toml file")
