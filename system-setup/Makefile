@@ -48,12 +48,12 @@ auth:
 		htpasswd ../src/papsite/auth/devs.htpasswd tim; \
 	fi
 	@if [ ! -e ../src/papsite/auth/testers.htpasswd ]; then \
-		@echo "Please set Papsite-Testers password for user 'betatester':"; \
+		echo "Please set Papsite-Testers password for user 'betatester':"; \
 		htpasswd -c ../src/papsite/auth/testers.htpasswd betatester; \
 	fi
-	@if [ ! -e ../src/webdav/auth/.htpasswd ]; then \
-		@echo "Please set WebDAV password for user 'jonasundchristine':"; \
-		htpasswd -c ../src/webdav/auth/.htpasswd jonasundchristine; \
+	@if [ ! -e ../src/webdav/.htpasswd ]; then \
+		echo "Please set WebDAV password for user 'jonasundchristine':"; \
+		htpasswd -c ../src/webdav/.htpasswd jonasundchristine; \
 	fi
 
 reauth:
