@@ -13,7 +13,8 @@ help:
 	@echo "  prepare-build  - Prepare build by copying necessary config files to service directories"
 	@echo "  build          - Build all Docker services"
 	@echo "                   You can restrict services with SERVICES='service1 service2', also in targets"
-	@echo "                   'up' and 'logs'"
+	@echo "                   'up', 'logs' and buildover"
+	@echo "  buildover      - Build all Docker services without using cache"
 	@echo "  up             - Start all services in detached mode"
 	@echo "  up-logs        - Start all services in detached mode and open logs"
 	@echo "  down           - Stop all services"
@@ -37,6 +38,9 @@ prepare-build:
 
 build: prepare-build
 	$(DC) build $(SERVICES)
+
+buildover:
+	$(DC) build --no-cache $(SERVICES)
 
 up:
 	$(DC) up -d $(SERVICES)
