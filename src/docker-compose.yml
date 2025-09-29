@@ -124,6 +124,28 @@ services:
     # volumes:
     #   - :/var/lib/dav  # Todo: Add how this is supposed to work
 
+  # ################################################## LLM SERVICES #####################################################
+
+  # === THE ALPACA SERVICE ===
+  # - This container will run the "Alpaca" LLM service.
+  alpaca:
+    # --- Static definitions ---
+    # restart: always
+
+    # --- For build-time ---
+    build:
+      context: ./alpaca  # Build in here, also use this Dockerfile
+
+    # --- For runtime ---
+    container_name: alpaca
+    hostname: alpaca  # "Computer name" from within container
+    expose:  # Won't publish ports to the host machine, only between services
+      - "8000"  # The port the service listens on
+    # volumes:
+    #   - ./alpaca/models:/models  # Volume for the models
+    # environment:  # Environment variables that are only necessary when running
+    #   MODEL_PATH: /models/ggml-model-q4_0.bin  # Path to the model to be used
+
   # ############################################### TELEGRAM BOTS ######################################################
 
   # === The Zettelbot ===
@@ -150,6 +172,8 @@ services:
   schaluppenbot:
     # --- Static definitions ---
     # restart: always
+    depends_on:
+      - webdav  # Needs access to the family storage
 
     # --- For build-time ---
     build:
@@ -169,6 +193,8 @@ services:
   alpacabot:
     # --- Static definitions ---
     # restart: always
+    depends_on:
+      - alpaca  # Needs access to the LLM service
 
     # --- For build-time ---
     build:

@@ -1,0 +1,22 @@
+=== MY TMUX HELP ===
+
+--- General ---
++ Prefix is Ctrl+A
++ Prefix -> R:                       Reload config
++ Prefix -> T:                       Show current time
++ Prefix -> ?:                       Show this help message
+
+--- Windows ---
++ Ctrl+Shift+Alt+Up:                 New Window
++ Ctrl+Shift+Alt+Right/Down:         Split window
++ Ctrl+Shift+Alt+Page-Up/Page-Down:  Switch between windows
++ Prefix -> W:                       List windows
++ Prefix -> L:                       Switch to last active window
++ Prefix -> &:                       Kill current window
+
+--- Panes ---
++ Shift+Alt+Arrows:                  Resize current pane
++ Alt+Arrows:                        Switch between panes
++ Prefix -> Ctrl+Space:              Switch layout
++ Prefix -> [:                       Enter copy mode
++ Prefix -> X:                       Kill current pane
