@@ -1,6 +1,6 @@
 format = """
 [░▒▓]({c5})\
-[  ](fg:{c0} bg:{c5})\
+[  $hostname@$username ](fg:{c0} bg:{c5})\
 [](fg:{c5} bg:{c4})\
 $directory\
 [](fg:{c4} bg:{c3})\
