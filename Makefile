@@ -30,7 +30,6 @@ sshkeys:
 	ssh-keygen -t ed25519 -f .ssh/id_ed25519 -N ""
 	chmod 600 .ssh/id_ed25519
 	chmod 644 .ssh/id_ed25519.pub
-	ssh -T git@github.com
 
 prepare-build:
 	@for dir in alpaca papsite reverse-proxy telegram-bot webdav; do \
