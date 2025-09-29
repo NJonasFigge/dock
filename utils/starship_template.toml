@@ -32,41 +32,41 @@ truncation_symbol = "…/"
 
 [git_branch]
 symbol = ""
-style = "bg:{c3}"
-format = '[[ $symbol $branch ](fg:{c5} bg:{c3})]($style)'
+style = "fg:{c5} bg:{c3}"
+format = '[ $symbol $branch ]($style)'
 
 [git_status]
-style = "bg:{c3}"
-format = '[[($all_status$ahead_behind )](fg:{c5} bg:{c3})]($style)'
+style = "fg:{c5} bg:{c3}"
+format = '[($all_status$ahead_behind )]($style)'
 
 [nodejs]
 symbol = ""
-style = "bg:{c2}"
-format = '[[ $symbol ($version) ](fg:{c5} bg:{c2})]($style)'
+style = "fg:{c5} bg:{c2}"
+format = '[ $symbol ($version) ]($style)'
 
 [rust]
 symbol = ""
-style = "bg:{c2}"
-format = '[[ $symbol ($version) ](fg:{c5} bg:{c2})]($style)'
+style = "fg:{c5} bg:{c2}"
+format = '[ $symbol ($version) ]($style)'
 
 [golang]
 symbol = ""
-style = "bg:{c2}"
-format = '[[ $symbol ($version) ](fg:{c5} bg:{c2})]($style)'
+style = "fg:{c5} bg:{c2}"
+format = '[ $symbol ($version) ]($style)'
 
 [php]
 symbol = ""
-style = "bg:{c2}"
-format = '[[ $symbol ($version) ](fg:{c5} bg:{c2})]($style)'
+style = "fg:{c5} bg:{c2}"
+format = '[ $symbol ($version) ]($style)'
 
 [python]
 symbol = ""
-style = 'bg:{c2}'
+style = "fg:{c5} bg:{c2}"
 pyenv_version_name = false
 format = '[ via $symbol $virtualenv]($style)'
 
 [time]
 disabled = false
 time_format = "%R" # Hour:Minute Format
-style = "bg:{c1}"
-format = '[[  $time ](fg:{c5} bg:{c1})]($style)'
+style = "fg:{c5} bg:{c1}"
+format = '[  $time ]($style)'
