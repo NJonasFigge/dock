@@ -113,8 +113,6 @@ if __name__ == "__main__":
     print("This will look something like this in your terminal:")
     palette.print_preview()
 
-    print(palette.as_format_dict)
-
     if not args.preview:
         with open(args.template, 'r', encoding='utf-8') as f:
             template = f.read()

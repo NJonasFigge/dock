@@ -10,15 +10,16 @@ PROMPTHUE ?= 210
 
 help:
 	@echo "Available targets:"
-	@echo "  docker       - Install Docker and Docker Compose (if not existing)"
-	@echo "  auth         - Set up authentication files (if not existing)"
-	@echo "  reauth       - Recreate authentication files (will remove existing ones)"
-	@echo "  tmux         - Install and configure tmux"
-	@echo "  cheatsheets  - Copy cheatsheets to the home directory"
-	@echo "  shell        - Set up the shell (Fish by default or Bash, if KEEPBASH=false)"
-	@echo "  starship     - Install and configure the Starship prompt"
-	@echo "  all          - Set up all of the above"
-	@echo "  required     - Set up functionally required things (which are docker and auth)"
+	@echo "  docker               - Install Docker and Docker Compose (if not existing)"
+	@echo "  auth                 - Set up authentication files (if not existing)"
+	@echo "  reauth               - Recreate authentication files (will remove existing ones)"
+	@echo "  tmux                 - Install and configure tmux"
+	@echo "  cheatsheets          - Copy cheatsheets to the home directory"
+	@echo "  shell                - Set up the shell (Fish by default or Bash, if KEEPBASH=false)"
+	@echo "  starship-toml        - Install starship prompt (if not existing) and generate configuration"
+	@echo "  starship-activation  - Activate starship prompt in the chosen shell"
+	@echo "  all                  - Set up all of the above"
+	@echo "  required             - Set up functionally required things (which are docker and auth)"
 
 .PHONY: all required tmux docker auth reauth tmux cheatsheets shell starship
 
@@ -100,17 +101,19 @@ else
 	cp ./.bash_aliases ~/.bash_aliases
 endif
 
-starship: python-is-python3
+starship-toml: python-is-python3
 	@if [ ! -e /usr/local/bin/starship ]; then \
   		curl -sS https://starship.rs/install.sh | sh; \
 	fi
 	python ../utils/generate_starship_toml.py $(PROMPTHUE) -o ~/.config/starship.toml --spacers 4 5 6 9
-ifeq ($(KEEPBASH),false)
-	echo 'starship init fish | source' >> ~/.config/fish/config.fish
-else
+
+starship-activation:
+ifeq ($(KEEPBASH),true)
 	echo 'eval "$(starship init bash)"' >> ~/.bashrc
+else
+	echo 'starship init fish | source' >> ~/.config/fish/config.fish
 endif
 
-all: docker auth tmux cheatsheets shell starship
+all: docker auth tmux cheatsheets shell starship-toml starship-activation
 
 required: docker auth
