@@ -68,5 +68,5 @@ format = '[ via $symbol $virtualenv]($style)'
 [time]
 disabled = false
 time_format = "%R" # Hour:Minute Format
-style = "bg:{color_6}"
-format = '[[  $time ](fg:{color_1} bg:{color_6})]($style)'
+style = "bg:{c1}"
+format = '[[  $time ](fg:{c5} bg:{c1})]($style)'
