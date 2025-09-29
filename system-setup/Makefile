@@ -36,14 +36,14 @@ docker:
 	fi
 
 auth:
-	sudo apt-get install apache2-utils
-	echo "--- USER INTERACTION REQUIRED ---"
-	echo "Please set Papsite-Devs password for user 'jonas':"
-	htpasswd -c ./src/papsite/auth/devs.htpasswd jonas
-	echo "Please set Papsite-Devs password for user 'tim':"
-	htpasswd ./src/papsite/auth/devs.htpasswd tim
-	echo "Please set Papsite-Testers password for user 'betatester':"
-	htpasswd -c ./src/papsite/auth/testers.htpasswd betatester
+	sudo apt install apache2-utils
+	@echo "--- USER INTERACTION REQUIRED ---"
+	@echo "Please set Papsite-Devs password for user 'jonas':"
+	htpasswd -c ../src/papsite/auth/devs.htpasswd jonas
+	@echo "Please set Papsite-Devs password for user 'tim':"
+	htpasswd ../src/papsite/auth/devs.htpasswd tim
+	@echo "Please set Papsite-Testers password for user 'betatester':"
+	htpasswd -c ../src/papsite/auth/testers.htpasswd betatester
 
 tmux:
 	sudo apt update
