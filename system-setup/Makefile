@@ -95,7 +95,7 @@ else
 	cp ./.bash_aliases ~/.bash_aliases
 endif
 
-starship:
+starship: python-is-python3
 	@if [ ! -e /usr/local/bin/starship ]; then \
   		curl -sS https://starship.rs/install.sh | sh; \
 	fi
@@ -106,6 +106,6 @@ else
 	echo 'eval "$(starship init bash)"' >> ~/.bashrc
 endif
 
-all: docker auth tmux cheatsheets shell python-is-python3 | starship
+all: docker auth tmux cheatsheets shell starship
 
 required: docker auth

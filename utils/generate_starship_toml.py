@@ -48,7 +48,7 @@ class ColorPalette:
     @property
     def colors(self): return self._colors
     @property
-    def as_format_dict(self): return {f'_{i + 1}': c.as_hex for i, c in enumerate(reversed(self._colors))}
+    def as_format_dict(self): return {f'color_{i + 1}': c.as_hex for i, c in enumerate(reversed(self._colors))}
 
     def print(self):
         for color in self._colors:

@@ -1,24 +1,24 @@
 format = """
-[░▒▓]({_1})\
-[  ](bg:{_1} fg:{_6})\
-[](fg:{_1} bg:{_2})\
+[░▒▓]({color_1})\
+[  ](bg:{color_1} fg:{_6})\
+[](fg:{color_1} bg:{color_3})\
 $directory\
-[](fg:{_2} bg:{_3})\
+[](fg:{color_3} bg:{color_4})\
 $git_branch\
 $git_status\
-[](fg:{_3} bg:{_4})\
+[](fg:{color_4} bg:{color_5})\
 $nodejs\
 $rust\
 $golang\
 $php\
 $python\
-[](fg:{_4} bg:{_5})\
+[](fg:{color_5} bg:{color_6})\
 $time\
-[ ](fg:{_5})\
+[ ](fg:{color_6})\
 \n$character"""
 
 [directory]
-style = "fg:{_6} bg:{_2}"
+style = "fg:{_6} bg:{color_3}"
 format = "[ $path ]($style)"
 truncation_length = 100
 truncate_to_repo = false
@@ -32,41 +32,41 @@ truncation_symbol = "…/"
 
 [git_branch]
 symbol = ""
-style = "bg:{_3}"
-format = '[[ $symbol $branch ](fg:{_2} bg:{_3})]($style)'
+style = "bg:{color_4}"
+format = '[[ $symbol $branch ](fg:{color_3} bg:{color_4})]($style)'
 
 [git_status]
-style = "bg:{_3}"
-format = '[[($all_status$ahead_behind )](fg:{_2} bg:{_3})]($style)'
+style = "bg:{color_4}"
+format = '[[($all_status$ahead_behind )](fg:{color_3} bg:{color_4})]($style)'
 
 [nodejs]
 symbol = ""
-style = "bg:{_4}"
-format = '[[ $symbol ($version) ](fg:{_2} bg:{_4})]($style)'
+style = "bg:{color_5}"
+format = '[[ $symbol ($version) ](fg:{color_3} bg:{color_5})]($style)'
 
 [rust]
 symbol = ""
-style = "bg:{_4}"
-format = '[[ $symbol ($version) ](fg:{_2} bg:{_4})]($style)'
+style = "bg:{color_5}"
+format = '[[ $symbol ($version) ](fg:{color_3} bg:{color_5})]($style)'
 
 [golang]
 symbol = ""
-style = "bg:{_4}"
-format = '[[ $symbol ($version) ](fg:{_2} bg:{_4})]($style)'
+style = "bg:{color_5}"
+format = '[[ $symbol ($version) ](fg:{color_3} bg:{color_5})]($style)'
 
 [php]
 symbol = ""
-style = "bg:{_4}"
-format = '[[ $symbol ($version) ](fg:{_2} bg:{_4})]($style)'
+style = "bg:{color_5}"
+format = '[[ $symbol ($version) ](fg:{color_3} bg:{color_5})]($style)'
 
 [time]
 disabled = false
 time_format = "%R" # Hour:Minute Format
-style = "bg:{_5}"
-format = '[[  $time ](fg:{_1} bg:{_5})]($style)'
+style = "bg:{color_6}"
+format = '[[  $time ](fg:{color_1} bg:{color_6})]($style)'
 
 [python]
 symbol = ""
-style = 'bg:{_4}'
+style = 'bg:{color_5}'
 pyenv_version_name = false
 format = '[ via $symbol $virtualenv]($style)'
