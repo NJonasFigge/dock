@@ -30,6 +30,8 @@ class ColorPalette:
 
         :param hue_degrees: Hue in degrees (0-360)
         :param num_colors: Number of colors to generate
+        :param spacers: List of indices to use as spacers (these colors will be generated but not used, negative
+            indices allowed)
         :param saturation_bounds: Tuple of (min_saturation, max_saturation)
         :param lightness_bounds: Tuple of (min_lightness, max_lightness)
         :return: List of hex color codes
@@ -48,8 +50,14 @@ class ColorPalette:
         return ColorPalette(colors, thereof_spacers=spacers)
 
     def __init__(self, colors: list[Color], thereof_spacers: list[int]):
+        """
+        Instantiate a ColorPalette.
+        :param colors: List of Color objects
+        :param thereof_spacers: List of indices to use as spacers (these colors will be generated but not used,
+            negative indices allowed)
+        """
         self._colors = colors
-        self._spacers = thereof_spacers
+        self._spacers = [s if s >= 0 else len(self._colors) + s for s in thereof_spacers]
 
     @property
     def as_format_dict(self):

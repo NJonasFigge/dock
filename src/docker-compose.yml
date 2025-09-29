@@ -23,6 +23,8 @@ services:
     # --- For build-time ---
     build:
       context: ./reverse-proxy  # Build in here, also use this Dockerfile
+      args:
+        PROMPTHUE: 0  # Prompt color hue (0-360), 0 = red
 
     # --- For runtime ---
     container_name: reverse-proxy
@@ -43,6 +45,7 @@ services:
       args:  # Build arguments that steer the build process
         ACCESS: www  # No password required
         FIXEDBRANCH: latest  # Always only use the latest version branch
+        PROMPTHUE: 35  # Prompt color hue (0-360), 35 = orange
 
     # --- For runtime ---
     container_name: papsite-live
@@ -66,6 +69,7 @@ services:
       args:  # Build arguments that steer the build process
         ACCESS: devs, testers  # Access granted to users in these htpasswd-files
         FIXEDBRANCH: main  # Always only use main branch
+        PROMPTHUE: 55  # Prompt color hue (0-360), 55 = yellow
 
     # --- For runtime ---
     container_name: papsite-stage
@@ -87,6 +91,7 @@ services:
       args:  # Build arguments that steer the build process
         ACCESS: devs  # Access granted to users in these htpasswd-files
         CGI_SCRIPTS: deploy.cgi
+        PROMPTHUE: 75  # Prompt color hue (0-360), 75 = neon green
 
     # --- For runtime ---
     container_name: papsite-devtest
@@ -111,6 +116,8 @@ services:
     # --- For build-time ---
     build:
       context: ./webdav
+      args:
+        PROMPTHUE: 110  # Prompt color hue (0-360), 110 = green
 
     # --- For runtime ---
     container_name: webdav
@@ -135,6 +142,8 @@ services:
     # --- For build-time ---
     build:
       context: ./alpaca  # Build in here, also use this Dockerfile
+      args:
+        PROMPTHUE: 150  # Prompt color hue (0-360), 150 = turquoise
 
     # --- For runtime ---
     container_name: alpaca
@@ -157,6 +166,8 @@ services:
     # --- For build-time ---
     build:
       context: ./telegram-bot  # Build in here, also use this Dockerfile
+      args:
+        PROMPTHUE: 200  # Prompt color hue (0-360), 200 = light blue
 
     # --- For runtime ---
     container_name: zettelbot
@@ -178,6 +189,8 @@ services:
     # --- For build-time ---
     build:
       context: ./telegram-bot  # Build in here, also use this Dockerfile
+      args:
+        PROMPTHUE: 210  # Prompt color hue (0-360), 210 = blue
 
     # --- For runtime ---
     container_name: schaluppenbot
@@ -199,6 +212,8 @@ services:
     # --- For build-time ---
     build:
       context: ./telegram-bot  # Build in here, also use this Dockerfile
+      args:
+        PROMPTHUE: 230  # Prompt color hue (0-360), 230 = dark blue
 
     # --- For runtime ---
     container_name: alpacabot
@@ -218,6 +233,8 @@ services:
     # --- For build-time ---
     build:
       context: ./telegram-bot  # Build in here, also use this Dockerfile
+      args:
+        PROMPTHUE: 245  # Prompt color hue (0-360), 245 = lilac
 
     # --- For runtime ---
     container_name: eheboostbot
