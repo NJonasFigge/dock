@@ -88,10 +88,10 @@ starship:
 	cp ./starship.toml ~/.config/starfish.toml
 ifeq ($(KEEPBASH),false)
 	echo 'starship init fish | source' >> ~/.config/fish/config.fish
-	source ~/.config/fish/config.fish
+	. ~/.config/fish/config.fish
 else
 	echo 'eval "$(starship init bash)"' >> ~/.bashrc
-	source ~/.bashrc
+	. ~/.bashrc
 endif
 
 all: docker auth tmux cheatsheets shell starship
