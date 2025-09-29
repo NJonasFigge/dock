@@ -20,7 +20,7 @@ help:
 	@echo "  logs     - Follow logs of all services"
 	@echo "  clean    - Remove all containers, images, volumes, networks"
 	@echo "  exec     - Run a command in a service: make exec SERVICE=<service> CMD='<command>'"
-	@echo "  bash     - Open a bash shell in a service: make bash SERVICE=<service>"
+	@echo "  shell    - Open a shell in a service: make shell SERVICE=<service>"
 
 .PHONY: build up down restart logs clean exec bash
 
@@ -52,8 +52,14 @@ ifndef CMD
 endif
 	$(DC) exec $(SERVICE) sh -c "$(CMD)"
 
-bash:
+shell:
 ifndef SERVICE
 	$(error SERVICE is not set. Usage: make bash SERVICE=<service>)
 endif
-	$(DC) exec -it $(SERVICE) bash
+	@if [ -e /usr/bin/fish ]; then \
+		echo "Opening fish shell in service '$(SERVICE)'..."; \
+		$(DC) exec -it $(SERVICE) fish; \
+	else \
+		echo "Opening bash shell in service '$(SERVICE)'..."; \
+		$(DC) exec -it $(SERVICE) bash; \
+	fi
