@@ -83,10 +83,22 @@ class ColorPalette:
     def print_preview(self):
         usable_colors = [c for i, c in enumerate(self._colors) if i not in self._spacers]
         set_colors = lambda i, j: usable_colors[i].ansi_code_fg + usable_colors[j].ansi_code_bg
-        print(f'{usable_colors[5].ansi_code_fg}░▒▓{set_colors(0, 5)}  {set_colors(5, 4)}▄'
-              f'{set_colors(0, 4)} ~/dock/system-setup {set_colors(4, 3)}▄{set_colors(5, 3)}  main ? '
-              f'{set_colors(3, 2)}▄{set_colors(2, 1)}▄{set_colors(5, 1)}  13:49 '
-              f'{self.ANSI_RESET}{usable_colors[1].ansi_code_fg}▄{self.ANSI_RESET}')
+        print(f'{usable_colors[6].ansi_code_fg}░▒▓'
+              f'{set_colors(0, 6)}  '
+              f'{set_colors(6, 5)}▄'
+              f'{set_colors(0, 5)} user@host '
+              f'{set_colors(5, 4)}▄'
+              f'{set_colors(0, 4)} ~/dock/system-setup '
+              f'{set_colors(4, 3)}▄'
+              f'{set_colors(5, 3)}  main ? '
+              f'{set_colors(3, 2)}▄'
+              f'{set_colors(5, 2)} venv '
+              f'{set_colors(2, 1)}▄'
+              f'{set_colors(5, 1)}  13:49 '
+              f'{set_colors(1, 0)}▄'
+              f'{set_colors(5, 0)} took 3s '
+              f'{self.ANSI_RESET}{usable_colors[0].ansi_code_fg}▄'
+              f'{self.ANSI_RESET}')
 
 
 if __name__ == "__main__":
@@ -117,7 +129,7 @@ if __name__ == "__main__":
             args.spacers = []
 
     # - Generate color palette
-    palette = ColorPalette.from_hue(args.hue, num_colors=6, spacers=args.spacers,
+    palette = ColorPalette.from_hue(args.hue, num_colors=7, spacers=args.spacers,
                                     saturation_bounds=args.saturation_bounds,
                                     lightness_bounds=args.lightness_bounds)
 
