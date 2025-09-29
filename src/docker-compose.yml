@@ -55,7 +55,7 @@ services:
       - "443"  # HTTPS
     volumes:
       - ./papsite/venvs/live-venv:/venv  # Pre-supply a virtualenv (that might be updated by the container)
-      - ./.ssh:/root/.ssh:ro  # - For fetching git repos via SSH
+      - ./dot-ssh:/root/.ssh:ro  # - For fetching git repos via SSH
     environment:  # Environment variables that are only necessary when running
       IS_LIVE: true  # Activates live mode
 
@@ -79,7 +79,7 @@ services:
       - "443"  # HTTPS
     volumes:
       - ./papsite/venvs/stage-venv:/venv  # Pre-supply a virtualenv (that might be updated by the container)
-      - ./.ssh:/root/.ssh:ro  # - For fetching git repos via SSH
+      - ./dot-ssh:/root/.ssh:ro  # - For fetching git repos via SSH
 
   # === THE DEVTEST PAPSITE ===
   # - This container will clone an arbitrary branch of the papsite repo, render the contents, deploy them to a certain
@@ -101,7 +101,7 @@ services:
       - "443"  # HTTPS
     volumes:
       - ./papsite/venvs/devtest-venv:/venv  # Pre-supply a virtualenv (that might be updated by the container)
-      - ./.ssh:/root/.ssh:ro  # - For fetching git repos via SSH
+      - ./dot-ssh:/root/.ssh:ro  # - For fetching git repos via SSH
     environment:  # Environment variables that are only necessary when running
       BRANCH: nginx
 
@@ -174,7 +174,7 @@ services:
     hostname: zettelbot  # "Computer name" from within container
     volumes:
       - ./telegram-bot/venvs/zettelbot-venv:/venv  # Pre-supply a virtualenv (that might be updated by the container)
-      - ./.ssh:/root/.ssh:ro  # - For fetching git repos via SSH
+      - ./dot-ssh:/root/.ssh:ro  # - For fetching git repos via SSH
     environment:  # Environment variables that are only necessary when running
       REPO: "git@github.com:NJonasFigge/Zettelbot.git"
 
@@ -197,7 +197,7 @@ services:
     hostname: schaluppenbot  # "Computer name" from within container
     volumes:
       - ./telegram-bot/venvs/schaluppenbot-venv:/venv  # Pre-supply a virtualenv (that might be updated by the container)
-      - ./.ssh:/root/.ssh:ro  # - For fetching git repos via SSH
+      - ./dot-ssh:/root/.ssh:ro  # - For fetching git repos via SSH
     environment:  # Environment variables that are only necessary when running
       REPO: "git@github.com:NJonasFigge/SchaluppenBot.git"
 
@@ -220,7 +220,7 @@ services:
     hostname: alpacabot  # "Computer name" from within container
     volumes:
       - ./telegram-bot/venvs/alpacabot-venv:/venv  # Pre-supply a virtualenv (that might be updated by the container)
-      - ./.ssh:/root/.ssh:ro  # - For fetching git repos via SSH
+      - ./dot-ssh:/root/.ssh:ro  # - For fetching git repos via SSH
     environment:  # Environment variables that are only necessary when running
       REPO: "git@github.com:NJonasFigge/AlpacaBot.git"
 
@@ -241,6 +241,6 @@ services:
     hostname: eheboostbot  # "Computer name" from within container
     volumes:
       - ./telegram-bot/venvs/eheboostbot-venv:/venv  # Pre-supply a virtualenv (that might be updated by the container)
-      - ./.ssh:/root/.ssh:ro  # - For fetching git repos via SSH
+      - ./dot-ssh:/root/.ssh:ro  # - For fetching git repos via SSH
     environment:  # Environment variables that are only necessary when running
       REPO: "git@github.com:NJonasFigge/EheBoostBot.git"
