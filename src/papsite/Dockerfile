@@ -59,7 +59,7 @@ COPY entrypoint.sh /app/entrypoint.sh
 RUN chmod +x /app/entrypoint.sh
 
 # - Install fish
-RUN apk add --no-cache fish util-linux && mkdir -p ~/.config/fish && chsh -s /usr/bin/fish
+RUN apk add --no-cache fish && mkdir -p ~/.config/fish
 COPY config.fish ~/.config/fish/
 
 # - Install starship and configure it

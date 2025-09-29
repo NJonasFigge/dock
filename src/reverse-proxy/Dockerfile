@@ -15,7 +15,7 @@ RUN apk add --no-cache bash
 COPY nginx.conf /etc/nginx/nginx.conf
 
 # - Install fish
-RUN apk add --no-cache fish util-linux && mkdir -p ~/.config/fish && chsh -s /usr/bin/fish
+RUN apk add --no-cache fish && mkdir -p ~/.config/fish
 COPY config.fish ~/.config/fish/
 
 # - Install starship and configure it
