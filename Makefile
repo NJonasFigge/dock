@@ -35,13 +35,7 @@ prepare-build:
 		done; \
 	done
 
-sshkeys:
-	mkdir -p .ssh
-	ssh-keygen -t ed25519 -f .ssh/id_ed25519 -N ""
-	chmod 644 .ssh/id_ed25519  # Needs to be readable by containers
-	chmod 644 .ssh/id_ed25519.pub
-
-build: prepare-build sshkeys
+build: prepare-build
 	$(DC) build $(SERVICES)
 
 up:
