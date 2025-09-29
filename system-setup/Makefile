@@ -75,13 +75,18 @@ cheatsheets:
 	cp -r ./cheatsheets ~/
 
 python-is-python3:
-	@if [ ! -e /usr/bin/python ]; then \
+	@if [ ! -e /usr/bin/python3 ]; then \
 		sudo apt update; \
 		sudo apt install -y python3; \
 	else \
 		echo "Python is already installed."; \
 	fi
-	sudo ln -s /usr/bin/python3 /usr/bin/python
+
+	@if [ ! -e /usr/bin/python ]; then \
+		sudo ln -s /usr/bin/python3 /usr/bin/python; \
+	else \
+		echo "'python' already points to 'python3'."; \
+	fi
 
 shell:
 ifeq ($(KEEPBASH),false)
