@@ -19,7 +19,7 @@ help:
 .PHONY: all required tmux docker auth tmux cheatsheets shell starship
 
 docker:
-	if ! command -v docker &> /dev/null; then \
+	@if [ ! -e /usr/bin/docker ]; then \
 		sudo apt install -y ca-certificates curl gnupg; \
 		sudo install -m 0755 -d /etc/apt/keyrings; \
 		curl -fsSL https://download.docker.com/linux/debian/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg; \
