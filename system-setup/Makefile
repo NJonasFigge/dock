@@ -21,7 +21,7 @@ help:
 	@echo "  starship-toml        - Install starship prompt (if not existing) and generate configuration"
 	@echo "  starship-activation  - Activate starship prompt in the chosen shell"
 	@echo "  all                  - Set up all of the above"
-	@echo "  required             - Set up functionally required things (which are sshkeys, docker and auth)"
+	@echo "  required             - Set up functionally required things (which are ssh, docker and auth)"
 
 .PHONY: all required tmux docker auth reauth tmux cheatsheets shell starship
 
@@ -45,15 +45,6 @@ docker:
 
 ssh:
 	sudo apt install -y openssh-client
-
-sshkeys: ssh
-	mkdir -p ~/.ssh
-	sudo chown "$(whoami)":"$(whoami)" ~/.ssh
-	chmod 700 ~/.ssh
-	ssh-keygen -t ed25519
-	chmod 600 ~/.ssh/id_ed25519
-	chmod 644 ~/.ssh/id_ed25519.pub
-	ssh -T git@github.com
 
 auth:
 	@if [ ! -e /usr/bin/htpasswd ]; then \
@@ -129,6 +120,6 @@ else
 	echo 'starship init fish | source' >> ~/.config/fish/config.fish
 endif
 
-all: sshkeys docker auth tmux cheatsheets shell starship-toml starship-activation
+all: ssh docker auth tmux cheatsheets shell starship-toml starship-activation
 
-required: sshkeys docker auth
+required: ssh docker auth
