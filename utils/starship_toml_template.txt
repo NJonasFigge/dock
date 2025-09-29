@@ -33,31 +33,31 @@ truncation_symbol = "…/"
 [git_branch]
 symbol = ""
 style = "bg:{color_4}"
-format = '[[ $symbol $branch ](fg:{color_3} bg:{color_4})]($style)'
+format = '[[ $symbol $branch ](fg:{color_1} bg:{color_4})]($style)'
 
 [git_status]
 style = "bg:{color_4}"
-format = '[[($all_status$ahead_behind )](fg:{color_3} bg:{color_4})]($style)'
+format = '[[($all_status$ahead_behind )](fg:{color_1} bg:{color_4})]($style)'
 
 [nodejs]
 symbol = ""
 style = "bg:{color_5}"
-format = '[[ $symbol ($version) ](fg:{color_3} bg:{color_5})]($style)'
+format = '[[ $symbol ($version) ](fg:{color_1} bg:{color_5})]($style)'
 
 [rust]
 symbol = ""
 style = "bg:{color_5}"
-format = '[[ $symbol ($version) ](fg:{color_3} bg:{color_5})]($style)'
+format = '[[ $symbol ($version) ](fg:{color_1} bg:{color_5})]($style)'
 
 [golang]
 symbol = ""
 style = "bg:{color_5}"
-format = '[[ $symbol ($version) ](fg:{color_3} bg:{color_5})]($style)'
+format = '[[ $symbol ($version) ](fg:{color_1} bg:{color_5})]($style)'
 
 [php]
 symbol = ""
 style = "bg:{color_5}"
-format = '[[ $symbol ($version) ](fg:{color_3} bg:{color_5})]($style)'
+format = '[[ $symbol ($version) ](fg:{color_1} bg:{color_5})]($style)'
 
 [time]
 disabled = false
