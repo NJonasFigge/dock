@@ -74,6 +74,15 @@ tmux:
 cheatsheets:
 	cp -r ./cheatsheets ~/
 
+python-is-python3:
+	@if [ ! -e /usr/bin/python ]; then \
+		sudo apt update; \
+		sudo apt install -y python3; \
+	else \
+		echo "Python is already installed."; \
+	fi
+	sudo ln -s /usr/bin/python3 /usr/bin/python
+
 shell:
 ifeq ($(KEEPBASH),false)
 	sudo apt update
@@ -87,7 +96,9 @@ else
 endif
 
 starship:
-	curl -sS https://starship.rs/install.sh | sh
+	@if [ ! -e /usr/local/bin/starship ]; then \
+  		curl -sS https://starship.rs/install.sh | sh; \
+	fi
 	python ../utils/generate_starship_toml.py $(PROMPTHUE) -o ~/.config/starship.toml
 ifeq ($(KEEPBASH),false)
 	echo 'starship init fish | source' >> ~/.config/fish/config.fish
@@ -95,6 +106,6 @@ else
 	echo 'eval "$(starship init bash)"' >> ~/.bashrc
 endif
 
-all: docker auth tmux cheatsheets shell starship
+all: docker auth tmux cheatsheets shell python-is-python3 | starship
 
 required: docker auth
