@@ -48,7 +48,7 @@ ssh:
 
 sshkeys: ssh
 	mkdir -p ~/.ssh
-	sudo chown "$USER":"$USER" ~/.ssh
+	sudo chown "$(whoami)":"$(whoami)" ~/.ssh
 	chmod 700 ~/.ssh
 	ssh-keygen -t ed25519
 	chmod 600 ~/.ssh/id_ed25519
