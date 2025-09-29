@@ -19,17 +19,21 @@ help:
 .PHONY: all required tmux docker auth tmux cheatsheets shell starship
 
 docker:
-	sudo apt install -y ca-certificates curl gnupg
-	sudo install -m 0755 -d /etc/apt/keyrings
-	curl -fsSL https://download.docker.com/linux/debian/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
-	echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/debian $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-	sudo apt update
-	sudo apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
-	sudo usermod -aG docker $USER
-	echo "--- IMPORTANT ---"
-	echo "You need to log out and log back in for the group changes to take effect."
-	echo "Then you can run 'docker run hello-world' to verify the installation."
-	echo "-----------------"
+	if ! command -v docker &> /dev/null; then \
+		sudo apt install -y ca-certificates curl gnupg; \
+		sudo install -m 0755 -d /etc/apt/keyrings; \
+		curl -fsSL https://download.docker.com/linux/debian/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg; \
+		echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/debian $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null; \
+		sudo apt update; \
+		sudo apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin; \
+		sudo usermod -aG docker $USER; \
+		echo "--- IMPORTANT ---"; \
+		echo "You need to log out and log back in for the group changes to take effect."; \
+		echo "Then you can run 'docker run hello-world' to verify the installation."; \
+		echo "-----------------"; \
+	else \
+		echo "Docker is already installed."; \
+	fi
 
 auth:
 	sudo apt-get install apache2-utils
