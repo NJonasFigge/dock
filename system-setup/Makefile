@@ -85,7 +85,7 @@ endif
 
 starship:
 	curl -sS https://starship.rs/install.sh | sh
-	cp ./starship.toml ~/.config/starfish.toml
+	cp ./starship.toml ~/.config/starship.toml
 ifeq ($(KEEPBASH),false)
 	echo 'starship init fish | source' >> ~/.config/fish/config.fish
 else
