@@ -52,7 +52,7 @@ tmux:
 	cp ./.tmux.help ~/
 
 cheatsheets:
-	cp ./cheatsheets ~/
+	cp -r ./cheatsheets ~/
 
 shell:
 ifeq ($(KEEPBASH),false)
