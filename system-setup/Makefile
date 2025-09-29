@@ -10,9 +10,8 @@ PROMPTHUE ?= 210
 
 help:
 	@echo "Available targets:"
-	@echo "  ssh                  - Install OpenSSH client"
-	@echo "  sshkeys              - Generate SSH keys for GitHub access"
 	@echo "  docker               - Install Docker and Docker Compose (if not existing)"
+	@echo "  ssh                  - Install OpenSSH client"
 	@echo "  auth                 - Set up authentication files (if not existing)"
 	@echo "  reauth               - Recreate authentication files (will remove existing ones)"
 	@echo "  tmux                 - Install and configure tmux"
