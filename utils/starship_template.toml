@@ -83,4 +83,5 @@ style = "fg:{c5} bg:{c1}"
 format = '[  $time ]($style)'
 
 [cmd_duration]
-format = "$duration"
+style = "fg:{c5} bg:{c0}"
+format = "[took $duration]($style)"
