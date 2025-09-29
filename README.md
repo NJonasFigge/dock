@@ -33,7 +33,7 @@ usermod -aG sudo $USER
 
 Log out and log back in to activate the changes.
 
-#### Install `git`
+#### Install and prepare `git`
 
 ```bash
 sudo apt install git

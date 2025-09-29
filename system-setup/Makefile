@@ -10,6 +10,8 @@ PROMPTHUE ?= 210
 
 help:
 	@echo "Available targets:"
+	@echo "  ssh                  - Install OpenSSH client"
+	@echo "  sshkeys              - Generate SSH keys for GitHub access"
 	@echo "  docker               - Install Docker and Docker Compose (if not existing)"
 	@echo "  auth                 - Set up authentication files (if not existing)"
 	@echo "  reauth               - Recreate authentication files (will remove existing ones)"
@@ -19,7 +21,7 @@ help:
 	@echo "  starship-toml        - Install starship prompt (if not existing) and generate configuration"
 	@echo "  starship-activation  - Activate starship prompt in the chosen shell"
 	@echo "  all                  - Set up all of the above"
-	@echo "  required             - Set up functionally required things (which are docker and auth)"
+	@echo "  required             - Set up functionally required things (which are sshkeys, docker and auth)"
 
 .PHONY: all required tmux docker auth reauth tmux cheatsheets shell starship
 
@@ -39,6 +41,16 @@ docker:
 	else \
 		echo "Docker is already installed."; \
 	fi
+
+
+ssh:
+	sudo apt install -y openssh-client
+
+sshkeys: ssh
+	ssh-keygen -t ed25519
+	chmod 600 ~/.ssh/id_ed25519
+	chmod 644 ~/.ssh/id_ed25519.pub
+	ssh -T git@github.com
 
 auth:
 	@if [ ! -e /usr/bin/htpasswd ]; then \
@@ -114,6 +126,6 @@ else
 	echo 'starship init fish | source' >> ~/.config/fish/config.fish
 endif
 
-all: docker auth tmux cheatsheets shell starship-toml starship-activation
+all: sshkeys docker auth tmux cheatsheets shell starship-toml starship-activation
 
-required: docker auth
+required: sshkeys docker auth

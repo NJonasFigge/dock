@@ -2,6 +2,9 @@
 
 REPO="git@bitbucket.org:papierschiff-content/papsite.git"
 
+# - Set to exit on error
+set -e
+
 # - Clean clone target
 rm -rf /app/papsite
 
