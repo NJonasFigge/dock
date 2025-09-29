@@ -9,6 +9,7 @@ end
 
 # - Poweruser utils
 alias cl='clear'
+alias ll='ls -lah'
 alias nxtd='pushd +1 > /dev/null'
 alias whatsmyip='curl https://ipinfo.io/ip'
 

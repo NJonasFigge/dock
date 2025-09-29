@@ -27,5 +27,9 @@ COPY generate_starship_toml.py /tmp/generate_starship_toml.py
 COPY starship_template.toml /tmp/starship_template.toml
 RUN python /tmp/generate_starship_toml.py $PROMPTHUE -o /root/.config/starship.toml --good-spacers
 
+# - Generate ssh keys
+RUN ssh-keygen -t rsa -b 4096 -f /root/.ssh/id_rsa -N "" -C "papsite-deploy-key"
+RUN chmod 600 /root/.ssh/id_rsa
+
 # - Set entrypoint script
 ENTRYPOINT ["/app/entrypoint.sh"]
