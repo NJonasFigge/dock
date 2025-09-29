@@ -76,6 +76,7 @@ ifeq ($(KEEPBASH),false)
 	sudo apt update
 	sudo apt install -y fish
 	chsh -s /usr/bin/fish
+	mkdir -p ~/.config/fish
 	cp ./config.fish ~/.config/fish/
 else
 	chsh -s /usr/bin/bash
@@ -86,7 +87,6 @@ starship:
 	curl -sS https://starship.rs/install.sh | sh
 	cp ./starship.toml ~/.config/starfish.toml
 ifeq ($(KEEPBASH),false)
-	mkdir -p ~/.config/fish
 	echo 'starship init fish | source' >> ~/.config/fish/config.fish
 	source ~/.config/fish/config.fish
 else
