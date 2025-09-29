@@ -1,8 +1,7 @@
 #! /usr/bin/make
 
 # Paths
-SRC_DIR := src
-DC := docker compose -f $(SRC_DIR)/docker-compose.yml
+DC := docker compose -f src/docker-compose.yml
 
 # Defaults
 SERVICES ?=
@@ -11,20 +10,32 @@ SERVICES ?=
 .PHONY: help
 help:
 	@echo "Available targets:"
-	@echo "  build    - Build all Docker services"
-	@echo "             You can restrict services with SERVICES='service1 service2', also in targets 'up' and 'logs'"
-	@echo "  up       - Start all services in detached mode"
-	@echo "  up-logs  - Start all services in detached mode and open logs"
-	@echo "  down     - Stop all services"
-	@echo "  restart  - Recreate containers"
-	@echo "  logs     - Follow logs of all services"
-	@echo "  clean    - Remove all containers, images, volumes, networks"
-	@echo "  exec     - Run a command in a service: make exec SERVICE=<service> CMD='<command>'"
-	@echo "  shell    - Open a shell in a service: make shell SERVICE=<service>"
+	@echo "  prepare-build  - Prepare build by copying necessary config files to service directories"
+	@echo "  build          - Build all Docker services"
+	@echo "                   You can restrict services with SERVICES='service1 service2', also in targets"
+	@echo "                   'up' and 'logs'"
+	@echo "  up             - Start all services in detached mode"
+	@echo "  up-logs        - Start all services in detached mode and open logs"
+	@echo "  down           - Stop all services"
+	@echo "  restart        - Recreate containers"
+	@echo "  logs           - Follow logs of all services"
+	@echo "  clean          - Remove all containers, images, volumes, networks"
+	@echo "  exec           - Run a command in a service: make exec SERVICE=<service> CMD='<command>'"
+	@echo "  shell          - Open a shell in a service: make shell SERVICE=<service>"
 
-.PHONY: build up down restart logs clean exec bash
+.PHONY: prepare-build build up up-logs down restart logs clean exec shell
 
-build:
+prepare-build:
+	@for dir in alpaca papsite reverse-proxy telegram-bot webdav; do \
+		for file in system-setup/config.fish utils/generate_starship_toml.py utils/starship_template.toml; do \
+			if [ ! -e src/$$dir/$$(basename $$file) ]; then \
+				cp $$file src/$$dir/; \
+				echo "Added $$(basename $$file) to $$dir."; \
+			fi; \
+		done; \
+	done
+
+build: prepare-build
 	$(DC) build $(SERVICES)
 
 up:
