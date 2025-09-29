@@ -1,6 +1,6 @@
 format = """
 [░▒▓]({color_1})\
-[  ](bg:{color_1} fg:{_6})\
+[  ](bg:{color_1} fg:{color_6})\
 [](fg:{color_1} bg:{color_3})\
 $directory\
 [](fg:{color_3} bg:{color_4})\
@@ -18,7 +18,7 @@ $time\
 \n$character"""
 
 [directory]
-style = "fg:{_6} bg:{color_3}"
+style = "fg:{color_6} bg:{color_3}"
 format = "[ $path ]($style)"
 truncation_length = 100
 truncate_to_repo = false
