@@ -11,9 +11,12 @@ from threading import Thread
 
 
 class ANSICODES:
-    LIGHT_GRAY = '\033[37m'
-    DARK_GRAY = '\033[90m'
-    RED = '\033[91m'
+    LIGHT_GRAY_BG = '\033[48;5;250m'
+    DARK_GRAY_BG = '\033[48;5;240m'
+    BLUE_FG = '\033[38;5;21m'
+    BLACK_FG = '\033[30m'
+    RESET = '\033[0m'
+    CLEAR_SCREEN = '\033[2J\033[H'
 
 
 def _get_keypress():
@@ -64,6 +67,7 @@ class Browser:
     def _start_log_stream(self):
         yml = Path(__file__).parent / 'src/docker-compose.yml'
         terminal_height = os.get_terminal_size().lines - 5
+
         self._log_stream_process = subprocess.Popen(["docker", "compose", "-f", str(yml), "logs", "-f",
                                                      self._current_container.name, "--no-log-prefix", "-n",
                                                      str(terminal_height - 5)],
@@ -76,9 +80,12 @@ class Browser:
 
     def start(self):
         while True:
-            print(f"\033[48;5;250m\033[38;5;0m\n=== Showing logs for: {self._current_container.name} ===\033[0m")
-            print(f"\033[48;5;240mPress [Enter] to open shell in {self._current_container.name}.\033[0m")
-            print("\033[48;5;240mPress [A] and [D] to rotate through logs, [q] to quit.\033[0m\n")
+            print(ANSICODES.CLEAR_SCREEN + ANSICODES.LIGHT_GRAY_BG + ANSICODES.BLACK_FG, end='')
+            print(f"=== Showing logs for: {self._current_container.name} ===")
+            print(ANSICODES.RESET + ANSICODES.DARK_GRAY_BG, end='')
+            print(f"Press [Enter] to open shell in {self._current_container.name}.")
+            print("Press [A] and [D] to rotate through logs, [q] to quit.")
+            print(ANSICODES.RESET)
             self._start_log_stream()
             key = _get_keypress()
             if key == "q":
