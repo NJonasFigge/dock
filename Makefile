@@ -16,13 +16,15 @@ help:
 	@echo "                   'up', 'logs' and buildover"
 	@echo "  buildover      - Build all Docker services without using cache"
 	@echo "  up             - Start all services in detached mode"
-	@echo "  vup            - 'Verbose up': Start all services and open logs"
 	@echo "  down           - Stop all services"
 	@echo "  restart        - Recreate containers"
 	@echo "  logs           - Follow logs of all services"
+	@echo "  vup            - 'Verbose up': Start all services and open logs"
 	@echo "  clean          - Remove all containers, images, volumes, networks"
 	@echo "  exec           - Run a command in a service: make exec SERVICE=<service> CMD='<command>'"
 	@echo "  shell          - Open a shell in a service: make shell SERVICE=<service>"
+	@echo "  browse         - Open log browser (with shell spawning capabilities) for all running containers"
+	@echo "  iup            - 'Interactive up': Start all services and open log browser"
 
 .PHONY: context build up vup down restart logs clean exec shell
 
@@ -84,3 +86,5 @@ endif
 
 browse: up
 	@python browse_containers.py
+
+iup: up browse

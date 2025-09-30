@@ -1,6 +1,8 @@
 
+import os
 import sys
 import tty
+import shutil
 import termios
 import subprocess
 import datetime as dt
@@ -47,14 +49,18 @@ class Browser:
         self._current_index = (self._current_index + (-1 if backwards else 1)) % len(self._containers)
 
     def _start_log_stream(self):
-        return subprocess.Popen(["make", "logs", "SERVICE=" + self._current_container.name])
+        size = shutil.get_terminal_size()
+        env = os.environ.copy()
+        env['COLUMNS'] = str(size.columns)
+        env['LINES'] = str(size.lines)
+        return subprocess.Popen(["make", "logs", "SERVICE=" + self._current_container.name], env=env)
 
     def _open_shell(self):
         subprocess.run(["make", "shell", "SERVICE=" + self._current_container.name])
 
     def start(self):
         while True:
-            print(f"\033[48;5;240m\033[38;5;0m\n=== Showing logs for {self._current_container.name} ===\033[0m")
+            print(f"\033[48;5;250m\033[38;5;0m\n=== Showing logs for {self._current_container.name} ===\033[0m")
             print(f"Press [Enter] to open shell in {self._current_container.name}.")
             print("Press [A] and [D] to rotate through logs, [q] to quit.\n")
             log_stream_process = self._start_log_stream()
