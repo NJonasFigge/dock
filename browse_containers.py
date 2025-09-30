@@ -62,7 +62,9 @@ class Browser:
         while self._log_stream_process is not None and self._log_stream_process.stdout is not None:
             for line in self._log_stream_process.stdout:
                 if ("fatal" in line.lower() or "error" in line.lower() or "can't" in line.lower()
-                        or "failed" in line.lower() or "no such" in line.lower() or "denied" in line.lower()):
+                        or "failed" in line.lower() or "no such" in line.lower() or "denied" in line.lower()
+                        or "unavailable" in line.lower() or "unreachable" in line.lower()
+                        or "not found" in line.lower()):
                     print(ANSICODES.RED_FG + line.strip() + ANSICODES.RESET, end='\n\r')
                 elif "warn" in line.lower():
                     print(ANSICODES.YELLOW_FG + line.strip() + ANSICODES.RESET, end='\n\r')
