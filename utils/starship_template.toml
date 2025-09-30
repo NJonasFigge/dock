@@ -22,7 +22,8 @@ $cmd_duration\
 \n$character"""
 
 [username]
-style = "fg:{c0} bg:{c5}"
+style_user = "fg:{c0} bg:{c5}"
+style_root = "bg:{c5}"
 show_always = true
 format = "[$user]($style)"
 disabled = false
