@@ -9,8 +9,11 @@ ARG PROMPTHUE="310"
 
 # === LAYERS ===
 
-# - Install bash
-RUN apk add --no-cache bash
+# - Install required packages
+RUN apk add --no-cache git bash fcgiwrap spawn-fcgi openssh-client python3 py3-pip make
+
+# - Make "python" point to python3
+RUN ln -sf python3 /usr/bin/python
 
 # - Deploy nginx configuration file
 COPY nginx.conf /etc/nginx/nginx.conf
