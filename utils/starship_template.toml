@@ -24,12 +24,13 @@ $cmd_duration\
 \n$character"""
 
 [username]
-style_user = "fg:{c0} bg:{c5}"
-style_root = "fg:{c0} bg:{c5}"
-show_always = true
-format = "[ $user]($style)"
-disabled = false
-akiases = {{ "root" = "\uf511" }}  #  Wrong TOML syntax, but since this whole file will be .format()-ed, it works.
+disabled = true
+
+[custom.username]
+command = 'if [ "$USER" = root ]; then echo "󱢼"; else echo "$USER"; fi'
+when = 'true'
+style = "fg:{c0} bg:{c5}"
+format = "[ $output]($style)"
 
 [hostname]
 style = "fg:{c0} bg:{c5}"
