@@ -14,7 +14,7 @@ class ANSICODES:
     LIGHT_GRAY_BG = '\033[48;5;250m'
     DARK_GRAY_BG = '\033[48;5;240m'
     GRAY_FG = '\033[38;5;245m'
-    BLUE_FG = '\033[38;5;21m'
+    BLUE_FG = '\033[38;5;81m'
     BLACK_FG = '\033[30m'
     RED_FG = '\033[31m'
     YELLOW_FG = '\033[33m'
