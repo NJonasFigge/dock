@@ -4,7 +4,7 @@
 DC := docker compose -f src/docker-compose.yml
 
 # Defaults
-SERVICES ?= "$SERVICE"
+SERVICES ?= "$(SERVICE)"
 
 # Default target
 .PHONY: help
