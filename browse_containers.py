@@ -70,7 +70,6 @@ class Browser:
                     print(ANSICODES.BLUE_FG + line.strip() + ANSICODES.RESET, end='\n\r')
                 else:
                     print(line, end='\r')
-                print()
 
     def _rotate(self, backwards: bool = False):
         self._current_index = (self._current_index + (-1 if backwards else 1)) % len(self._containers)
