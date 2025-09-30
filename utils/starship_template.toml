@@ -2,7 +2,7 @@ format = """
 [░▒▓]({c6})\
 [  ](fg:{c0} bg:{c6})\
 [](fg:{c6} bg:{c5})\
-$custom.user\
+${{custom.user}}\
 [@](fg:{c0} bg:{c5})\
 $hostname\
 [](fg:{c5} bg:{c4})\
