@@ -21,6 +21,8 @@ class ANSICODES:
     GREEN_FG = '\033[32m'
     RESET = '\033[0m'
     CLEAR_SCREEN = '\033[2J\033[H'
+    BOLD = '\033[1m'
+    NOTBOLD = '\033[22m'
 
 
 def _get_keypress():
@@ -102,8 +104,8 @@ class Browser:
             if new_screen:
                 terminal_width = os.get_terminal_size().columns
                 print(ANSICODES.CLEAR_SCREEN + ANSICODES.LIGHT_GRAY_BG + ANSICODES.BLACK_FG, end='')
-                print(f"=== Showing logs for: {ANSICODES.GREEN_FG}{self._current_container.name}{ANSICODES.BLACK_FG} "
-                      f"===".ljust(terminal_width + 2))
+                print(f"=== Showing logs for: {ANSICODES.BOLD}{self._current_container.name}{ANSICODES.NOTBOLD} "
+                      f"===".ljust(terminal_width + 10))
                 print(ANSICODES.RESET + ANSICODES.DARK_GRAY_BG, end='')
                 print(f"Instructions:  [Enter]       - Execute a command this container".ljust(terminal_width))
                 print(f"               [Ctrl+Enter]  - Open a shell in this container".ljust(terminal_width))
