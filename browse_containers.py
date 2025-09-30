@@ -104,13 +104,12 @@ class Browser:
             if new_screen:
                 terminal_width = os.get_terminal_size().columns
                 print(ANSICODES.CLEAR_SCREEN + ANSICODES.LIGHT_GRAY_BG + ANSICODES.BLACK_FG, end='')
-                print(f"=== Showing logs for: {ANSICODES.BOLD}{self._current_container.name}{ANSICODES.NOTBOLD} "
-                      f"===".ljust(terminal_width + 10))
+                print(f" Showing logs for: {self._current_container.name}".ljust(terminal_width))
                 print(ANSICODES.RESET + ANSICODES.DARK_GRAY_BG, end='')
-                print(f"Instructions:  [Enter]       - Execute a command this container".ljust(terminal_width))
-                print(f"               [Ctrl+Enter]  - Open a shell in this container".ljust(terminal_width))
-                print(f"               [A] / [D]     - Rotate through containers".ljust(terminal_width))
-                print(f"               [Q]           - Quit this browser".ljust(terminal_width))
+                print(f" Instructions:  [Enter]       - Execute a command this container".ljust(terminal_width))
+                print(f"                [Ctrl+Enter]  - Open a shell in this container".ljust(terminal_width))
+                print(f"                [A] / [D]     - Rotate through containers".ljust(terminal_width))
+                print(f"                [Q]           - Quit this browser".ljust(terminal_width))
                 print(ANSICODES.RESET)
                 self._start_log_stream()
             new_screen = True
