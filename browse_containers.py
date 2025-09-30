@@ -119,6 +119,9 @@ class Browser:
                 self._rotate()
                 print(f"\n{ANSICODES.GRAY_FG}Rotating to next container...{ANSICODES.RESET}")
             elif key == "\r":  # Enter key
+                inp = input('Command to execute -$: ')
+                subprocess.run(["make", "exec", "SERVICE=" + self._current_container.name, "CMD=" + inp])
+            elif key == "\n":  # Ctrl+Enter key
                 if self._log_stream_process is not None:
                     self._log_stream_process.terminate()
                     self._log_stream_process = None
