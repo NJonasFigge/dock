@@ -57,8 +57,8 @@ class Browser:
     def start(self):
         while True:
             print(f"\033[48;5;250m\033[38;5;0m\n=== Showing logs for: {self._current_container.name} ===\033[0m")
-            print(f"Press [Enter] to open shell in {self._current_container.name}.")
-            print("Press [A] and [D] to rotate through logs, [q] to quit.\n")
+            print(f"\033[48;5;50mPress [Enter] to open shell in {self._current_container.name}.\033[0m")
+            print("\033[48;5;50mPress [A] and [D] to rotate through logs, [q] to quit.\033[0m\n")
             log_stream_process = self._start_log_stream()
             key = _get_keypress()
             if key == "q":
