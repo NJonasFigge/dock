@@ -102,11 +102,13 @@ class Browser:
             if new_screen:
                 print(ANSICODES.CLEAR_SCREEN + ANSICODES.LIGHT_GRAY_BG + ANSICODES.BLACK_FG, end='')
                 print(f"=== Showing logs for: {self._current_container.name} ===")
-                print(ANSICODES.RESET + ANSICODES.DARK_GRAY_BG, end='')
-                print(f"Press [Enter] to open shell in {self._current_container.name}.")
-                print("Press [A] and [D] to rotate through logs, [q] to quit.")
                 print(ANSICODES.RESET)
                 self._start_log_stream()
+            print(ANSICODES.DARK_GRAY_BG, end='')
+            print(f"Instructions:  [Enter]       - Execute a command in {self._current_container.name}\n"
+                  f"               [Ctrl+Enter]  - Open a shell in {self._current_container.name}\n"
+                  f"               [A] / [D]     - Rotate through containers\n"
+                  f"               [Q]           - Quit this browser")
             new_screen = True
             key = _get_keypress()
             if key == "q":
