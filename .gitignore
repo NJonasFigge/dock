@@ -2,6 +2,7 @@
 
 # --- Authentication details ---
 src/papsite/auth/*
+src/webdav/.htpasswd
 
 # --- Prebuilt venvs ---
 src/papsite/venvs/live-venv/*
@@ -9,10 +10,15 @@ src/papsite/venvs/stage-venv/*
 src/papsite/venvs/devtest-venv/*
 
 # --- Context preparations
+src/alpaca/config.fish
 src/alpaca/utils
+src/papsite/config.fish
 src/papsite/utils
+src/reverse-proxy/config.fish
 src/reverse-proxy/utils
+src/telegram-bot/config.fish
 src/telegram-bot/utils
+src/webdav/config.fish
 src/webdav/utils
 
 # --- Include all placeholder files ---
