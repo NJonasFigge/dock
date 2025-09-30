@@ -1,4 +1,5 @@
 
+import os
 import sys
 import tty
 import termios
@@ -7,6 +8,12 @@ import datetime as dt
 from time import sleep
 from pathlib import Path
 from threading import Thread
+
+
+class ANSICODES:
+    LIGHT_GRAY = '\033[37m'
+    DARK_GRAY = '\033[90m'
+    RED = '\033[91m'
 
 
 def _get_keypress():
@@ -56,8 +63,10 @@ class Browser:
 
     def _start_log_stream(self):
         yml = Path(__file__).parent / 'src/docker-compose.yml'
+        terminal_height = os.get_terminal_size().lines - 5
         self._log_stream_process = subprocess.Popen(["docker", "compose", "-f", str(yml), "logs", "-f",
-                                                     self._current_container.name, "--no-log-prefix"],
+                                                     self._current_container.name, "--no-log-prefix", "-n",
+                                                     str(terminal_height - 5)],
                                                     stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
         thread = Thread(target=self._stream_process_output, daemon=True)
         thread.start()
