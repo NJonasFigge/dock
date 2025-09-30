@@ -47,7 +47,7 @@ up:
 down:
 	@if [ -n "$$(docker ps -q)" ]; then \
 		$(DC) down; \
-	else
+	else \
 	  	echo "No running containers."; \
 	fi
 
