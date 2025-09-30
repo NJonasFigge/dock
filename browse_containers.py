@@ -1,44 +1,80 @@
 
+import sys
+import tty
+import termios
 import subprocess
-import time
+import datetime as dt
+from time import sleep
 
 
-def get_container_ids():
-    result = subprocess.run(["docker", "ps", "-q"], capture_output=True, text=True)
-    return result.stdout.strip().splitlines()
+def _get_keypress():
+    fd = sys.stdin.fileno()
+    old_settings = termios.tcgetattr(fd)
+    try:
+        tty.setraw(fd)
+        key = sys.stdin.read(1)
+    finally:
+        termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+    return key
 
 
-def get_container_name(cid: str):
-    result = subprocess.run(["docker", "inspect", "--format={{.Name}}", cid], capture_output=True, text=True)
-    return result.stdout.strip().lstrip('/')
+class Container:
+    @staticmethod
+    def from_id(cid: str):
+        result = subprocess.run(["docker", "inspect", "--format={{.Name}}", cid], capture_output=True, text=True)
+        name = result.stdout.strip().lstrip('/')
+        return Container(cid, name)
+
+    def __init__(self, cid: str, name: str):
+        self.cid = cid
+        self.name = name
 
 
-def stream_logs(cid: str):
-    return subprocess.Popen(["docker", "logs", "-f", cid])
+class Browser:
+    def __init__(self):
+        self._start_time = dt.datetime.now()
+        ps_output = subprocess.run(["docker", "ps", "-q"], capture_output=True, text=True)
+        self._containers = [Container.from_id(cid) for cid in ps_output.stdout.strip().splitlines()]
+        if len(self._containers) == 0:
+            print("No running containers found.")
+            exit()
+        self._current_index = 0
 
+    @property
+    def _current_container(self): return self._containers[self._current_index]
 
-def open_shell(cid: str):
-    subprocess.run(["make", "shell"])
+    def _rotate(self, backwards: bool = False):
+        self._current_index = (self._current_index + (-1 if backwards else 1)) % len(self._containers)
+
+    def _start_log_stream(self):
+        return subprocess.Popen(["make", "logs", "SERVICE=" + self._current_container.name])
+
+    def _open_shell(self):
+        subprocess.run(["make", "shell", "SERVICE=" + self._current_container.name])
+
+    def start(self):
+        while True:
+            print(f"\033[48;5;240m\033[38;5;0m\n=== Showing logs for {self._current_container.name} ===\033[0m")
+            print(f"Press [Enter] to open shell in {self._current_container.name}.")
+            print("Press [A] and [D] to rotate through logs, [q] to quit.\n")
+            log_stream_process = self._start_log_stream()
+            key = _get_keypress()
+            if key == "q":
+                print("Exiting...")
+                log_stream_process.terminate()
+                break
+            elif key == "a":
+                self._rotate(backwards=True)
+                print("Rotating to previous container...")
+            elif key == "d":
+                self._rotate()
+                print("Rotating to next container...")
+            elif key == "\r":  # Enter key
+                log_stream_process.terminate()
+                subprocess.run(["make", "shell", "SERVICE=" + self._current_container.name])  # Blocking call
+            sleep(1)  # Give time for the user to see the exit message
 
 
 if __name__ == "__main__":
-    while True:
-        container_ids = get_container_ids()
-        print(container_ids)
-        print([get_container_name(cid) for cid in container_ids])
-        exit()
-        for container_id in container_ids:
-            name = get_container_name(container_id)
-            print(f"\n=== Logs for {name} ===")
-            log_proc = stream_logs(container_id)
-            try:
-                input(f"Press [Enter] to open shell in {name}, or [Ctrl+C] to skip...\n")
-                log_proc.terminate()
-                open_shell(container_id)
-            except KeyboardInterrupt:
-                log_proc.terminate()
-                print("Skipping shell...")
-            print("Returning to log loop...")
-            time.sleep(1)
-        print("\nLooping through containers again...\n")
-        time.sleep(2)
+    browser = Browser()
+    browser.start()
