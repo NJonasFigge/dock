@@ -15,6 +15,5 @@ COPY config.fish /root/.config/fish/
 
 # - Install starship and configure it
 RUN curl -sS https://starship.rs/install.sh | sh -s -- -y
-COPY generate_starship_toml.py /tmp/generate_starship_toml.py
-COPY starship_template.toml /tmp/starship_template.toml
-RUN python /tmp/generate_starship_toml.py $PROMPTHUE -o /root/.config/starship.toml --good-spacers
+COPY utils ./
+RUN python utils/generate_starship_toml.py $PROMPTHUE -o /root/.config/starship.toml --good-spacers

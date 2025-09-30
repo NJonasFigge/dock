@@ -10,7 +10,7 @@ SERVICES ?= "$(SERVICE)"
 .PHONY: help
 help:
 	@echo "Available targets:"
-	@echo "  prepare-build  - Prepare build by copying necessary config files to service directories"
+	@echo "  context        - Prepare build context by copying required files from system-setup to service directories"
 	@echo "  build          - Build all Docker services"
 	@echo "                   You can restrict services with SERVICES='service1 service2', also in targets"
 	@echo "                   'up', 'logs' and buildover"
@@ -24,21 +24,21 @@ help:
 	@echo "  exec           - Run a command in a service: make exec SERVICE=<service> CMD='<command>'"
 	@echo "  shell          - Open a shell in a service: make shell SERVICE=<service>"
 
-.PHONY: prepare-build build up vup down restart logs clean exec shell
+.PHONY: context build up vup down restart logs clean exec shell
 
-prepare-build:
+context:
 	@for dir in alpaca papsite reverse-proxy telegram-bot webdav; do \
-		for file in system-setup/config.fish utils/generate_starship_toml.py utils/starship_template.toml; do \
-			rm -f src/$$dir/$$(basename $$file); \
-	    	cp $$file src/$$dir/; \
-			echo "Added $$(basename $$file) to $$dir."; \
-	  	done; \
+		rm -f src/$$dir/config.fish; \
+	    cp config.fish src/$$dir/; \
+		rm -rf src/$$dir/utils; \
+	    cp -r utils src/$$dir/; \
+		echo "Build context '$$dir' configured."; \
 	done
 
-build: prepare-build down
+build: context down
 	$(DC) build $(SERVICES)
 
-buildover: prepare-build down
+buildover: context down
 	$(DC) build --no-cache $(SERVICES)
 
 up:
