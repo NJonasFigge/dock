@@ -49,9 +49,7 @@ class Browser:
     def _stream_process_output(self):
         while self._log_stream_process is not None and self._log_stream_process.stdout is not None:
             for line in self._log_stream_process.stdout:
-                print(repr(line.strip()), end='\r\n')
-                sys.stdout.flush()
-                # print(':: ', line.strip().replace('\r', ''))
+                print(line, end='\r')
 
     def _rotate(self, backwards: bool = False):
         self._current_index = (self._current_index + (-1 if backwards else 1)) % len(self._containers)
