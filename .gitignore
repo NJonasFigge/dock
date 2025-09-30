@@ -2,7 +2,7 @@
 
 # --- Authentication details ---
 src/papsite/auth/*
-src/webdav/.htpasswd
+src/fileserver/.htpasswd
 
 # --- Prebuilt venvs ---
 src/papsite/venvs/live-venv/*
@@ -18,8 +18,8 @@ src/reverse-proxy/config.fish
 src/reverse-proxy/utils
 src/telegram-bot/config.fish
 src/telegram-bot/utils
-src/webdav/config.fish
-src/webdav/utils
+src/fileserver/config.fish
+src/fileserver/utils
 
 # --- Include all placeholder files ---
 !**/.gitkeep

@@ -18,7 +18,7 @@ services:
       - papsite-live
       - papsite-stage
       - papsite-devtest
-      - webdav
+      - fileserver
 
     # --- For build-time ---
     build:
@@ -107,29 +107,23 @@ services:
 
   # ############################################### FAMILY STORAGE #####################################################
 
-  # === THE WEBDAV ===
+  # === THE FILESERVER ===
   # - This container will serve the family storage via WedDAV.
-  webdav:
+  fileserver:
     # --- Static definitions ---
     # restart: always
 
     # --- For build-time ---
     build:
-      context: ./webdav
+      context: ./fileserver
       args:
         PROMPTHUE: 110  # Prompt color hue (0-360), 110 = green
 
     # --- For runtime ---
-    container_name: webdav
-    hostname: webdav  # "Computer name" from within container
+    container_name: fileserver
+    hostname: fileserver  # "Computer name" from within container
     expose:  # Won't publish ports to the host machine, only between services
       - "80"   # HTTP
-    environment:
-      AUTH_TYPE: Digest  # Todo: These parameters are currently predetermined by the image used to build "FROM"
-      USERNAME: test
-      PASSWORD: test
-    # volumes:
-    #   - :/var/lib/dav  # Todo: Add how this is supposed to work
 
   # ################################################## LLM SERVICES #####################################################
 
@@ -184,7 +178,7 @@ services:
     # --- Static definitions ---
     # restart: always
     depends_on:
-      - webdav  # Needs access to the family storage
+      - fileserver  # Needs access to the family storage
 
     # --- For build-time ---
     build:
