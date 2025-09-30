@@ -29,7 +29,7 @@ style_root = "fg:{c0} bg:{c5}"
 show_always = true
 format = "[ $user]($style)"
 disabled = false
-akiases = { "root" = "\uf511" }
+akiases = {{ "root" = "\uf511" }}  #  Wrong TOML syntax, but since this whole file will be .format()-ed, it works.
 
 [hostname]
 style = "fg:{c0} bg:{c5}"
