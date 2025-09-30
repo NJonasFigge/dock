@@ -49,7 +49,7 @@ class Browser:
     def _stream_process_output(self):
         while self._log_stream_process is not None and self._log_stream_process.stdout is not None:
             for line in self._log_stream_process.stdout:
-                print(repr(line))
+                print(repr(line), end='')
                 # print(':: ', line.strip().replace('\r', ''))
 
     def _rotate(self, backwards: bool = False):
