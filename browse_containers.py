@@ -50,6 +50,7 @@ class Browser:
         while self._log_stream_process is not None and self._log_stream_process.stdout is not None:
             for line in self._log_stream_process.stdout:
                 print(repr(line), end='')
+                sys.stdout.flush()
                 # print(':: ', line.strip().replace('\r', ''))
 
     def _rotate(self, backwards: bool = False):
@@ -60,7 +61,7 @@ class Browser:
         self._log_stream_process = subprocess.Popen(["docker", "compose", "-f", str(yml), "logs", "-f",
                                                      self._current_container.name, "--no-log-prefix"],
                                                     stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-        thread = Thread(target=self._stream_process_output)
+        thread = Thread(target=self._stream_process_output, daemon=True)
         thread.start()
 
     def _open_shell(self):
