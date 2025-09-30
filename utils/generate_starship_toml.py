@@ -151,8 +151,11 @@ if __name__ == "__main__":
         template = template.replace('{', '&curlyopen').replace('}', '%curlyclose')
         # - Replace '%<' and '>%' with '{' and '}' for str.format()
         template = template.replace('%<', '{').replace('>%', '}')
+        # - Prepare substitutions
+        substitutions = palette.as_format_dict
+        substitutions['user_cmd'] = str(Path(__file__).parent / 'beautiful_user.sh')
         # - Format template
-        starship_toml_content = template.format(**palette.as_format_dict)
+        starship_toml_content = template.format(**substitutions)
         # - Un-escape curly braces
         starship_toml_content = starship_toml_content.replace('&curlyopen', '{').replace('%curlyclose', '}')
         # - Write to file
