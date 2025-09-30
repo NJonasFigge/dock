@@ -29,17 +29,16 @@ help:
 prepare-build:
 	@for dir in alpaca papsite reverse-proxy telegram-bot webdav; do \
 		for file in system-setup/config.fish utils/generate_starship_toml.py utils/starship_template.toml; do \
-			if [ ! -e src/$$dir/$$(basename $$file) ]; then \
-				cp $$file src/$$dir/; \
-				echo "Added $$(basename $$file) to $$dir."; \
-			fi; \
-		done; \
+			rm -f src/$$dir/$$(basename $$file); \
+	    	cp $$file src/$$dir/; \
+			echo "Added $$(basename $$file) to $$dir."; \
+	  	done; \
 	done
 
 build: prepare-build
 	$(DC) build $(SERVICES)
 
-buildover:
+buildover: prepare-build
 	$(DC) build --no-cache $(SERVICES)
 
 up:
