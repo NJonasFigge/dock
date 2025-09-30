@@ -35,17 +35,21 @@ prepare-build:
 	  	done; \
 	done
 
-build: prepare-build
+build: prepare-build down
 	$(DC) build $(SERVICES)
 
-buildover: prepare-build
+buildover: prepare-build down
 	$(DC) build --no-cache $(SERVICES)
 
 up:
 	$(DC) up -d $(SERVICES)
 
 down:
-	$(DC) down
+	@if [ -n "$$(docker ps -q)" ]; then \
+		$(DC) down; \
+	else
+	  	echo "No running containers."; \
+	fi
 
 restart: down up
 
