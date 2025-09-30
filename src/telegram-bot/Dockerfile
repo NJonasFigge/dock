@@ -17,12 +17,14 @@ ENV REPO="$REPO"
 COPY entrypoint.sh /app/entrypoint.sh
 RUN chmod +x /app/entrypoint.sh
 
-# - Install fish
+# - Install required packages
 RUN apt-get update && \
-    apt-get install -y fish && \
+    apt-get install -y fish openssh-client && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* && \
-    mkdir -p /root/.config/fish
+    mkdir -p /root/.config/fish \
+
+# - Deploy fish configuration
 COPY config.fish /root/.config/fish/
 
 # - Install starship and configure it
