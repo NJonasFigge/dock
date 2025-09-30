@@ -49,7 +49,7 @@ class Browser:
     def _stream_process_output(self):
         while self._log_stream_process is not None and self._log_stream_process.stdout is not None:
             for line in self._log_stream_process.stdout:
-                print(line.strip())
+                print(':: ', line.strip())
 
     def _rotate(self, backwards: bool = False):
         self._current_index = (self._current_index + (-1 if backwards else 1)) % len(self._containers)
@@ -59,7 +59,7 @@ class Browser:
         self._log_stream_process = subprocess.Popen(["docker", "compose", "-f", str(yml), "logs", "-f",
                                                      self._current_container.name, "--no-log-prefix"],
                                                     stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-        thread = Thread(target=self._stream_process_output, daemon=True)
+        thread = Thread(target=self._stream_process_output)
         thread.start()
 
     def _open_shell(self):
@@ -89,6 +89,8 @@ class Browser:
                     self._log_stream_process.terminate()
                     self._log_stream_process = None
                 subprocess.run(["make", "shell", "SERVICE=" + self._current_container.name])  # Blocking call
+            else:
+                print(f"Unrecognized key: {key}")
             sleep(1)  # Give time for the user to see the exit message
 
 
