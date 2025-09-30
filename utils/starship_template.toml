@@ -1,26 +1,26 @@
 format = """
-[░▒▓]({c6})\
-[  ](fg:{c0} bg:{c6})\
-[](fg:{c6} bg:{c5})\
-$user\
-[@](fg:{c0} bg:{c5})\
+[░▒▓](%<c6>%)\
+[  ](fg:%<c0>% bg:%<c6>%)\
+[](fg:%<c6>% bg:%<c5>%)\
+${custom.user}\
+[@](fg:%<c0>% bg:%<c5>%)\
 $hostname\
-[](fg:{c5} bg:{c4})\
+[](fg:%<c5>% bg:%<c4>%)\
 $directory\
-[](fg:{c4} bg:{c3})\
+[](fg:%<c4>% bg:%<c3>%)\
 $git_branch\
 $git_status\
-[](fg:{c3} bg:{c2})\
+[](fg:%<c3>% bg:%<c2>%)\
 $nodejs\
 $rust\
 $golang\
 $php\
 $python\
-[](fg:{c2} bg:{c1})\
+[](fg:%<c2>% bg:%<c1>%)\
 $time\
-[](fg:{c1} bg:{c0})\
+[](fg:%<c1>% bg:%<c0>%)\
 $cmd_duration\
-[](fg:{c0})\
+[](fg:%<c0>%)\
 \n$character"""
 
 [username]
@@ -29,16 +29,16 @@ disabled = true
 [custom.user]
 command = 'if [ "$USER" = root ]; then echo "󱢼"; else echo "$USER"; fi'
 when = 'true'
-style = "fg:{c0} bg:{c5}"
+style = "fg:%<c0>% bg:%<c5>%"
 format = "[ $output]($style)"
 
 [hostname]
-style = "fg:{c0} bg:{c5}"
+style = "fg:%<c0>% bg:%<c5>%"
 ssh_only = false
 format = "[$hostname ]($style)"
 
 [directory]
-style = "fg:{c0} bg:{c4}"
+style = "fg:%<c0>% bg:%<c4>%"
 format = "[ $path ]($style)"
 truncation_length = 100
 truncate_to_repo = false
@@ -52,45 +52,45 @@ truncation_symbol = "…/"
 
 [git_branch]
 symbol = ""
-style = "fg:{c5} bg:{c3}"
+style = "fg:%<c5>% bg:%<c3>%"
 format = '[ $symbol $branch ]($style)'
 
 [git_status]
-style = "fg:{c5} bg:{c3}"
+style = "fg:%<c5>% bg:%<c3>%"
 format = '[($all_status$ahead_behind )]($style)'
 
 [nodejs]
 symbol = ""
-style = "fg:{c5} bg:{c2}"
+style = "fg:%<c5>% bg:%<c2>%"
 format = '[ $symbol ($version) ]($style)'
 
 [rust]
 symbol = ""
-style = "fg:{c5} bg:{c2}"
+style = "fg:%<c5>% bg:%<c2>%"
 format = '[ $symbol ($version) ]($style)'
 
 [golang]
 symbol = ""
-style = "fg:{c5} bg:{c2}"
+style = "fg:%<c5>% bg:%<c2>%"
 format = '[ $symbol ($version) ]($style)'
 
 [php]
 symbol = ""
-style = "fg:{c5} bg:{c2}"
+style = "fg:%<c5>% bg:%<c2>%"
 format = '[ $symbol ($version) ]($style)'
 
 [python]
 symbol = ""
-style = "fg:{c5} bg:{c2}"
+style = "fg:%<c5>% bg:%<c2>%"
 pyenv_version_name = false
 format = '[ via $symbol $virtualenv]($style)'
 
 [time]
 disabled = false
 time_format = "%R" # Hour:Minute Format
-style = "fg:{c5} bg:{c1}"
+style = "fg:%<c5>% bg:%<c1>%"
 format = '[  $time ]($style)'
 
 [cmd_duration]
-style = "fg:{c5} bg:{c0}"
+style = "fg:%<c5>% bg:%<c0>%"
 format = "[took $duration]($style)"

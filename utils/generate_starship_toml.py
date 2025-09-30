@@ -144,9 +144,18 @@ if __name__ == "__main__":
         palette.print_preview()
 
     if not args.preview:
+        # - Read template
         with open(args.template, 'r', encoding='utf-8') as f:
             template = f.read()
+        # - Escape curly braces for str.format()
+        template = template.replace('{', '&curlyopen').replace('}', '%curlyclose')
+        # - Replace '%<' and '>%' with '{' and '}' for str.format()
+        template = template.replace('%<', '{').replace('>%', '}')
+        # - Format template
         starship_toml_content = template.format(**palette.as_format_dict)
+        # - Un-escape curly braces
+        starship_toml_content = starship_toml_content.replace('&curlyopen', '{').replace('%curlyclose', '}')
+        # - Write to file
         with open(args.output_file, 'w', encoding='utf-8') as f:
             f.write(starship_toml_content)
         print(f"Generated starship.toml at {args.output_file}")
