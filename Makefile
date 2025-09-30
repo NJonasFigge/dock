@@ -29,7 +29,7 @@ help:
 context:
 	@for dir in alpaca papsite reverse-proxy telegram-bot webdav; do \
 		rm -f src/$$dir/config.fish; \
-	    cp config.fish src/$$dir/; \
+	    cp system-setup/config.fish src/$$dir/; \
 		rm -rf src/$$dir/utils; \
 	    cp -r utils src/$$dir/; \
 		echo "Build context '$$dir' configured."; \
