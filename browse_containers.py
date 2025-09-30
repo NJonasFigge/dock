@@ -25,6 +25,7 @@ if __name__ == "__main__":
     while True:
         container_ids = get_container_ids()
         print(container_ids)
+        print([get_container_name(cid) for cid in container_ids])
         exit()
         for container_id in container_ids:
             name = get_container_name(container_id)
