@@ -154,7 +154,7 @@ services:
       - "80"   # HTTP
 
   # === THE AI-SERVER ===
-  # - This container will run the "Alpaca" LLM service.
+  # - This container will run an LLM service.
   ai-server:
     # --- Static definitions ---
     # restart: always
