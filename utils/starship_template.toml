@@ -25,10 +25,22 @@ $cmd_duration\
 
 [username]
 style_user = "fg:{c0} bg:{c5}"
-style_root = "fg:#ff0000 bg:{c5}"
+style_root = "fg:{c0} bg:{c5}"
 show_always = true
-format = "[ $user]($style)"
+format = "[ $usersymbol]($style)"
 disabled = false
+
+[custom.usersymbol]
+command = '''
+if [ "$USER" = "root" ]; then
+  echo ""  # Replace with your preferred Nerd Font symbol
+else
+  echo "$USER"
+fi
+'''
+when = "true"
+format = "$output"
+
 
 [hostname]
 style = "fg:{c0} bg:{c5}"
