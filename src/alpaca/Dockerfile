@@ -2,12 +2,14 @@
 FROM python:3.12-slim
 WORKDIR /app
 
-# - Install fish
+# - Install required packages
 RUN apt-get update && \
-    apt-get install -y fish && \
+    apt-get install -y fish openssh-client && \
     apt-get clean && \
-    rm -rf /var/lib/apt/lists/* && \
-    mkdir -p /root/.config/fish
+    rm -rf /var/lib/apt/lists/*
+
+# - Deploy fish configuration
+RUN mkdir -p /root/.config/fish
 COPY config.fish /root/.config/fish/
 
 # - Install starship and configure it
