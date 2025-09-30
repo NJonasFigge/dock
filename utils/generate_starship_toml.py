@@ -120,6 +120,7 @@ if __name__ == "__main__":
                         help="Min and max saturation values (0.0 to 1.0)")
     parser.add_argument("--lightness-bounds", type=float, nargs=2, default=(0.22, .95),
                         help="Min and max lightness values (0.0 to 1.0)")
+    parser.add_argument("-q", "--quiet", action="store_true", help="Suppress output except for errors")
     args = parser.parse_args()
 
     if args.spacers is None:
@@ -134,12 +135,13 @@ if __name__ == "__main__":
                                     lightness_bounds=args.lightness_bounds)
 
     # - Output results
-    print("Generated color palette:")
-    palette.print_color_codes()
-    print("Color table:")
-    palette.print_table()
-    print("This will look something like this in your terminal:")
-    palette.print_preview()
+    if not args.quiet:
+        print("Generated color palette:")
+        palette.print_color_codes()
+        print("Color table:")
+        palette.print_table()
+        print("This will look something like this in your terminal:")
+        palette.print_preview()
 
     if not args.preview:
         with open(args.template, 'r', encoding='utf-8') as f:

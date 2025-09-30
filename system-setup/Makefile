@@ -7,7 +7,7 @@ KEEPBASH ?= false
 # - Set starship prompt color hue (0-360), default is blueish
 PROMPTHUE ?= 210
 # - Set further starship args
-STARSHIPARGS = --good-spacers --saturation-bounds .0 .2
+STARSHIPARGS = --good-spacers --saturation-bounds .0 .2 --quiet
 
 
 help:
