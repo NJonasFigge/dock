@@ -9,12 +9,12 @@ ARG PROMPTHUE="310"
 
 # === LAYERS ===
 
-# - Install python3 and set python to python3
-RUN apk add --no-cache python3 && \
-    ln -sf /usr/bin/python3 /usr/bin/python
-
 # - Install fish
-RUN apk add --no-cache fish && mkdir -p /root/.config/fish
+RUN apt-get update && \
+    apt-get install -y fish && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* && \
+    mkdir -p /root/.config/fish
 COPY config.fish /root/.config/fish/
 
 # - Install starship and configure it
