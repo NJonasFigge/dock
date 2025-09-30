@@ -1,6 +1,6 @@
 format = """
 [░▒▓]({c6})\
-[   ](fg:{c0} bg:{c6})\
+[  ](fg:{c0} bg:{c6})\
 [](fg:{c6} bg:{c5})\
 $username\
 [@](fg:{c0} bg:{c5})\
