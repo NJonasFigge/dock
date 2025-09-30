@@ -61,7 +61,8 @@ class Browser:
     def _stream_process_output(self):
         while self._log_stream_process is not None and self._log_stream_process.stdout is not None:
             for line in self._log_stream_process.stdout:
-                if "fatal" in line.lower() or "error" in line.lower():
+                if ("fatal" in line.lower() or "error" in line.lower() or "can't" in line.lower()
+                        or "failed" in line.lower() or "no such" in line.lower() or "denied" in line.lower()):
                     print(ANSICODES.RED_FG + line.strip() + ANSICODES.RESET, end='\r')
                 elif "warn" in line.lower():
                     print(ANSICODES.YELLOW_FG + line.strip() + ANSICODES.RESET, end='\r')
@@ -69,6 +70,7 @@ class Browser:
                     print(ANSICODES.BLUE_FG + line.strip() + ANSICODES.RESET, end='\r')
                 else:
                     print(line, end='\r')
+                print()
 
     def _rotate(self, backwards: bool = False):
         self._current_index = (self._current_index + (-1 if backwards else 1)) % len(self._containers)
