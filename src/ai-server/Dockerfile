@@ -2,6 +2,13 @@
 FROM python:3.12-slim
 WORKDIR /app
 
+# === ARGUMENTS ===
+
+# - PROMPTHUE defines which hue (0-360) the prompt shall have. Defaults to an ugly pink.
+ARG PROMPTHUE="310"
+
+# === LAYERS ===
+
 # - Install fish
 RUN apt-get update && \
     apt-get install -y fish && \

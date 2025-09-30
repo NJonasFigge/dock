@@ -10,8 +10,8 @@ src/papsite/venvs/stage-venv/*
 src/papsite/venvs/devtest-venv/*
 
 # --- Context preparations
-src/alpaca/config.fish
-src/alpaca/utils
+src/ai-server/config.fish
+src/ai-server/utils
 src/papsite/config.fish
 src/papsite/utils
 src/reverse-proxy/config.fish

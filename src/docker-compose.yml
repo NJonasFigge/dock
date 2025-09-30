@@ -1,7 +1,22 @@
 
 name: dock
 
-# Todo: Can I actually restrict clients (-> revproxy)?
+networks:
+  papsite-live-net:  # Connects reverse-proxy with papsite-live
+    name: papsite-live-net
+    driver: bridge
+  papsite-stage-net:  # Connects reverse-proxy with papsite-stage
+    name: papsite-stage-net
+    driver: bridge
+  papsite-devtest-net:  # Connects reverse-proxy with papsite-devtest
+    name: papsite-devtest-net
+    driver: bridge
+  fileserver-net:  # Connects reverse-proxy with fileserver
+    name: fileserver-net
+    driver: bridge
+  ai-net:  # Connects alpacabot with ai-server
+    name: ai-net
+    driver: bridge
 
 
 services:
@@ -29,6 +44,11 @@ services:
     # --- For runtime ---
     container_name: reverse-proxy
     hostname: reverse-proxy  # "Computer name" from within container
+    networks:
+      - papsite-live-net
+      - papsite-stage-net
+      - papsite-devtest-net
+      - fileserver-net
     ports:  # Exposed container ports (mapping "<actual_server_port>:<container_port>")
       - "80:80"    # HTTP
       - "443:443"  # HTTPS
@@ -50,6 +70,8 @@ services:
     # --- For runtime ---
     container_name: papsite-live
     hostname: papsite-live  # "Computer name" from within container
+    networks:
+      - papsite-live-net
     expose: # Won't publish ports to the host machine, only between services
       - "80"   # HTTP
       - "443"  # HTTPS
@@ -74,6 +96,8 @@ services:
     # --- For runtime ---
     container_name: papsite-stage
     hostname: papsite-stage  # "Computer name" from within container
+    networks:
+      - papsite-stage-net
     expose: # Won't publish ports to the host machine, only between services
       - "80"   # HTTP
       - "443"  # HTTPS
@@ -96,6 +120,8 @@ services:
     # --- For runtime ---
     container_name: papsite-devtest
     hostname: papsite-devtest  # "Computer name" from within container
+    networks:
+      - papsite-devtest-net
     expose: # Won't publish ports to the host machine, only between services
       - "80"   # HTTP
       - "443"  # HTTPS
@@ -105,7 +131,7 @@ services:
     environment:  # Environment variables that are only necessary when running
       BRANCH: nginx
 
-  # ############################################### FAMILY STORAGE #####################################################
+  # ############################################### BACKEND SERVERS ####################################################
 
   # === THE FILESERVER ===
   # - This container will serve the family storage via WedDAV.
@@ -122,30 +148,32 @@ services:
     # --- For runtime ---
     container_name: fileserver
     hostname: fileserver  # "Computer name" from within container
+    networks:
+      - fileserver-net
     expose:  # Won't publish ports to the host machine, only between services
       - "80"   # HTTP
 
-  # ################################################## LLM SERVICES #####################################################
-
-  # === THE ALPACA SERVICE ===
+  # === THE AI-SERVER ===
   # - This container will run the "Alpaca" LLM service.
-  alpaca:
+  ai-server:
     # --- Static definitions ---
     # restart: always
 
     # --- For build-time ---
     build:
-      context: ./alpaca  # Build in here, also use this Dockerfile
+      context: ./ai-server  # Build in here, also use this Dockerfile
       args:
         PROMPTHUE: 150  # Prompt color hue (0-360), 150 = turquoise
 
     # --- For runtime ---
-    container_name: alpaca
-    hostname: alpaca  # "Computer name" from within container
+    container_name: ai-server
+    hostname: ai-server  # "Computer name" from within container
+    networks:
+      - ai-net
     expose:  # Won't publish ports to the host machine, only between services
       - "8000"  # The port the service listens on
     # volumes:
-    #   - ./alpaca/models:/models  # Volume for the models
+    #   - ./ai-server/models:/models  # Volume for the models
     # environment:  # Environment variables that are only necessary when running
     #   MODEL_PATH: /models/ggml-model-q4_0.bin  # Path to the model to be used
 
@@ -201,7 +229,7 @@ services:
     # --- Static definitions ---
     # restart: always
     depends_on:
-      - alpaca  # Needs access to the LLM service
+      - ai-server  # Needs access to the LLM service
 
     # --- For build-time ---
     build:
@@ -212,6 +240,8 @@ services:
     # --- For runtime ---
     container_name: alpacabot
     hostname: alpacabot  # "Computer name" from within container
+    networks:
+      - ai-net
     volumes:
       - ./telegram-bot/venvs/alpacabot-venv:/app/venv  # Pre-supply a virtualenv (that might be updated by the container)
       - ./dot-ssh:/root/.ssh:ro  # - For fetching git repos via SSH
