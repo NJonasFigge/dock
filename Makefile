@@ -16,7 +16,7 @@ help:
 	@echo "                   'up', 'logs' and buildover"
 	@echo "  buildover      - Build all Docker services without using cache"
 	@echo "  up             - Start all services in detached mode"
-	@echo "  up-logs        - Start all services in detached mode and open logs"
+	@echo "  vup            - 'Verbose up': Start all services and open logs"
 	@echo "  down           - Stop all services"
 	@echo "  restart        - Recreate containers"
 	@echo "  logs           - Follow logs of all services"
@@ -56,12 +56,12 @@ restart: down up
 logs:
 	$(DC) logs -f $(SERVICES)
 
-up-logs: up logs
+vup: up logs  # vup for verbose up
 
 clean:
 	$(DC) down --rmi all --volumes --remove-orphans
 
-exec:
+exec: up
 ifndef SERVICE
 	$(error SERVICE is not set. Usage: make exec SERVICE=<service> CMD="<command>")
 endif
@@ -70,9 +70,9 @@ ifndef CMD
 endif
 	$(DC) exec $(SERVICE) sh -c "$(CMD)"
 
-shell:
+shell: up
 ifndef SERVICE
-	$(error SERVICE is not set. Usage: make bash SERVICE=<service>)
+	$(error SERVICE is not set. Usage: make shell SERVICE=<service>)
 endif
 	@if [ -e /usr/bin/fish ]; then \
 		echo "Opening fish shell in service '$(SERVICE)'..."; \
