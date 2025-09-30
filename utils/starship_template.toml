@@ -2,7 +2,9 @@ format = """
 [░▒▓]({c6})\
 [   ](fg:{c0} bg:{c6})\
 [](fg:{c6} bg:{c5})\
-$username@$hostname\
+$username\
+[@](fg:{c0} bg:{c5})\
+$hostname\
 [](fg:{c5} bg:{c4})\
 $directory\
 [](fg:{c4} bg:{c3})\
@@ -25,13 +27,13 @@ $cmd_duration\
 style_user = "fg:{c0} bg:{c5}"
 style_root = "fg:#ff0000 bg:{c5}"
 show_always = true
-format = "[$user]($style)"
+format = "[ $user]($style)"
 disabled = false
 
 [hostname]
 style = "fg:{c0} bg:{c5}"
 ssh_only = false
-format = "[$hostname]($style)"
+format = "[$hostname ]($style)"
 
 [directory]
 style = "fg:{c0} bg:{c4}"
