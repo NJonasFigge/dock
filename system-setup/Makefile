@@ -112,9 +112,7 @@ starship-toml: python-is-python3
 	@if [ ! -e /usr/local/bin/starship ]; then \
   		curl -sS https://starship.rs/install.sh | sh; \
 	fi
-	cd ../utils && \
- 		chmod +x beautiful_user.sh && \
- 		python generate_starship_toml.py $(PROMPTHUE) -o ~/.config/starship.toml $(STARSHIPARGS)
+	python ../utilsgenerate_starship_toml.py $(PROMPTHUE) -o ~/.config/starship.toml $(STARSHIPARGS)
 
 starship-activation:
 ifeq ($(KEEPBASH),true)
