@@ -15,6 +15,8 @@ class ANSICODES:
     DARK_GRAY_BG = '\033[48;5;240m'
     BLUE_FG = '\033[38;5;21m'
     BLACK_FG = '\033[30m'
+    RED_FG = '\033[31m'
+    YELLOW_FG = '\033[33m'
     RESET = '\033[0m'
     CLEAR_SCREEN = '\033[2J\033[H'
 
@@ -59,7 +61,14 @@ class Browser:
     def _stream_process_output(self):
         while self._log_stream_process is not None and self._log_stream_process.stdout is not None:
             for line in self._log_stream_process.stdout:
-                print(line, end='\r')
+                if "fatal" in line.lower() or "error" in line.lower():
+                    print(ANSICODES.RED_FG + line.strip() + ANSICODES.RESET, end='\r')
+                elif "warn" in line.lower():
+                    print(ANSICODES.YELLOW_FG + line.strip() + ANSICODES.RESET, end='\r')
+                elif "info" in line.lower():
+                    print(ANSICODES.BLUE_FG + line.strip() + ANSICODES.RESET, end='\r')
+                else:
+                    print(line, end='\r')
 
     def _rotate(self, backwards: bool = False):
         self._current_index = (self._current_index + (-1 if backwards else 1)) % len(self._containers)
