@@ -97,14 +97,17 @@ class Browser:
         subprocess.run(["make", "shell", "SERVICE=" + self._current_container.name])
 
     def start(self):
+        new_screen = True
         while True:
-            print(ANSICODES.CLEAR_SCREEN + ANSICODES.LIGHT_GRAY_BG + ANSICODES.BLACK_FG, end='')
-            print(f"=== Showing logs for: {self._current_container.name} ===")
-            print(ANSICODES.RESET + ANSICODES.DARK_GRAY_BG, end='')
-            print(f"Press [Enter] to open shell in {self._current_container.name}.")
-            print("Press [A] and [D] to rotate through logs, [q] to quit.")
-            print(ANSICODES.RESET)
-            self._start_log_stream()
+            if new_screen:
+                print(ANSICODES.CLEAR_SCREEN + ANSICODES.LIGHT_GRAY_BG + ANSICODES.BLACK_FG, end='')
+                print(f"=== Showing logs for: {self._current_container.name} ===")
+                print(ANSICODES.RESET + ANSICODES.DARK_GRAY_BG, end='')
+                print(f"Press [Enter] to open shell in {self._current_container.name}.")
+                print("Press [A] and [D] to rotate through logs, [q] to quit.")
+                print(ANSICODES.RESET)
+                self._start_log_stream()
+            new_screen = True
             key = _get_keypress()
             if key == "q":
                 print(f"\n{ANSICODES.GRAY_FG}Exiting...{ANSICODES.RESET}")
@@ -119,8 +122,10 @@ class Browser:
                 self._rotate()
                 print(f"\n{ANSICODES.GRAY_FG}Rotating to next container...{ANSICODES.RESET}")
             elif key == "\r":  # Enter key
-                inp = input('Command to execute -$: ')
-                subprocess.run(["make", "exec", "SERVICE=" + self._current_container.name, "CMD=" + inp])
+                inp = input(f'\n{ANSICODES.GRAY_FG}Command to execute -$: ')
+                print(ANSICODES.RESET)
+                subprocess.run(["docker", "exec", "-it", self._current_container.cid, "sh", "-c", inp])
+                new_screen = False
             elif key == "\n":  # Ctrl+Enter key
                 if self._log_stream_process is not None:
                     self._log_stream_process.terminate()
