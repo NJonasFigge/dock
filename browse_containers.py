@@ -13,10 +13,12 @@ from threading import Thread
 class ANSICODES:
     LIGHT_GRAY_BG = '\033[48;5;250m'
     DARK_GRAY_BG = '\033[48;5;240m'
+    GRAY_FG = '\033[38;5;245m'
     BLUE_FG = '\033[38;5;21m'
     BLACK_FG = '\033[30m'
     RED_FG = '\033[31m'
     YELLOW_FG = '\033[33m'
+    GREEN_FG = '\033[32m'
     RESET = '\033[0m'
     CLEAR_SCREEN = '\033[2J\033[H'
 
@@ -70,6 +72,10 @@ class Browser:
                         or "unavailable" in line.lower() or "unreachable" in line.lower()
                         or "not found" in line.lower()):
                     print(ANSICODES.RED_FG + line.strip() + ANSICODES.RESET, end='\n\r')
+                elif "success" in line.lower():
+                    print(ANSICODES.GREEN_FG + line.strip() + ANSICODES.RESET, end='\n\r')
+                elif "debug" in line.lower():
+                    print(ANSICODES.GRAY_FG + line.strip() + ANSICODES.RESET, end='\n\r')
                 else:
                     print(line, end='\r')
 
@@ -101,24 +107,24 @@ class Browser:
             self._start_log_stream()
             key = _get_keypress()
             if key == "q":
-                print("Exiting...")
+                print(f"\n{ANSICODES.GRAY_FG}Exiting...{ANSICODES.RESET}")
                 if self._log_stream_process is not None:
                     self._log_stream_process.terminate()
                     self._log_stream_process = None
                 break
             elif key == "a":
                 self._rotate(backwards=True)
-                print("Rotating to previous container...")
+                print(f"\n{ANSICODES.GRAY_FG}Rotating to previous container...{ANSICODES.RESET}")
             elif key == "d":
                 self._rotate()
-                print("Rotating to next container...")
+                print(f"\n{ANSICODES.GRAY_FG}Rotating to next container...{ANSICODES.RESET}")
             elif key == "\r":  # Enter key
                 if self._log_stream_process is not None:
                     self._log_stream_process.terminate()
                     self._log_stream_process = None
                 subprocess.run(["make", "shell", "SERVICE=" + self._current_container.name])  # Blocking call
             else:
-                print(f"Unrecognized key: {key}")
+                print(f"{ANSICODES.RED_FG}Unrecognized key: {key}{ANSICODES.RESET}")
             sleep(1)  # Give time for the user to see the exit message
 
 
