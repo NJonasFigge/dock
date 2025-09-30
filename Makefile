@@ -84,7 +84,7 @@ endif
 		$(DC) exec -it $(SERVICE) bash; \
 	fi
 
-browse: up
+browse:
 	@python browse_containers.py
 
 iup: up browse
