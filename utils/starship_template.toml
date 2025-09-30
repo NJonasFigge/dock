@@ -27,7 +27,7 @@ $cmd_duration\
 disabled = true
 
 [custom.user]
-command = '/tmp/test'
+command = '/app/utils/beautiful_user.sh'
 when = 'true'
 style = "fg:%<c0>% bg:%<c5>%"
 format = "[ $output]($style)"
