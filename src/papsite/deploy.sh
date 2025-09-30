@@ -1,6 +1,10 @@
 #! /bin/bash
 
-REPO="git@bitbucket.org:papierschiff-content/papsite.git"
+# - Set parameters in environment
+export REPO="git@bitbucket.org:papierschiff-content/papsite.git"
+export DEPLOY_TARGET=/usr/share/nginx/html
+export VENV_DIR=/app/venv
+export IS_LIVE=${IS_LIVE:-false}
 
 # - Set to exit on error
 set -e
@@ -16,9 +20,9 @@ fi
 
 # - Clone branch
 echo "Cloning branch: $BRANCH"
-cd /app || exit
+cd /app
 git clone -b "$BRANCH" "$REPO"
 
 # - Deploy papsite from target
-cd papsite || exit
-./project.mk deploy DEPLOY_TARGET=/usr/share/nginx/html IS_LIVE="$IS_LIVE" VENV_DIR=/venv
+cd papsite
+make deploy
