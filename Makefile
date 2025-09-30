@@ -27,7 +27,7 @@ help:
 .PHONY: context build up vup down restart logs clean exec shell
 
 context:
-	@for dir in alpaca papsite reverse-proxy telegram-bot webdav; do \
+	@for dir in alpaca papsite reverse-proxy telegram-bot fileserver; do \
 		rm -f src/$$dir/config.fish; \
 	    cp system-setup/config.fish src/$$dir/; \
 		rm -rf src/$$dir/utils; \
