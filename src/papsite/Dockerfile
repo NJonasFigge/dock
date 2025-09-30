@@ -54,6 +54,11 @@ RUN mkdir -p /usr/share/nginx/html/cgi
 RUN for script in $(echo $CGI_SCRIPTS | tr ',' '\n'); do cp /tmp/build-cgi/$script /usr/share/nginx/html/cgi/; done
 RUN rm -rf /tmp/build-cgi
 
+# - Add github and bitbucket to known ssh hosts
+RUN mkdir -p /root/.ssh && \
+    ssh-keyscan github.com >> /root/.ssh/known_hosts && \
+    ssh-keyscan bitbucket.org >> /root/.ssh/known_hosts
+
 # - Deploy entrypoint script (which will deploy the site on runtime)
 COPY entrypoint.sh /app/entrypoint.sh
 RUN chmod +x /app/entrypoint.sh
@@ -67,11 +72,6 @@ RUN curl -sS https://starship.rs/install.sh | sh -s -- -y
 COPY generate_starship_toml.py /tmp/generate_starship_toml.py
 COPY starship_template.toml /tmp/starship_template.toml
 RUN python /tmp/generate_starship_toml.py $PROMPTHUE -o /root/.config/starship.toml --good-spacers
-
-# - Add github and bitbucket to known ssh hosts
-RUN mkdir -p /root/.ssh && \
-    ssh-keyscan github.com >> /root/.ssh/known_hosts && \
-    ssh-keyscan bitbucket.org >> /root/.ssh/known_hosts
 
 # - Set entrypoint script
 ENTRYPOINT ["/app/entrypoint.sh"]
