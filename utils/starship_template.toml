@@ -2,7 +2,7 @@ format = """
 [░▒▓]({c6})\
 [  ](fg:{c0} bg:{c6})\
 [](fg:{c6} bg:{c5})\
-$custom.username\
+$custom.user\
 [@](fg:{c0} bg:{c5})\
 $hostname\
 [](fg:{c5} bg:{c4})\
@@ -26,7 +26,7 @@ $cmd_duration\
 [username]
 disabled = true
 
-[custom.username]
+[custom.user]
 command = 'if [ "$USER" = root ]; then echo "󱢼"; else echo "$USER"; fi'
 when = 'true'
 style = "fg:{c0} bg:{c5}"
