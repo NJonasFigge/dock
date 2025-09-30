@@ -4,7 +4,7 @@ import time
 
 
 def get_container_ids():
-    result = subprocess.run(["docker compose", "ps", "-q"], capture_output=True, text=True)
+    result = subprocess.run(["docker", "compose", "ps", "-q"], capture_output=True, text=True)
     return result.stdout.strip().splitlines()
 
 
