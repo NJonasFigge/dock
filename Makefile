@@ -54,7 +54,7 @@ down:
 restart: down up
 
 logs:
-	$(DC) logs -f $(SERVICES)
+	$(DC) logs -f $(SERVICES) || true  # || true to avoid error when exiting via Ctrl+C
 
 vup: up logs  # vup for verbose up
 
@@ -81,3 +81,6 @@ endif
 		echo "Opening bash shell in service '$(SERVICE)'..."; \
 		$(DC) exec -it $(SERVICE) bash; \
 	fi
+
+browse: up
+	@python browse_containers.py
