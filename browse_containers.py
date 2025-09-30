@@ -5,6 +5,7 @@ import termios
 import subprocess
 import datetime as dt
 from time import sleep
+from pathlib import Path
 
 
 def _get_keypress():
@@ -47,7 +48,8 @@ class Browser:
         self._current_index = (self._current_index + (-1 if backwards else 1)) % len(self._containers)
 
     def _start_log_stream(self):
-        return subprocess.Popen(["docker", "compose", "-f" "src/docker-compose.yml" "logs", "-f",
+        yml = Path(__file__).parent / 'src/docker-compose.yml'
+        return subprocess.Popen(["docker", "compose", "-f", str(yml), "logs", "-f",
                                  self._current_container.name])
 
     def _open_shell(self):
