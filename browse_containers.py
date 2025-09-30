@@ -49,7 +49,11 @@ class Browser:
 
     def _start_log_stream(self):
         yml = Path(__file__).parent / 'src/docker-compose.yml'
-        return subprocess.Popen(["docker", "logs", "-f", self._current_container.name])
+        p = subprocess.Popen(["docker", "compose", "-f", str(yml), "logs", "-f", self._current_container.name],
+                             stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+        for line in p.stdout:
+            print(line.strip())
+        return p
 
     def _open_shell(self):
         subprocess.run(["make", "shell", "SERVICE=" + self._current_container.name])
