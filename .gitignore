@@ -8,5 +8,12 @@ src/papsite/venvs/live-venv/*
 src/papsite/venvs/stage-venv/*
 src/papsite/venvs/devtest-venv/*
 
+# --- Context preparations
+src/alpaca/utils
+src/papsite/utils
+src/reverse-proxy/utils
+src/telegram-bot/utils
+src/webdav/utils
+
 # --- Include all placeholder files ---
 !**/.gitkeep
