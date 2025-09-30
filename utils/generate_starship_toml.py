@@ -111,20 +111,20 @@ if __name__ == "__main__":
     parser.add_argument("-p", "--preview", action="store_true",
                         help="Print the generated color palette instead of writing to starship.toml")
     parser.add_argument("--good-spacers", action="store_true",
-                        help="Use a predefined set of good spacer indices (4, 5, 6 and -1).")
+                        help="Use a predefined set of good spacer indices. Currently: 4 5 6 7 9 -3 -2")
     parser.add_argument("--spacers", type=int, nargs='*',
                         help="Indices of colors to use as spacers. E.g., --spacer 2 5 means 2 more colors are "
                              "generated at index 2 and 5, but they will not be used. "
                              "(Overrides --good-spacers if set.)")
-    parser.add_argument("--saturation-bounds", type=float, nargs=2, default=(0.2, .9),
+    parser.add_argument("--saturation-bounds", type=float, nargs=2, default=(0.1, .6),
                         help="Min and max saturation values (0.0 to 1.0)")
-    parser.add_argument("--lightness-bounds", type=float, nargs=2, default=(0.3, .95),
+    parser.add_argument("--lightness-bounds", type=float, nargs=2, default=(0.22, .95),
                         help="Min and max lightness values (0.0 to 1.0)")
     args = parser.parse_args()
 
     if args.spacers is None:
         if args.good_spacers:
-            args.spacers = [4, 5, 6, -1]
+            args.spacers = [4, 5, 6, 7, 9, -3, -2]
         else:
             args.spacers = []
 

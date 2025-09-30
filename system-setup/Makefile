@@ -2,10 +2,12 @@
 
 .PHONY: help
 
-# Set fish installation and usage to true, if not specified otherwise
+# - Set fish installation and usage to true, if not specified otherwise
 KEEPBASH ?= false
-# Set starship prompt color hue (0-360), default is blueish
+# - Set starship prompt color hue (0-360), default is blueish
 PROMPTHUE ?= 210
+# - Set further starship args
+STARSHIPARGS = --good-spacers --saturation-bounds .0 .2
 
 
 help:
@@ -110,7 +112,7 @@ starship-toml: python-is-python3
 	@if [ ! -e /usr/local/bin/starship ]; then \
   		curl -sS https://starship.rs/install.sh | sh; \
 	fi
-	python ../utils/generate_starship_toml.py $(PROMPTHUE) -o ~/.config/starship.toml --good-spacers
+	python ../utils/generate_starship_toml.py $(PROMPTHUE) -o ~/.config/starship.toml $(STARSHIPARGS)
 
 starship-activation:
 ifeq ($(KEEPBASH),true)

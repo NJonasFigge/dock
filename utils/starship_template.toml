@@ -23,7 +23,7 @@ $cmd_duration\
 
 [username]
 style_user = "fg:{c0} bg:{c5}"
-style_root = "bg:{c5}"
+style_root = "fg:#ff0000 bg:{c5}"
 show_always = true
 format = "[$user]($style)"
 disabled = false
