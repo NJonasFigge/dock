@@ -30,7 +30,7 @@ show_always = true
 format = "[ $usersymbol]($style)"
 disabled = false
 
-[custom.usersymbol]
+[usersymbol]
 command = '''
 if [ "$USER" = "root" ]; then
   echo ""  # Replace with your preferred Nerd Font symbol
