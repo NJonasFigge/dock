@@ -1,8 +1,6 @@
 
-import os
 import sys
 import tty
-import shutil
 import termios
 import subprocess
 import datetime as dt
@@ -49,11 +47,8 @@ class Browser:
         self._current_index = (self._current_index + (-1 if backwards else 1)) % len(self._containers)
 
     def _start_log_stream(self):
-        size = shutil.get_terminal_size()
-        env = os.environ.copy()
-        env['COLUMNS'] = str(size.columns)
-        env['LINES'] = str(size.lines)
-        return subprocess.Popen(["make", "logs", "SERVICE=" + self._current_container.name], env=env)
+        return subprocess.Popen(["docker", "compose", "-f" "src/docker-compose.yml" "logs", "-f",
+                                 self._current_container.name])
 
     def _open_shell(self):
         subprocess.run(["make", "shell", "SERVICE=" + self._current_container.name])
