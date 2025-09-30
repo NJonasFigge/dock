@@ -17,9 +17,9 @@ ENV REPO="$REPO"
 COPY entrypoint.sh /app/entrypoint.sh
 RUN chmod +x /app/entrypoint.sh
 
-# - Install required packages
+# - Install fish
 RUN apt-get update && \
-    apt-get install -y fish openssh-client && \
+    apt-get install -y fish && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 

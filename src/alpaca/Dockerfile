@@ -2,9 +2,9 @@
 FROM python:3.12-slim
 WORKDIR /app
 
-# - Install required packages
+# - Install fish
 RUN apt-get update && \
-    apt-get install -y fish openssh-client && \
+    apt-get install -y fish && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
