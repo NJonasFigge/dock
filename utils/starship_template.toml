@@ -27,7 +27,7 @@ $cmd_duration\
 disabled = true
 
 [custom.user]
-command = 'if [ "$USER" = root ]; then echo "󱢼"; else echo "$USER"; fi'
+command = 'if [ "$(whoami)" = root ]; then echo "󱢼"; else whoami; fi'
 when = 'true'
 style = "fg:%<c0>% bg:%<c5>%"
 format = "[ $output]($style)"
