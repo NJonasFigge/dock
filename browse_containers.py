@@ -155,9 +155,20 @@ class Browser:
         self._max_log_lines = os.get_terminal_size().lines - 12  # Leave space for tabs, instructions and some buffer
         self._is_instructions_minimized = False
         self._printer_thread: Thread = Thread(target=self._print, daemon=True)
-        self._is_print_pause = False
         self._last_updated_tabs_bar: dt.datetime = dt.datetime.fromtimestamp(0)
-        self._is_printing_new_screens_paused = False
+
+        class PrintPause:
+            IS_PAUSED = False
+
+            def __enter__(slf):
+                slf.IS_PAUSED = True
+
+            def __exit__(slf, exc_type, exc_val, exc_tb):
+                slf.IS_PAUSED = False
+                self._print()
+
+        self._print_pause = PrintPause
+
 
     @property
     def active_tab_container(self): return self._containers[self._active_tab_id]
@@ -182,7 +193,7 @@ class Browser:
         return ''.join(tabs)
 
     def _print(self):
-        if self._is_printing_new_screens_paused:
+        if self._print_pause.IS_PAUSED:
             return
         self._is_print_pause = True
         terminal_width = os.get_terminal_size().columns
@@ -192,9 +203,8 @@ class Browser:
             instructions = f' [I] to expand instructions...'
         else:
             instructions = '\n\r'.join([line.ljust(terminal_width) for line in self._instruction_lines])
-        print(ANSICODES.LIGHT_GRAY_BG + ANSICODES.BLACK_FG
-              + f' Started at {self._start_time.strftime("%Y-%m-%d %H:%M:%S")}'.ljust(terminal_width)
-              + ANSICODES.RESET, end='\n\r')
+        started_line = f' Started at {self._start_time.strftime("%Y-%m-%d %H:%M:%S")}'.ljust(terminal_width)
+        print(ANSICODES.LIGHT_GRAY_BG + ANSICODES.BLACK_FG + started_line + ANSICODES.RESET, end='\n\r')
         print(ANSICODES.DARK_GRAY_BG + instructions + ANSICODES.RESET, end='\n\r')
         for line in self.active_tab_container.get_log_tail(self._max_log_lines):
             print(line, end='\n\r')
@@ -215,16 +225,14 @@ class Browser:
         self._active_tab_id = (self._active_tab_id + (-1 if backwards else 1)) % len(self._containers)
 
     def prompt_user_in_active_tab(self):
-        self._is_printing_new_screens_paused = True
-        inp = input(f'\n{ANSICODES.GRAY_FG}Command to execute -$: ')
-        print(ANSICODES.RESET)
-        subprocess.run(["docker", "exec", "-it", self.active_tab_container.cid, "sh", "-c", inp])
-        self._is_printing_new_screens_paused = False
+        with self._print_pause:
+            inp = input(f'\n{ANSICODES.GRAY_FG}Command to execute -$: ')
+            print(ANSICODES.RESET)
+            subprocess.run(["docker", "exec", "-it", self.active_tab_container.cid, "sh", "-c", inp])
 
     def open_shell_in_active_tab(self):
-        self._is_printing_new_screens_paused = True
-        subprocess.run(["make", "shell", "SERVICE=" + self.active_tab_container.name])
-        self._is_printing_new_screens_paused = False
+        with self._print_pause:
+            subprocess.run(["make", "shell", "SERVICE=" + self.active_tab_container.name])
 
     def start(self):
         for container in self._containers:
