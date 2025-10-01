@@ -112,7 +112,7 @@ class Container:
                 self._log_lines_raw.append(line.strip())
                 self._log_colors.append(self._fine_color(line))
 
-    def start_collecting_logs(self, terminal_height_buffer: int = 5):
+    def start_collecting_logs(self, terminal_height_buffer: int = 8):
         if isinstance(self._logging_process, subprocess.Popen):
             raise RuntimeError("Logging already started.")
         yml = Path(__file__).parent / 'src/docker-compose.yml'
@@ -146,6 +146,7 @@ class Browser:
                                    '               [Enter]    - Open a shell in this container',
                                    '               [I]        - Minimize these instructions',
                                    '               [Q]        - Quit this browser']
+        self._is_instructions_minimized = False
         self._log_printer_thread: Thread = Thread(target=self._print_log, daemon=True)
         self._is_log_printing_paused = False
 
@@ -183,8 +184,11 @@ class Browser:
         terminal_width = os.get_terminal_size().columns
         print(ANSICODES.CLEAR_SCREEN, end='')
         print(self.tabs_bar)
-        print(ANSICODES.DARK_GRAY_BG + '\n'.join([line.ljust(terminal_width) for line in self._instruction_lines])
-              + ANSICODES.RESET)
+        if self._is_instructions_minimized:
+            instructions = f' [I] to expand instructions...'
+        else:
+            instructions = '\n'.join([line.ljust(terminal_width) for line in self._instruction_lines])
+        print(ANSICODES.DARK_GRAY_BG + instructions + ANSICODES.RESET)
         print(f'{ANSICODES.GRAY_FG}Started at {self._start_time.strftime("%Y-%m-%d %H:%M:%S")}\n')
         print('\n'.join(self.active_tab_container.all_seen_log_lines))
         self._is_log_printing_paused = False
@@ -217,6 +221,8 @@ class Browser:
                 case 'd':
                     self.switch_tab()
                     self._print_new_screen()
+                case 'i':
+                    self._is_instructions_minimized = not self._is_instructions_minimized
                 case ' ':  # Space
                     self.prompt_user_in_active_tab()
                 case '\r':  # Enter
