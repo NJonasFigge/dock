@@ -68,6 +68,8 @@ class LogLine:
         elif any(kw in line_lower for kw in ("debug", "verbos", "trace", "http", "https", "delete", "request",
                                              "response", "sql", "select", "insert", "inject", "update", "query")):
             return ANSICODES.GRAY_FG
+        else:
+            return ''
 
 
 class Container:
