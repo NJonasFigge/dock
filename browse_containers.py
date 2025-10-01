@@ -187,10 +187,10 @@ class Browser:
         terminal_width = os.get_terminal_size().columns
         clipping_needed = sum(len(tab_name) + 4 for tab_name in tab_names) > terminal_width  # +4 for badge and padding
         if clipping_needed:
-            available_width = terminal_width - 3 * len(tab_names)  # -3 for padding and ellipsis
+            available_width = terminal_width - 5 * len(tab_names)  # -5 for padding and ellipsis
             base_width = available_width // len(tab_names)
             tab_names = [tab_name if len(tab_name) <= base_width
-                         else tab_name[:max(0, base_width - 1)] + '…'
+                         else tab_name[:max(0, base_width - 3)] + '…'
                          for tab_name in tab_names]
         badges = [(f'{container.most_urgent_unseen_color}'
                    f'{container.num_unseen_lines if container.num_unseen_lines < 10 else "*"}'
@@ -212,9 +212,6 @@ class Browser:
             started_line = f' Started at {self._start_time.strftime("%Y-%m-%d %H:%M:%S")}'.ljust(terminal_width)
             print(ANSICODES.LIGHT_GRAY_BG + ANSICODES.BLACK_FG + started_line + ANSICODES.RESET, end='\n\r')
             print(ANSICODES.DARK_GRAY_BG + instructions + ANSICODES.RESET, end='\n\r')
-            print(self._max_log_lines,
-                  len(self.active_tab_container._log_lines_raw),
-                  len(list(self.active_tab_container.get_log_tail(self._max_log_lines))), end='\n\r')
             for line in self.active_tab_container.get_log_tail(self._max_log_lines):
                 print(line, end='\n\r')
             self._last_updated_tabs_bar = dt.datetime.now()
