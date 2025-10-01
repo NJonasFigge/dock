@@ -123,7 +123,8 @@ class Container:
 
 
 class Browser:
-    def __init__(self):
+    def __init__(self, update_interval: float = 0.3):
+        self._update_interval = update_interval
         self._start_time = dt.datetime.now()
         ps_output = subprocess.run(["docker", "ps", "-q"], capture_output=True, text=True)
         self._containers = [Container.from_id(cid) for cid in ps_output.stdout.strip().splitlines()]
@@ -140,14 +141,14 @@ class Browser:
         self._is_instructions_minimized = False
         self._printer_thread: Thread = Thread(target=self._printer_loop, daemon=True)
         self._last_updated_tabs_bar: dt.datetime = dt.datetime.fromtimestamp(0)
+        self._is_printing_paused = False
 
         class PrintPause:
-            IS_PAUSED = False
             def __init__(self, is_in_print_function: bool = False): self._is_in_print_function = is_in_print_function
-            def __enter__(slf): slf.IS_PAUSED = True
+            def __enter__(slf): self._is_printing_paused = True
 
             def __exit__(slf, exc_type, exc_val, exc_tb):
-                slf.IS_PAUSED = False
+                self._is_printing_paused = False
                 if not slf._is_in_print_function:  # Avoid recursive calls to _print
                     self._print()
 
@@ -194,13 +195,13 @@ class Browser:
 
     def _printer_loop(self):
         while isinstance(self._printer_thread, Thread):
-            if not self._print_pause.IS_PAUSED:
+            if not self._is_printing_paused:
                 # - Update screen if there are new lines in the active tab or if more than 1s passed since last update
                 if (self.active_tab_container.num_unseen_lines > 0
-                        or (dt.datetime.now() - self._last_updated_tabs_bar).total_seconds() > 1):
+                        or (dt.datetime.now() - self._last_updated_tabs_bar).total_seconds() > self._update_interval):
                     self._print()
             # Sleep a bit to avoid busy loop
-            sleep(0.2)
+            sleep(self._update_interval / 5)
 
     def switch_tab(self, backwards: bool = False):
         self._active_tab_id = (self._active_tab_id + (-1 if backwards else 1)) % len(self._containers)
