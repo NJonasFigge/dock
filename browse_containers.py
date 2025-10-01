@@ -8,6 +8,7 @@ import datetime as dt
 from pathlib import Path
 from threading import Thread
 from time import sleep
+from functools import cached_property
 
 
 class ANSICODES:
@@ -40,10 +41,19 @@ def _get_keypress():
     return key
 
 
-class Container:
-    @staticmethod
-    def _fine_color(line: str):
-        line_lower = line.lower()
+class LogLine:
+    def __init__(self, timestamp: dt.datetime, text: str):
+        self._timestamp = timestamp
+        self._text = text
+
+    @property
+    def timestamp(self): return self._timestamp
+    @property
+    def text(self): return self._text
+
+    @cached_property
+    def color(self):
+        line_lower = self.text.lower()
         if any(kw in line_lower for kw in ("info", "notice", "starting", "started", "listening", "listened")):
             return ANSICODES.BLUE_FG
         elif any(kw in line_lower for kw in ("warn", "retrying", "retry", "slow", "slowly")):
@@ -57,6 +67,8 @@ class Container:
                                              "response", "sql", "select", "insert", "inject", "update", "query")):
             return ANSICODES.GRAY_FG
 
+
+class Container:
     @staticmethod
     def from_id(cid: str):
         result = subprocess.run(["docker", "inspect", "--format={{.Name}}", cid], capture_output=True, text=True)
@@ -74,8 +86,7 @@ class Container:
         self._name = name
         self._logging_process: subprocess.Popen = NotImplemented  # Process pulling logs
         self._log_polling_thread: Thread = NotImplemented  # Thread processing log lines
-        self._log_lines_raw = []  # All log lines collected so far
-        self._log_colors = []  # Color codes for log lines
+        self._log_lines: list[LogLine] = []
         self._log_shown_until = 0  # Index of the last log line shown
 
     @property
@@ -83,11 +94,11 @@ class Container:
     @property
     def name(self): return self._name
     @property
-    def num_unseen_lines(self): return len(self._log_lines_raw) - self._log_shown_until
+    def num_unseen_lines(self): return len(self._log_lines) - self._log_shown_until
 
     def get_log_tail(self, n: int):
-        start = max(0, len(self._log_lines_raw) - n)
-        for i, (line, color) in enumerate(zip(self._log_lines_raw[start:], self._log_colors[start:])):
+        start = max(0, len(self._log_lines) - n)
+        for i, (line, color) in enumerate(zip(self._log_lines[start:], self._log_lines[start:])):
             if color is None:
                 yield line
             else:
@@ -98,7 +109,7 @@ class Container:
     def most_urgent_unseen_color(self):
         color_order = [ANSICODES.RED_FG, ANSICODES.YELLOW_FG, ANSICODES.BLUE_FG, ANSICODES.GREEN_FG,
                        ANSICODES.GRAY_FG, None]
-        unseen_colors = self._log_colors[self._log_shown_until:]
+        unseen_colors = [ll.color for ll in self._log_lines[self._log_shown_until:]]
         for color in color_order:
             if color in unseen_colors:
                 return color
@@ -106,8 +117,7 @@ class Container:
     def _poll_logs(self):
         while isinstance(self._logging_process, subprocess.Popen) and self._logging_process.stdout is not None:
             for line in self._logging_process.stdout:
-                self._log_lines_raw.append(line.strip())
-                self._log_colors.append(self._fine_color(line))
+                self._log_lines.append(LogLine(dt.datetime.now(), line.strip()))
 
     def start_collecting_logs(self):
         if isinstance(self._logging_process, subprocess.Popen):
@@ -176,7 +186,7 @@ class Browser:
         self._print_pause = PrintPause
 
     @property
-    def _max_log_lines(self): return os.get_terminal_size().lines - 12  # Leave space for tabs, instructions, buffer
+    def _max_log_lines(self): return os.get_terminal_size().lines - 12 + (5 if self._is_instructions_minimized else 0)
 
     @property
     def active_tab_container(self): return self._containers[self._active_tab_id]
@@ -212,7 +222,8 @@ class Browser:
                 instructions = f' [I] to expand instructions...'
             else:
                 instructions = '\n\r'.join([line.ljust(terminal_width) for line in self._instruction_lines])
-            started_line = f' Started at {self._start_time.strftime("%Y-%m-%d %H:%M:%S")}'.ljust(terminal_width)
+            started_line = (f' {self.active_tab_container.name} - Capturing logs since '
+                            f'{self._start_time.strftime("%Y-%m-%d %H:%M:%S")}').ljust(terminal_width)
             print(ANSICODES.LIGHT_GRAY_BG + ANSICODES.BLACK_FG + started_line + ANSICODES.RESET, end='\n\r')
             print(ANSICODES.DARK_GRAY_BG + instructions + ANSICODES.RESET, end='\n\r')
             for line in self.active_tab_container.get_log_tail(self._max_log_lines):
