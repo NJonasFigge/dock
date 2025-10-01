@@ -20,7 +20,6 @@ class ANSICODES:
     GREEN_FG = '\033[32m'
     RESET = '\033[0m'
     CLEAR_SCREEN = '\033[2J\033[H'
-    BOLD = '\033[1m'
     NOTBOLD = '\033[22m'
 
 
@@ -155,22 +154,21 @@ class Browser:
 
     @property
     def tabs_bar(self):
-        tabs = []
-        for i, container in enumerate(self._containers):
-            if i == self._active_tab_id:
-                tabs.append(f"{ANSICODES.DARK_GRAY_BG} ╔ {container.name} ╗ {ANSICODES.RESET}")
-            else:
-                if container.num_unseen_lines > 0:
-                    badge_color = container.most_urgent_unseen_color
-                    if badge_color is None:
-                        badge = (f"{ANSICODES.LIGHT_GRAY_BG}{ANSICODES.BLACK_FG}"
-                                 f"{container.num_unseen_lines}")
-                    else:
-                        badge = f"{badge_color}{container.num_unseen_lines}"
-                else:
-                    badge = ' '
-                tabs.append(f"{ANSICODES.LIGHT_GRAY_BG}{ANSICODES.BLACK_FG}  {container.name} {badge}  "
-                            f"{ANSICODES.RESET}")
+        tab_names = [container.name for container in self._containers]
+        terminal_width = os.get_terminal_size().columns
+        clipping_needed = sum(len(tab_name) + 4 for tab_name in tab_names) > terminal_width  # +4 for badge and padding
+        if clipping_needed:
+            available_width = terminal_width - 3 * len(tab_names)  # -3 for padding and ellipsis
+            base_width = available_width // len(tab_names)
+            tab_names = [tab_name if len(tab_name) <= base_width
+                         else tab_name[:max(0, base_width - 1)] + '…'
+                         for tab_name in tab_names]
+        badges = [(f'{container.most_urgent_unseen_color}'
+                   f'{container.num_unseen_lines if container.num_unseen_lines < 10 else "*"}'
+                   f'{ANSICODES.RESET}')
+                  if container.num_unseen_lines > 0 else ' ' for container in self._containers]
+        tabs = [(f' {badge}{ANSICODES.BLACK_FG + ANSICODES.LIGHT_GRAY_BG if i == self._active_tab_id else ""} {name} '
+                 f'{ANSICODES.RESET}') for i, (name, badge) in enumerate(zip(tab_names, badges))]
         return ''.join(tabs)
 
     def _print_log(self):
@@ -208,7 +206,7 @@ class Browser:
 
     def start(self):
         for container in self._containers:
-            container.start_collecting_logs(10)
+            container.start_collecting_logs(12)
         self._print_new_screen()
         self._log_printer_thread.start()  # Start log updating thread after initial screen print
         while True:
