@@ -63,6 +63,12 @@ class Container:
         name = result.stdout.strip().lstrip('/')
         return Container(cid, name)
 
+    @staticmethod
+    def from_name(name: str):
+        result = subprocess.run(["docker", "inspect", "--format={{.Id}}", name], capture_output=True, text=True)
+        cid = result.stdout.strip()
+        return Container(cid, name)
+
     def __init__(self, cid: str, name: str):
         self._cid = cid
         self._name = name
@@ -123,11 +129,26 @@ class Container:
 
 
 class Browser:
-    def __init__(self, update_interval: float = 0.3):
+    @staticmethod
+    def from_running_containers(update_interval: float = 0.3):
+        ps_output = subprocess.run(["docker", "ps", "-q"], capture_output=True, text=True)
+        containers = [Container.from_id(cid) for cid in ps_output.stdout.strip().splitlines()]
+        return Browser(containers, update_interval)
+
+    @staticmethod
+    def from_yml_listed_containers(update_interval: float = 0.3):
+        yml = Path(__file__).parent / 'src/docker-compose.yml'
+        yml_text = yml.read_text()
+        services_text = yml_text.split('services:')[1]
+        container_names = [line.removesuffix(':').strip() for line in services_text.splitlines()
+                           if line.startswith('  ') and line.endswith(':') and not line.strip().startswith('#')]
+        containers = [Container.from_name(name) for name in container_names]
+        return Browser(containers, update_interval)
+
+    def __init__(self, containers: list[Container], update_interval: float = 0.3):
+        self._containers = containers
         self._update_interval = update_interval
         self._start_time = dt.datetime.now()
-        ps_output = subprocess.run(["docker", "ps", "-q"], capture_output=True, text=True)
-        self._containers = [Container.from_id(cid) for cid in ps_output.stdout.strip().splitlines()]
         if len(self._containers) == 0:
             print("No running containers found.")
             exit()
@@ -249,5 +270,5 @@ class Browser:
         thread.join(timeout=1.)
 
 if __name__ == "__main__":
-    browser = Browser()
+    browser = Browser.from_yml_listed_containers()
     browser.start()
