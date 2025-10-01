@@ -187,7 +187,7 @@ class Browser:
         terminal_width = os.get_terminal_size().columns
         clipping_needed = sum(len(tab_name) + 4 for tab_name in tab_names) > terminal_width  # +4 for badge and padding
         if clipping_needed:
-            available_width = terminal_width - 5 * len(tab_names)  # -5 for padding and ellipsis
+            available_width = terminal_width - 4 * len(tab_names)  # -4 for badge and padding
             base_width = available_width // len(tab_names)
             tab_names = [tab_name if len(tab_name) <= base_width
                          else tab_name[:max(0, base_width - 3)] + '…'
