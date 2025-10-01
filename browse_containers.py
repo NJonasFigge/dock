@@ -177,7 +177,7 @@ class Browser:
             if not self._is_log_printing_paused:
                 line = next(self.active_tab_container.new_log_lines, None)
                 if line is not None:
-                    print(line)
+                    print(line, end='\n\r')
 
     def _print_new_screen(self):
         self._is_log_printing_paused = True
