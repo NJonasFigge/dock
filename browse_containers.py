@@ -141,7 +141,8 @@ class Browser:
         yml_text = yml.read_text()
         services_text = yml_text.split('services:')[1]
         container_names = [line.removesuffix(':').strip() for line in services_text.splitlines()
-                           if line.startswith('  ') and line.endswith(':') and not line.strip().startswith('#')]
+                           if line.removeprefix('  ') == line.strip()  # Second level indent only
+                           and line.endswith(':') and not line.strip().startswith('#')]
         containers = [Container.from_name(name) for name in container_names]
         return Browser(containers, update_interval)
 
