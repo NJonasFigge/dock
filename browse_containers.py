@@ -7,6 +7,7 @@ import subprocess
 import datetime as dt
 from pathlib import Path
 from threading import Thread
+from time import sleep
 
 
 class ANSICODES:
@@ -52,9 +53,8 @@ class Container:
             return ANSICODES.RED_FG
         elif any(kw in line_lower for kw in ("success", "ready", "connected", "completed", "done")):
             return ANSICODES.GREEN_FG
-        elif any(kw in line_lower for kw in ("debug", "verbose", "trace", "http", "https", "get", "post", "put",
-                                             "delete", "request", "response", "sql", "select", "insert", "update",
-                                             "query")):
+        elif any(kw in line_lower for kw in ("debug", "verbos", "trace", "http", "https", "delete", "request",
+                                             "response", "sql", "select", "insert", "inject", "update", "query")):
             return ANSICODES.GRAY_FG
 
     @staticmethod
@@ -79,18 +79,26 @@ class Container:
     @property
     def num_unseen_lines(self): return len(self._log_lines_raw) - self._log_shown_until
 
-    @property
-    def all_seen_log_lines(self):
-        for line, color in zip(self._log_lines_raw[:self._log_shown_until], self._log_colors[:self._log_shown_until]):
-            if color is None:
-                yield line
-            else:
-                yield color + line + ANSICODES.RESET
+    # @property
+    # def all_seen_log_lines(self):
+    #     for line, color in zip(self._log_lines_raw[:self._log_shown_until], self._log_colors[:self._log_shown_until]):
+    #         if color is None:
+    #             yield line
+    #         else:
+    #             yield color + line + ANSICODES.RESET
+    #
+    # @property
+    # def new_log_lines(self):
+    #     for line, color in zip(self._log_lines_raw[self._log_shown_until:], self._log_colors[self._log_shown_until:]):
+    #         self._log_shown_until += 1
+    #         if color is None:
+    #             yield line
+    #         else:
+    #             yield color + line + ANSICODES.RESET
 
-    @property
-    def new_log_lines(self):
-        for line, color in zip(self._log_lines_raw[self._log_shown_until:], self._log_colors[self._log_shown_until:]):
-            self._log_shown_until += 1
+    def get_log_tail(self, n: int):
+        start = max(0, len(self._log_lines_raw) - n)
+        for line, color in zip(self._log_lines_raw[start:], self._log_colors[start:]):
             if color is None:
                 yield line
             else:
@@ -111,13 +119,12 @@ class Container:
                 self._log_lines_raw.append(line.strip())
                 self._log_colors.append(self._fine_color(line))
 
-    def start_collecting_logs(self, terminal_height_buffer: int):
+    def start_collecting_logs(self):
         if isinstance(self._logging_process, subprocess.Popen):
             raise RuntimeError("Logging already started.")
         yml = Path(__file__).parent / 'src/docker-compose.yml'
-        tail_n = os.get_terminal_size().lines - terminal_height_buffer
         self._logging_process = subprocess.Popen(["docker", "compose", "-f", str(yml), "logs", "-f",
-                                                  self.name, "--no-log-prefix", "-n", str(tail_n)],
+                                                  self.name, "--no-log-prefix"],
                                                  stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
         self._log_polling_thread = Thread(target=self._poll_logs, daemon=True)
         self._log_polling_thread.start()
@@ -145,10 +152,11 @@ class Browser:
                                    '               [Enter]    - Open a shell in this container',
                                    '               [I]        - Minimize these instructions',
                                    '               [Q]        - Quit this browser']
+        self._max_log_lines = os.get_terminal_size().lines - 12  # Leave space for tabs, instructions and some buffer
         self._is_instructions_minimized = False
-        self._log_printer_thread: Thread = Thread(target=self._print_log, daemon=True)
-        self._is_log_printing_paused = False
-        self._last_updated_tabs_bar: dt.datetime = NotImplemented
+        self._printer_thread: Thread = Thread(target=self._print, daemon=True)
+        self._is_print_pause = False
+        self._last_updated_tabs_bar: dt.datetime = dt.datetime.fromtimestamp(0)
         self._is_printing_new_screens_paused = False
 
     @property
@@ -173,10 +181,10 @@ class Browser:
                  f'{ANSICODES.RESET}') for i, (name, badge) in enumerate(zip(tab_names, badges))]
         return ''.join(tabs)
 
-    def _print_new_screen(self):
+    def _print(self):
         if self._is_printing_new_screens_paused:
             return
-        self._is_log_printing_paused = True
+        self._is_print_pause = True
         terminal_width = os.get_terminal_size().columns
         print(ANSICODES.CLEAR_SCREEN, end='')
         print(self.tabs_bar, end='\n\r')
@@ -188,21 +196,20 @@ class Browser:
               + f' Started at {self._start_time.strftime("%Y-%m-%d %H:%M:%S")}'.ljust(terminal_width)
               + ANSICODES.RESET, end='\n\r')
         print(ANSICODES.DARK_GRAY_BG + instructions + ANSICODES.RESET, end='\n\r')
-        for line in self.active_tab_container.all_seen_log_lines:
+        for line in self.active_tab_container.get_log_tail(self._max_log_lines):
             print(line, end='\n\r')
-        self._is_log_printing_paused = False
+        self._is_print_pause = False
         self._last_updated_tabs_bar = dt.datetime.now()
 
-    def _print_log(self):
-        while self._log_printer_thread is not None:
-            if not self._is_log_printing_paused:
-                line = next(self.active_tab_container.new_log_lines, None)
-                if line is not None:
-                    print(line, end='\n\r')
-            time_since_last_tabs_bar_update = ((dt.datetime.now() - self._last_updated_tabs_bar).total_seconds()
-                                               if self._last_updated_tabs_bar is not NotImplemented else float('inf'))
-            if time_since_last_tabs_bar_update > 1:
-                self._print_new_screen()
+    def _printer_loop(self):
+        while isinstance(self._printer_thread, Thread):
+            if not self._is_print_pause:
+                # - Update screen if there are new lines in the active tab or if more than 1s passed since last update
+                if (self.active_tab_container.num_unseen_lines > 0
+                        or (dt.datetime.now() - self._last_updated_tabs_bar).total_seconds() > 1):
+                    self._print()
+            # Sleep a bit to avoid busy loop
+            sleep(0.2)
 
     def switch_tab(self, backwards: bool = False):
         self._active_tab_id = (self._active_tab_id + (-1 if backwards else 1)) % len(self._containers)
@@ -221,9 +228,8 @@ class Browser:
 
     def start(self):
         for container in self._containers:
-            container.start_collecting_logs(12)
-        self._print_new_screen()
-        self._log_printer_thread.start()  # Start log updating thread after initial screen print
+            container.start_collecting_logs()
+        self._printer_thread.start()  # Start log updating thread after initial screen print
         while True:
             key = _get_keypress()
             match key:
@@ -232,22 +238,24 @@ class Browser:
                     break
                 case 'a':
                     self.switch_tab(backwards=True)
-                    self._print_new_screen()
+                    self._print()
                 case 'd':
                     self.switch_tab()
-                    self._print_new_screen()
+                    self._print()
                 case 'i':
                     self._is_instructions_minimized = not self._is_instructions_minimized
+                    self._print()
                 case ' ':  # Space
                     self.prompt_user_in_active_tab()
+                    self._print()
                 case '\r':  # Enter
                     self.open_shell_in_active_tab()  # Blocking call
-                    self._print_new_screen()
+                    self._print()
                 case _: pass  # Ignore other keys
         for container in self._containers:
             container.stop_collectng_logs()
-        thread = self._log_printer_thread
-        self._log_printer_thread = None
+        thread = self._printer_thread
+        self._printer_thread = None
         thread.join(timeout=1.)
 
 if __name__ == "__main__":
