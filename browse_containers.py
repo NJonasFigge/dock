@@ -215,7 +215,7 @@ class Browser:
         return ''.join(tabs)
 
     def _print(self):
-        with self._print_pause(is_in_print_function=True):
+        with (self._print_pause(is_in_print_function=True)):
             terminal_width = os.get_terminal_size().columns
             print(ANSICODES.CLEAR_SCREEN, end='')
             print(self.tabs_bar, end='\n\r')
@@ -229,7 +229,7 @@ class Browser:
             print(ANSICODES.DARK_GRAY_BG + instructions + ANSICODES.RESET, end='\n\r')
             current_timestamp: dt.datetime = NotImplemented
             for log_line in self.active_tab_container.get_log_tail(self._max_log_lines):
-                background_string = ''
+                appendix = ''
                 if current_timestamp is NotImplemented or (current_timestamp.date() != log_line.timestamp.date()
                                                            and current_timestamp.hour != log_line.timestamp.hour
                                                            and current_timestamp.minute != log_line.timestamp.minute):
@@ -237,8 +237,10 @@ class Browser:
                         time_string = log_line.timestamp.strftime("%H:%M")
                     else:
                         time_string = log_line.timestamp.strftime("%Y-%m-%d %H:%M")
-                    background_string = ANSICODES.BLUE_FG + f'--- {time_string}'.rjust(terminal_width) + ANSICODES.RESET
-                line = log_line.colorized + background_string[len(log_line.raw):]  # Pad to full width
+                    time_string = f' --- {time_string}'
+                    appendix = (' ' * (terminal_width - len(time_string) - len(log_line.raw)) + ANSICODES.BLUE_FG
+                                + time_string + ANSICODES.RESET)
+                line = log_line.colorized + appendix  # Pad to full width
                 print(line, end='\n\r')
                 # current_timestamp = log_line.timestamp
             self._last_updated_tabs_bar = dt.datetime.now()
