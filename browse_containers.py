@@ -154,7 +154,7 @@ class Browser:
                                    '               [Q]        - Quit this browser']
         self._max_log_lines = os.get_terminal_size().lines - 12  # Leave space for tabs, instructions and some buffer
         self._is_instructions_minimized = False
-        self._printer_thread: Thread = Thread(target=self._print, daemon=True)
+        self._printer_thread: Thread = Thread(target=self._printer_loop, daemon=True)
         self._last_updated_tabs_bar: dt.datetime = dt.datetime.fromtimestamp(0)
 
         class PrintPause:
@@ -210,9 +210,7 @@ class Browser:
 
     def _printer_loop(self):
         while isinstance(self._printer_thread, Thread):
-            print(self._print_pause.IS_PAUSED)
             if not self._print_pause.IS_PAUSED:
-                print(self.active_tab_container.num_unseen_lines, (dt.datetime.now() - self._last_updated_tabs_bar).total_seconds())
                 # - Update screen if there are new lines in the active tab or if more than 1s passed since last update
                 if (self.active_tab_container.num_unseen_lines > 0
                         or (dt.datetime.now() - self._last_updated_tabs_bar).total_seconds() > 1):
