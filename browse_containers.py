@@ -190,7 +190,8 @@ class Browser:
             instructions = '\n'.join([line.ljust(terminal_width) for line in self._instruction_lines])
         print(ANSICODES.DARK_GRAY_BG + instructions + ANSICODES.RESET)
         print(f'{ANSICODES.GRAY_FG}Started at {self._start_time.strftime("%Y-%m-%d %H:%M:%S")}\n')
-        print('\n'.join(self.active_tab_container.all_seen_log_lines))
+        for line in self.active_tab_container.all_seen_log_lines:
+            print(line, end='\n\r')
         self._is_log_printing_paused = False
 
     def switch_tab(self, backwards: bool = False):
