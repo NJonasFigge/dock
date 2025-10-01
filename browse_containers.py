@@ -241,7 +241,7 @@ class Browser:
                 case ' ':  # Space
                     self.prompt_user_in_active_tab()
                 case '\r':  # Enter
-                    subprocess.run(["make", "shell", "SERVICE=" + self.active_tab_container.name])  # Blocking call
+                    self.open_shell_in_active_tab()  # Blocking call
                     self._print_new_screen()
                 case _: pass  # Ignore other keys
         for container in self._containers:
