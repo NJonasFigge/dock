@@ -49,11 +49,13 @@ class LogLine:
     @property
     def timestamp(self): return self._timestamp
     @property
-    def text(self): return self._text
+    def raw(self): return self._text
+    @property
+    def printable(self): return self.color + self.raw + ANSICODES.RESET
 
     @cached_property
     def color(self):
-        line_lower = self.text.lower()
+        line_lower = self.raw.lower()
         if any(kw in line_lower for kw in ("info", "notice", "starting", "started", "listening", "listened")):
             return ANSICODES.BLUE_FG
         elif any(kw in line_lower for kw in ("warn", "retrying", "retry", "slow", "slowly")):
@@ -96,13 +98,10 @@ class Container:
     @property
     def num_unseen_lines(self): return len(self._log_lines) - self._log_shown_until
 
-    def get_log_tail(self, n: int):
+    def get_log_tail(self, n: int) -> list[LogLine]:
         start = max(0, len(self._log_lines) - n)
         for i, (line, color) in enumerate(zip(self._log_lines[start:], self._log_lines[start:])):
-            if color is None:
-                yield line
-            else:
-                yield color + line + ANSICODES.RESET
+            yield line
             self._log_shown_until = start + i + 1
 
     @property
@@ -226,7 +225,19 @@ class Browser:
                             f'{self._start_time.strftime("%Y-%m-%d %H:%M:%S")}').ljust(terminal_width)
             print(ANSICODES.LIGHT_GRAY_BG + ANSICODES.BLACK_FG + started_line + ANSICODES.RESET, end='\n\r')
             print(ANSICODES.DARK_GRAY_BG + instructions + ANSICODES.RESET, end='\n\r')
-            for line in self.active_tab_container.get_log_tail(self._max_log_lines):
+            current_timestamp: dt.datetime = NotImplemented
+            for log_line in self.active_tab_container.get_log_tail(self._max_log_lines):
+                background_string = ''
+                if current_timestamp is NotImplemented or (current_timestamp.date() != log_line.timestamp.date()
+                                                           and current_timestamp.hour != log_line.timestamp.hour
+                                                           and current_timestamp.minute != log_line.timestamp.minute):
+                    if current_timestamp is NotImplemented or current_timestamp.date() != log_line.timestamp.date():
+                        time_string = log_line.timestamp.strftime("%H:%M")
+                    else:
+                        time_string = log_line.timestamp.strftime("%Y-%m-%d %H:%M")
+                    background_string = ANSICODES.BLUE_FG + f'--- {time_string}'.rjust(terminal_width) + ANSICODES.RESET
+                log_line_printable = log_line.printable
+                line = log_line_printable + background_string[len(log_line_printable):]  # Pad to full width
                 print(line, end='\n\r')
             self._last_updated_tabs_bar = dt.datetime.now()
 
