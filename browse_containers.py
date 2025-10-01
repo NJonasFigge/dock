@@ -159,7 +159,6 @@ class Browser:
                                    '               [Enter]    - Open a shell in this container',
                                    '               [I]        - Minimize these instructions',
                                    '               [Q]        - Quit this browser']
-        self._max_log_lines = os.get_terminal_size().lines - 12  # Leave space for tabs, instructions and some buffer
         self._is_instructions_minimized = False
         self._printer_thread: Thread = Thread(target=self._printer_loop, daemon=True)
         self._last_updated_tabs_bar: dt.datetime = dt.datetime.fromtimestamp(0)
@@ -176,6 +175,8 @@ class Browser:
 
         self._print_pause = PrintPause
 
+    @property
+    def _max_log_lines(self): return os.get_terminal_size().lines - 12  # Leave space for tabs, instructions, buffer
 
     @property
     def active_tab_container(self): return self._containers[self._active_tab_id]
