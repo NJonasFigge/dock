@@ -211,6 +211,7 @@ class Browser:
             started_line = f' Started at {self._start_time.strftime("%Y-%m-%d %H:%M:%S")}'.ljust(terminal_width)
             print(ANSICODES.LIGHT_GRAY_BG + ANSICODES.BLACK_FG + started_line + ANSICODES.RESET, end='\n\r')
             print(ANSICODES.DARK_GRAY_BG + instructions + ANSICODES.RESET, end='\n\r')
+            print(self.active_tab_container.get_log_tail(self._max_log_lines))
             for line in self.active_tab_container.get_log_tail(self._max_log_lines):
                 print(line, end='\n\r')
             self._last_updated_tabs_bar = dt.datetime.now()
