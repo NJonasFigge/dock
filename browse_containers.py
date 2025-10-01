@@ -112,7 +112,7 @@ class Container:
                 self._log_lines_raw.append(line.strip())
                 self._log_colors.append(self._fine_color(line))
 
-    def start_collecting_logs(self, terminal_height_buffer: int = 8):
+    def start_collecting_logs(self, terminal_height_buffer: int):
         if isinstance(self._logging_process, subprocess.Popen):
             raise RuntimeError("Logging already started.")
         yml = Path(__file__).parent / 'src/docker-compose.yml'
@@ -208,7 +208,7 @@ class Browser:
 
     def start(self):
         for container in self._containers:
-            container.start_collecting_logs()
+            container.start_collecting_logs(10)
         self._print_new_screen()
         self._log_printer_thread.start()  # Start log updating thread after initial screen print
         while True:
