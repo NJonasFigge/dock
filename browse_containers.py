@@ -149,6 +149,7 @@ class Browser:
         self._log_printer_thread: Thread = Thread(target=self._print_log, daemon=True)
         self._is_log_printing_paused = False
         self._last_updated_tabs_bar: dt.datetime = NotImplemented
+        self._is_printing_new_screens_paused = False
 
     @property
     def active_tab_container(self): return self._containers[self._active_tab_id]
@@ -173,6 +174,8 @@ class Browser:
         return ''.join(tabs)
 
     def _print_new_screen(self):
+        if self._is_printing_new_screens_paused:
+            return
         self._is_log_printing_paused = True
         terminal_width = os.get_terminal_size().columns
         print(ANSICODES.CLEAR_SCREEN, end='')
@@ -205,12 +208,16 @@ class Browser:
         self._active_tab_id = (self._active_tab_id + (-1 if backwards else 1)) % len(self._containers)
 
     def prompt_user_in_active_tab(self):
+        self._is_printing_new_screens_paused = True
         inp = input(f'\n{ANSICODES.GRAY_FG}Command to execute -$: ')
         print(ANSICODES.RESET)
         subprocess.run(["docker", "exec", "-it", self.active_tab_container.cid, "sh", "-c", inp])
+        self._is_printing_new_screens_paused = False
 
     def open_shell_in_active_tab(self):
+        self._is_printing_new_screens_paused = True
         subprocess.run(["make", "shell", "SERVICE=" + self.active_tab_container.name])
+        self._is_printing_new_screens_paused = False
 
     def start(self):
         for container in self._containers:
@@ -241,7 +248,7 @@ class Browser:
             container.stop_collectng_logs()
         thread = self._log_printer_thread
         self._log_printer_thread = None
-        thread.join(timeout=1.0)
+        thread.join(timeout=1.)
 
 if __name__ == "__main__":
     browser = Browser()
