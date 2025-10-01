@@ -185,13 +185,16 @@ class Browser:
     def tabs_bar(self):
         tab_names = [container.name for container in self._containers]
         terminal_width = os.get_terminal_size().columns
-        clipping_needed = sum(len(tab_name) + 4 for tab_name in tab_names) > terminal_width  # +4 for badge and padding
-        if clipping_needed:
-            available_width = terminal_width - 4 * len(tab_names)  # -4 for badge and padding
-            base_width = available_width // len(tab_names)
-            tab_names = [tab_name if len(tab_name) <= base_width
-                         else tab_name[:max(0, base_width - 3)] + '…'
-                         for tab_name in tab_names]
+        # - A Tab will look like this: " 3 container-name " (with colors)  -> 4 extra chars
+        if sum(len(tab_name) + 4 for tab_name in tab_names) > terminal_width:
+            width_per_tab = terminal_width // len(tab_names)
+            container_name_width = width_per_tab - 4
+            tab_names = []
+            for container in self._containers:
+                if len(container.name) <= container_name_width:
+                    tab_names.append(container.name)
+                else:
+                    tab_names.append(container.name[:container_name_width - 1] + '…')
         badges = [(f'{container.most_urgent_unseen_color}'
                    f'{container.num_unseen_lines if container.num_unseen_lines < 10 else "*"}'
                    f'{ANSICODES.RESET}')
