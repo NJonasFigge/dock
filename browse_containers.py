@@ -193,28 +193,24 @@ class Browser:
         return ''.join(tabs)
 
     def _print(self):
-        if self._print_pause.IS_PAUSED:
-            return
-        self._is_print_pause = True
-        terminal_width = os.get_terminal_size().columns
-        print(ANSICODES.CLEAR_SCREEN, end='')
-        print(self.tabs_bar, end='\n\r')
-        if self._is_instructions_minimized:
-            instructions = f' [I] to expand instructions...'
-        else:
-            instructions = '\n\r'.join([line.ljust(terminal_width) for line in self._instruction_lines])
-        started_line = f' Started at {self._start_time.strftime("%Y-%m-%d %H:%M:%S")}'.ljust(terminal_width)
-        print(ANSICODES.LIGHT_GRAY_BG + ANSICODES.BLACK_FG + started_line + ANSICODES.RESET, end='\n\r')
-        print(ANSICODES.DARK_GRAY_BG + instructions + ANSICODES.RESET, end='\n\r')
-        for line in self.active_tab_container.get_log_tail(self._max_log_lines):
-            print(line, end='\n\r')
-        self._is_print_pause = False
-        self._last_updated_tabs_bar = dt.datetime.now()
+        with self._print_pause():
+            terminal_width = os.get_terminal_size().columns
+            print(ANSICODES.CLEAR_SCREEN, end='')
+            print(self.tabs_bar, end='\n\r')
+            if self._is_instructions_minimized:
+                instructions = f' [I] to expand instructions...'
+            else:
+                instructions = '\n\r'.join([line.ljust(terminal_width) for line in self._instruction_lines])
+            started_line = f' Started at {self._start_time.strftime("%Y-%m-%d %H:%M:%S")}'.ljust(terminal_width)
+            print(ANSICODES.LIGHT_GRAY_BG + ANSICODES.BLACK_FG + started_line + ANSICODES.RESET, end='\n\r')
+            print(ANSICODES.DARK_GRAY_BG + instructions + ANSICODES.RESET, end='\n\r')
+            for line in self.active_tab_container.get_log_tail(self._max_log_lines):
+                print(line, end='\n\r')
+            self._last_updated_tabs_bar = dt.datetime.now()
 
     def _printer_loop(self):
         while isinstance(self._printer_thread, Thread):
-            self._print()
-            if not self._is_print_pause:
+            if not self._print_pause.IS_PAUSED:
                 # - Update screen if there are new lines in the active tab or if more than 1s passed since last update
                 if (self.active_tab_container.num_unseen_lines > 0
                         or (dt.datetime.now() - self._last_updated_tabs_bar).total_seconds() > 1):
@@ -226,13 +222,13 @@ class Browser:
         self._active_tab_id = (self._active_tab_id + (-1 if backwards else 1)) % len(self._containers)
 
     def prompt_user_in_active_tab(self):
-        with self._print_pause:
+        with self._print_pause():
             inp = input(f'\n{ANSICODES.GRAY_FG}Command to execute -$: ')
             print(ANSICODES.RESET)
             subprocess.run(["docker", "exec", "-it", self.active_tab_container.cid, "sh", "-c", inp])
 
     def open_shell_in_active_tab(self):
-        with self._print_pause:
+        with self._print_pause():
             subprocess.run(["make", "shell", "SERVICE=" + self.active_tab_container.name])
 
     def start(self):
