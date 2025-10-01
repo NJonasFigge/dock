@@ -79,30 +79,14 @@ class Container:
     @property
     def num_unseen_lines(self): return len(self._log_lines_raw) - self._log_shown_until
 
-    # @property
-    # def all_seen_log_lines(self):
-    #     for line, color in zip(self._log_lines_raw[:self._log_shown_until], self._log_colors[:self._log_shown_until]):
-    #         if color is None:
-    #             yield line
-    #         else:
-    #             yield color + line + ANSICODES.RESET
-    #
-    # @property
-    # def new_log_lines(self):
-    #     for line, color in zip(self._log_lines_raw[self._log_shown_until:], self._log_colors[self._log_shown_until:]):
-    #         self._log_shown_until += 1
-    #         if color is None:
-    #             yield line
-    #         else:
-    #             yield color + line + ANSICODES.RESET
-
     def get_log_tail(self, n: int):
         start = max(0, len(self._log_lines_raw) - n)
-        for line, color in zip(self._log_lines_raw[start:], self._log_colors[start:]):
+        for i, (line, color) in enumerate(zip(self._log_lines_raw[start:], self._log_colors[start:])):
             if color is None:
                 yield line
             else:
                 yield color + line + ANSICODES.RESET
+            self._log_shown_until = start + i + 1
 
     @property
     def most_urgent_unseen_color(self):
