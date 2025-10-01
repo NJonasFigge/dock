@@ -51,7 +51,7 @@ class LogLine:
     @property
     def raw(self): return self._text
     @property
-    def printable(self): return self.color + self.raw + ANSICODES.RESET
+    def colorized(self): return self.color + self.raw + ANSICODES.RESET
 
     @cached_property
     def color(self):
@@ -238,9 +238,9 @@ class Browser:
                     else:
                         time_string = log_line.timestamp.strftime("%Y-%m-%d %H:%M")
                     background_string = ANSICODES.BLUE_FG + f'--- {time_string}'.rjust(terminal_width) + ANSICODES.RESET
-                log_line_printable = log_line.printable
-                line = log_line_printable + background_string[len(log_line_printable):]  # Pad to full width
+                line = log_line.colorized + background_string[len(log_line.raw):]  # Pad to full width
                 print(line, end='\n\r')
+                # current_timestamp = log_line.timestamp
             self._last_updated_tabs_bar = dt.datetime.now()
 
     def _printer_loop(self):
