@@ -26,12 +26,17 @@ class ANSICODES:
 
 
 def _get_keypress():
+    # - Get the file descriptor for standard input
     fd = sys.stdin.fileno()
+    # - Save original terminal settings
     old_settings = termios.tcgetattr(fd)
     try:
+        # - Set terminal to raw mode to capture keypresses immediately
         tty.setraw(fd)
+        # - Read a single character
         key = sys.stdin.read(1)
     finally:
+        # - Restore original terminal settings
         termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
     return key
 
