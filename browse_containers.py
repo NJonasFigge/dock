@@ -159,13 +159,13 @@ class Browser:
 
         class PrintPause:
             IS_PAUSED = False
-
-            def __enter__(slf):
-                slf.IS_PAUSED = True
+            def __init__(self, is_in_print_function: bool = False): self._is_in_print_function = is_in_print_function
+            def __enter__(slf): slf.IS_PAUSED = True
 
             def __exit__(slf, exc_type, exc_val, exc_tb):
                 slf.IS_PAUSED = False
-                self._print()
+                if not slf._is_in_print_function:  # Avoid recursive calls to _print
+                    self._print()
 
         self._print_pause = PrintPause
 
@@ -193,7 +193,7 @@ class Browser:
         return ''.join(tabs)
 
     def _print(self):
-        with self._print_pause():
+        with self._print_pause(is_in_print_function=True):
             terminal_width = os.get_terminal_size().columns
             print(ANSICODES.CLEAR_SCREEN, end='')
             print(self.tabs_bar, end='\n\r')
