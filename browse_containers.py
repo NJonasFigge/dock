@@ -213,6 +213,7 @@ class Browser:
 
     def _printer_loop(self):
         while isinstance(self._printer_thread, Thread):
+            self._print()
             if not self._is_print_pause:
                 # - Update screen if there are new lines in the active tab or if more than 1s passed since last update
                 if (self.active_tab_container.num_unseen_lines > 0
