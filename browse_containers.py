@@ -160,13 +160,13 @@ class Browser:
             if i == self._active_tab_id:
                 tabs.append(f"{ANSICODES.DARK_GRAY_BG} ╔ {container.name} ╗ {ANSICODES.RESET}")
             else:
-                if self.active_tab_container.num_unseen_lines > 0:
-                    badge_color = self.active_tab_container.most_urgent_unseen_color
+                if container.num_unseen_lines > 0:
+                    badge_color = container.most_urgent_unseen_color
                     if badge_color is None:
                         badge = (f"{ANSICODES.LIGHT_GRAY_BG}{ANSICODES.BLACK_FG}"
-                                 f"{self.active_tab_container.num_unseen_lines}")
+                                 f"{container.num_unseen_lines}")
                     else:
-                        badge = f"{badge_color}{self.active_tab_container.num_unseen_lines}"
+                        badge = f"{badge_color}{container.num_unseen_lines}"
                 else:
                     badge = ' '
                 tabs.append(f"{ANSICODES.LIGHT_GRAY_BG}{ANSICODES.BLACK_FG}  {container.name} {badge}  "
