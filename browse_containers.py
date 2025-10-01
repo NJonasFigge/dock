@@ -174,13 +174,13 @@ class Browser:
 
     def _print_new_screen(self):
         self._is_log_printing_paused = True
-        terminal_width = os.get_terminal_size().columns - 1
+        terminal_width = os.get_terminal_size().columns
         print(ANSICODES.CLEAR_SCREEN, end='')
         print(self.tabs_bar, end='\n\r')
         if self._is_instructions_minimized:
             instructions = f' [I] to expand instructions...'
         else:
-            instructions = '\n'.join([line.ljust(terminal_width) for line in self._instruction_lines])
+            instructions = '\n\r'.join([line.ljust(terminal_width) for line in self._instruction_lines])
         print(ANSICODES.LIGHT_GRAY_BG + ANSICODES.BLACK_FG
               + f' Started at {self._start_time.strftime("%Y-%m-%d %H:%M:%S")}'.ljust(terminal_width)
               + ANSICODES.RESET, end='\n\r')
