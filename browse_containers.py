@@ -170,7 +170,7 @@ class Browser:
                                    '               [Enter]    - Open a shell in this container',
                                    '               [I]        - Minimize these instructions',
                                    '               [Q]        - Quit this browser']
-        self._is_instructions_minimized = False
+        self._is_instructions_minimized = True
         self._printer_thread: Thread = Thread(target=self._printer_loop, daemon=True)
         self._last_updated_tabs_bar: dt.datetime = dt.datetime.fromtimestamp(0)
         self._is_printing_paused = False
