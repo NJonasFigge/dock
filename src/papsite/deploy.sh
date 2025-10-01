@@ -6,6 +6,17 @@ export DEPLOY_TARGET=/usr/share/nginx/html
 export VENV_DIR=/app/venv
 export IS_LIVE=${IS_LIVE:-false}
 
+# - If FIXEDBRANCH is set, override BRANCH
+if [ -n "$FIXEDBRANCH" ]; then
+  export BRANCH="$FIXEDBRANCH"
+fi
+
+# - If BRANCH is not set, raise error
+if [ -z "$BRANCH" ]; then
+  echo "Error: BRANCH environment variable is not set."
+  exit 1
+fi
+
 # - Set to exit on error
 set -e
 
