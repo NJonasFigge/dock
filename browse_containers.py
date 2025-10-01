@@ -148,6 +148,7 @@ class Browser:
         self._is_instructions_minimized = False
         self._log_printer_thread: Thread = Thread(target=self._print_log, daemon=True)
         self._is_log_printing_paused = False
+        self._last_updated_tabs_bar: dt.datetime = NotImplemented
 
     @property
     def active_tab_container(self): return self._containers[self._active_tab_id]
@@ -171,13 +172,6 @@ class Browser:
                  f'{ANSICODES.RESET}') for i, (name, badge) in enumerate(zip(tab_names, badges))]
         return ''.join(tabs)
 
-    def _print_log(self):
-        while self._log_printer_thread is not None:
-            if not self._is_log_printing_paused:
-                line = next(self.active_tab_container.new_log_lines, None)
-                if line is not None:
-                    print(line, end='\n\r')
-
     def _print_new_screen(self):
         self._is_log_printing_paused = True
         terminal_width = os.get_terminal_size().columns
@@ -187,11 +181,25 @@ class Browser:
             instructions = f' [I] to expand instructions...'
         else:
             instructions = '\n'.join([line.ljust(terminal_width) for line in self._instruction_lines])
+        print(ANSICODES.LIGHT_GRAY_BG
+              + f' Started at {self._start_time.strftime("%Y-%m-%d %H:%M:%S")}'.ljust(terminal_width)
+              + ANSICODES.RESET)
         print(ANSICODES.DARK_GRAY_BG + instructions + ANSICODES.RESET)
-        print(f'{ANSICODES.GRAY_FG}Started at {self._start_time.strftime("%Y-%m-%d %H:%M:%S")}\n')
         for line in self.active_tab_container.all_seen_log_lines:
             print(line, end='\n\r')
         self._is_log_printing_paused = False
+        self._last_updated_tabs_bar = dt.datetime.now()
+
+    def _print_log(self):
+        while self._log_printer_thread is not None:
+            if not self._is_log_printing_paused:
+                line = next(self.active_tab_container.new_log_lines, None)
+                if line is not None:
+                    print(line, end='\n\r')
+            time_since_last_tabs_bar_update = ((dt.datetime.now() - self._last_updated_tabs_bar).total_seconds()
+                                               if self._last_updated_tabs_bar is not NotImplemented else float('inf'))
+            if time_since_last_tabs_bar_update > 1:
+                self._print_new_screen()
 
     def switch_tab(self, backwards: bool = False):
         self._active_tab_id = (self._active_tab_id + (-1 if backwards else 1)) % len(self._containers)
