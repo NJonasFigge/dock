@@ -17,7 +17,7 @@ services:
   # === The "My Climate" base image ===
   # - This image is the basis for all other images. It installs some basic packages and does some initial setup that
   #   makes me feel well.
-  myclimate-base:
+  my-climate:
     # --- For build-time ---
     image: my-climate  # Name the built image
     build:
@@ -26,7 +26,7 @@ services:
 
   # === The "My Webserver" base image ===
   # - This image is the basis for all webserver images. It installs and configures a webserver (nginx + cgiwrap)
-  mywebserver-base:
+  my-webserver:
     # --- For build-time ---
     image: my-webserver  # Name the built image
     build:
