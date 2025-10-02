@@ -83,6 +83,8 @@ services:
   #   any servable contents itself, but retrieves them from the other containers.
   reverse-proxy:
     # --- Static definitions ---
+    depends_on:  # Images to build before this
+      - mywebserver-base  # This image is based on the mywebserver-base image
     # restart: always
 
     # --- For build-time ---
@@ -111,6 +113,10 @@ services:
   # - This container will clone the papsite repo's latest version branch, render the contents, deploy them to a certain
   #   directory and serve that directory to the reverse proxy.
   papsite-live:
+    # --- Static definitions ---
+    depends_on:  # Images to build before this
+      - papsite-base  # This image is based on the papsite-base image
+
     # --- For build-time ---
     build:
       context: ./papsite  # Build in here, also use this Dockerfile
@@ -138,6 +144,10 @@ services:
   # - This container will clone the papsite repo's main branch, render the contents, deploy them to a certain
   #   directory and serve that directory to the reverse proxy.
   papsite-stage:
+    # --- Static definitions ---
+    depends_on:  # Images to build before this
+      - papsite-base  # This image is based on the papsite-base image
+
     # --- For build-time ---
     build:
       context: ./papsite  # Build in here, also use this Dockerfile
@@ -163,6 +173,10 @@ services:
   # - This container will clone an arbitrary branch of the papsite repo, render the contents, deploy them to a certain
   #   directory and serve that directory to the reverse proxy.
   papsite-devtest:
+    # --- Static definitions ---
+    depends_on:  # Images to build before this
+      - papsite-base  # This image is based on the papsite-base image
+
     # --- For build-time ---
     build:
       context: ./papsite  # Build in here, also use this Dockerfile
@@ -193,6 +207,8 @@ services:
   # - This container will serve the family storage via WedDAV.
   fileserver:
     # --- Static definitions ---
+    depends_on:  # Images to build before this
+      - mywebserver-base  # This image is based on the mywebserver-base image
     # restart: always
 
     # --- For build-time ---
@@ -214,6 +230,8 @@ services:
   # - This container will run an LLM service.
   ai-server:
     # --- Static definitions ---
+    depends_on:  # Images to build before this
+      - myclimate-base  # This image is based on the myclimate-base image
     # restart: always
 
     # --- For build-time ---
@@ -242,6 +260,8 @@ services:
   # - This container will clone and run the main branch of the zettelbot repo.
   zettelbot:
     # --- Static definitions ---
+    depends_on:  # Images to build before this
+      - myclimate-base  # This image is based on the myclimate-base image
     # restart: always
 
     # --- For build-time ---
@@ -264,6 +284,8 @@ services:
   # - This container will clone and run the main branch of the zettelbot repo.
   schaluppenbot:
     # --- Static definitions ---
+    depends_on:  # Images to build before this
+      - myclimate-base  # This image is based on the myclimate-base image
     # restart: always
     depends_on:
       - fileserver  # Needs access to the family storage
@@ -288,9 +310,9 @@ services:
   # - This container will clone and run the main branch of the zettelbot repo.
   alpacabot:
     # --- Static definitions ---
+    depends_on:  # Images to build before this
+      - myclimate-base  # This image is based on the myclimate-base image
     # restart: always
-    depends_on:
-      - ai-server  # Needs access to the LLM service
 
     # --- For build-time ---
     build:
@@ -314,6 +336,8 @@ services:
   # - This container will clone and run the main branch of the zettelbot repo.
   eheboostbot:
     # --- Static definitions ---
+    depends_on:  # Images to build before this
+      - myclimate-base  # This image is based on the myclimate-base image
     # restart: always
 
     # --- For build-time ---
