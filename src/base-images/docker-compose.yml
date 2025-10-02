@@ -35,7 +35,7 @@ services:
 
   # === The "Papsite" base image ===
   # - This image is the basis for all papsite images. It installs and configures everything needed to run a papsite.
-  papsite:
+  papsite-base:
     # --- For build-time ---
     image: papsite-base  # Name the built image
     build:
