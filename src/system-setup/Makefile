@@ -51,26 +51,26 @@ auth:
 	@if [ ! -e /usr/bin/htpasswd ]; then \
   		sudo apt install apache2-utils; \
 	fi
-	@if [ ! -e ../src/papsite/auth/devs.htpasswd ]; then \
+	@if [ ! -e ../services/papsite/auth/devs.htpasswd ]; then \
 		echo "--- USER INTERACTION REQUIRED ---"; \
 		echo "Please set Papsite-Devs password for user 'jonas':"; \
-		htpasswd -c ../src/papsite/auth/devs.htpasswd jonas; \
+		htpasswd -c ../services/papsite/auth/devs.htpasswd jonas; \
 		echo "Please set Papsite-Devs password for user 'tim':"; \
-		htpasswd ../src/papsite/auth/devs.htpasswd tim; \
+		htpasswd ../services/papsite/auth/devs.htpasswd tim; \
 	fi
-	@if [ ! -e ../src/papsite/auth/testers.htpasswd ]; then \
+	@if [ ! -e ../services/papsite/auth/testers.htpasswd ]; then \
 		echo "Please set Papsite-Testers password for user 'betatester':"; \
-		htpasswd -c ../src/papsite/auth/testers.htpasswd betatester; \
+		htpasswd -c ../services/papsite/auth/testers.htpasswd betatester; \
 	fi
-	@if [ ! -e ../src/webdav/.htpasswd ]; then \
+	@if [ ! -e ../services/webdav/.htpasswd ]; then \
 		echo "Please set WebDAV password for user 'jonasundchristine':"; \
-		htpasswd -c ../src/webdav/.htpasswd jonasundchristine; \
+		htpasswd -c ../services/webdav/.htpasswd jonasundchristine; \
 	fi
 
 reauth:
-	rm -f ../src/papsite/auth/devs.htpasswd
-	rm -f ../src/papsite/auth/testers.htpasswd
-	rm -f ../src/webdav/auth/.htpasswd
+	rm -f ../services/papsite/auth/devs.htpasswd
+	rm -f ../services/papsite/auth/testers.htpasswd
+	rm -f ../services/webdav/auth/.htpasswd
 	$(MAKE) auth
 
 tmux:
@@ -112,7 +112,7 @@ starship-toml: python-is-python3
 	@if [ ! -e /usr/local/bin/starship ]; then \
   		curl -sS https://starship.rs/install.sh | sh; \
 	fi
-	python ../utils/generate_starship_toml.py $(PROMPTHUE) -o ~/.config/starship.toml $(STARSHIPARGS)
+	python ../starship-utils/generate_starship_toml.py $(PROMPTHUE) -o ~/.config/starship.toml $(STARSHIPARGS)
 
 starship-activation:
 ifeq ($(KEEPBASH),true)

@@ -1,25 +1,17 @@
 .idea
 
+# --- Context preparations
+src/base-images/my-climate/config.fish
+src/base-images/my-climate/utils
+
 # --- Authentication details ---
-src/_base/papsite-base/auth/*
-src/fileserver/.htpasswd
+src/base-images/papsite-base/auth/*
+src/services/fileserver/.htpasswd
 
 # --- Prebuilt venvs ---
-src/papsite/venvs/live-venv/*
-src/papsite/venvs/stage-venv/*
-src/papsite/venvs/devtest-venv/*
-
-# --- Context preparations
-src/ai-server/config.fish
-src/ai-server/utils
-src/papsite/config.fish
-src/papsite/utils
-src/reverse-proxy/config.fish
-src/reverse-proxy/utils
-src/telegram-bot/config.fish
-src/telegram-bot/utils
-src/fileserver/config.fish
-src/fileserver/utils
+src/services/papsite/venvs/live-venv/*
+src/services/papsite/venvs/stage-venv/*
+src/services/papsite/venvs/devtest-venv/*
 
 # --- Include all placeholder files ---
 !**/.gitkeep

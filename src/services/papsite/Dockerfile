@@ -42,7 +42,7 @@ RUN rm -rf /tmp/build-cgi
 # === ACTIVATE CUSTOM STARSHIP CONFIGURATION ===
 
 # - Generate starship configuration with the given prompt hue inside the .config folder of the root user
-RUN python utils/generate_starship_toml.py $PROMPTHUE -o /root/.config/starship.toml --good-spacers
+RUN python starship-utils/generate_starship_toml.py $PROMPTHUE -o /root/.config/starship.toml --good-spacers
 
 
 # === SET ENTRYPOINT ===

@@ -1,14 +1,8 @@
 
 # === BASE IMAGE ===
 
-# - Use the my-climate base image
-FROM my-climate:latest
-
-
-# === BASE IMAGE ===
-
-# - Use the my-climate base image
-FROM my-climate:latest
+# - Use the my-webserver base image
+FROM my-webserver:latest
 
 
 # === ARGUMENTS ===
@@ -20,10 +14,10 @@ ARG PROMPTHUE="310"
 # === ACTIVATE CUSTOM STARSHIP CONFIGURATION ===
 
 # - Generate starship configuration with the given prompt hue inside the .config folder of the root user
-RUN python utils/generate_starship_toml.py $PROMPTHUE -o /root/.config/starship.toml --good-spacers
+RUN python starship-utils/generate_starship_toml.py $PROMPTHUE -o /root/.config/starship.toml --good-spacers
 
 
 # === SET COMMAND ===
 
-# - Open shell
-CMD [ "fish" ]
+# - Start nginx server in foreground (so that the container doesn't exit)
+CMD ["nginx", "-g", "daemon off;"]

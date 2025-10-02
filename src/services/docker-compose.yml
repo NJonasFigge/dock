@@ -1,5 +1,8 @@
 
-name: dock
+# - This Docker Compose file is used to build and run the main services. Building this assumes that the base images
+#   have already been built and are up to date.
+
+name: run-services
 
 
 networks:
@@ -25,45 +28,6 @@ networks:
 
 
 services:
-  # ################################################ MY BASE IMAGES ####################################################
-
-  # === The "My Climate" base image ===
-  # - This image is the basis for all other images. It installs some basic packages and does some initial setup that
-  #   makes me feel well.
-  myclimate-base:
-    # --- For build-time ---
-    image: my-climate:latest  # Name the built image
-    build:
-      context: ./_base/my-climate  # Build in here, also use this Dockerfile
-
-
-  # === The "My Webserver" base image ===
-  # - This image is the basis for all webserver images. It installs and configures a webserver (nginx + cgiwrap)
-  mywebserver-base:
-    # --- Static definitions ---
-    depends_on:  # Services to start before this
-      - myclimate-base  # This image is based on the myclimate-base image
-
-    # --- For build-time ---
-    image: my-webserver:latest  # Name the built image
-    build:
-      context: ./_base/my-webserver  # Build in here, also use this Dockerfile
-
-
-  # === The "Papsite" base image ===
-  # - This image is the basis for all papsite images. It installs and configures everything needed to run a papsite.
-  papsite-base:
-    # --- Static definitions ---
-    depends_on:  # Services to start before this
-      - mywebserver-base  # This image is based on the mywebserver-base image
-
-    # --- For build-time ---
-    image: papsite-base:latest  # Name the built image
-    build:
-      context: ./_base/papsite-base  # Build in here, also use this Dockerfile
-
-
-
   # ############################################### REVERSE PROXY ######################################################
 
   # === THE REVERSE PROXY SERVICE ===
@@ -77,7 +41,7 @@ services:
 
     # --- For build-time ---
     build:
-      context: ./reverse-proxy  # Build in here, also use this Dockerfile
+      context: reverse-proxy  # Build in here, also use this Dockerfile
       args:
         PROMPTHUE: 0  # Prompt color hue (0-360), 0 = red
 
@@ -107,7 +71,7 @@ services:
 
     # --- For build-time ---
     build:
-      context: ./papsite  # Build in here, also use this Dockerfile
+      context: papsite  # Build in here, also use this Dockerfile
       args:  # Build arguments that steer the build process
         ACCESS: www  # No password required
         FIXEDBRANCH: latest  # Always only use the latest version branch
@@ -138,7 +102,7 @@ services:
 
     # --- For build-time ---
     build:
-      context: ./papsite  # Build in here, also use this Dockerfile
+      context: papsite  # Build in here, also use this Dockerfile
       args:  # Build arguments that steer the build process
         ACCESS: devs, testers  # Access granted to users in these htpasswd-files
         FIXEDBRANCH: main  # Always only use main branch
@@ -167,7 +131,7 @@ services:
 
     # --- For build-time ---
     build:
-      context: ./papsite  # Build in here, also use this Dockerfile
+      context: papsite  # Build in here, also use this Dockerfile
       args:  # Build arguments that steer the build process
         ACCESS: devs  # Access granted to users in these htpasswd-files
         CGI_SCRIPTS: deploy.cgi
@@ -201,7 +165,7 @@ services:
 
     # --- For build-time ---
     build:
-      context: ./fileserver
+      context: fileserver
       args:
         PROMPTHUE: 110  # Prompt color hue (0-360), 110 = green
 
@@ -224,7 +188,7 @@ services:
 
     # --- For build-time ---
     build:
-      context: ./ai-server  # Build in here, also use this Dockerfile
+      context: ai-server  # Build in here, also use this Dockerfile
       args:
         PROMPTHUE: 150  # Prompt color hue (0-360), 150 = turquoise
 
@@ -254,7 +218,7 @@ services:
 
     # --- For build-time ---
     build:
-      context: ./telegram-bot  # Build in here, also use this Dockerfile
+      context: telegram-bot  # Build in here, also use this Dockerfile
       args:
         PROMPTHUE: 200  # Prompt color hue (0-360), 200 = light blue
 
@@ -278,7 +242,7 @@ services:
 
     # --- For build-time ---
     build:
-      context: ./telegram-bot  # Build in here, also use this Dockerfile
+      context: telegram-bot  # Build in here, also use this Dockerfile
       args:
         PROMPTHUE: 210  # Prompt color hue (0-360), 210 = blue
 
@@ -302,7 +266,7 @@ services:
 
     # --- For build-time ---
     build:
-      context: ./telegram-bot  # Build in here, also use this Dockerfile
+      context: telegram-bot  # Build in here, also use this Dockerfile
       args:
         PROMPTHUE: 230  # Prompt color hue (0-360), 230 = dark blue
 
@@ -328,7 +292,7 @@ services:
 
     # --- For build-time ---
     build:
-      context: ./telegram-bot  # Build in here, also use this Dockerfile
+      context: telegram-bot  # Build in here, also use this Dockerfile
       args:
         PROMPTHUE: 245  # Prompt color hue (0-360), 245 = lilac
 

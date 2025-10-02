@@ -1,0 +1,46 @@
+
+# - This Docker Compose file is used to build the base images for the main services.
+#   Build this BEFORE starting the main service images and build it in SEQUENTIAL mode:
+#   `docker-compose build --no-parallel`. (This is because some images depend on others being built first.)
+
+
+name: build-base-images  # Name of this Docker Compose setup
+
+
+services:
+  # ################################################ MY BASE IMAGES ####################################################
+
+  # === The "My Climate" base image ===
+  # - This image is the basis for all other images. It installs some basic packages and does some initial setup that
+  #   makes me feel well.
+  myclimate-base:
+    # --- For build-time ---
+    image: my-climate:latest  # Name the built image
+    build:
+      context: my-climate  # Build in here, also use this Dockerfile
+
+
+  # === The "My Webserver" base image ===
+  # - This image is the basis for all webserver images. It installs and configures a webserver (nginx + cgiwrap)
+  mywebserver-base:
+    # --- Static definitions ---
+    depends_on:  # Services to start before this
+      - myclimate-base  # This image is based on the myclimate-base image
+
+    # --- For build-time ---
+    image: my-webserver  # Name the built image
+    build:
+      context: my-webserver  # Build in here, also use this Dockerfile
+
+
+  # === The "Papsite" base image ===
+  # - This image is the basis for all papsite images. It installs and configures everything needed to run a papsite.
+  papsite-base:
+    # --- Static definitions ---
+    depends_on:  # Services to start before this
+      - mywebserver-base  # This image is based on the mywebserver-base image
+
+    # --- For build-time ---
+    image: papsite-base  # Name the built image
+    build:
+      context: papsite-base  # Build in here, also use this Dockerfile
