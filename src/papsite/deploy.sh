@@ -19,6 +19,7 @@ fi
 
 # - Set to exit on error
 set -e
+trap 'echo "An error occurred in deploy.sh!"; bash' ERR
 
 # - Clean clone target
 rm -rf /app/papsite
