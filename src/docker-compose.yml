@@ -46,7 +46,7 @@ services:
   mywebserver-base:
     # --- Static definitions ---
     depends_on:  # Images to build before this
-      - myclimate-base  # This image is based on the myclimate-base image
+      - my-climate  # This image is based on the my-climate image
 
     # --- For build-time ---
     image: my-webserver  # Name the built image
@@ -63,7 +63,7 @@ services:
   papsite-base:
     # --- Static definitions ---
     depends_on:  # Images to build before this
-      - mywebserver-base  # This image is based on the mywebserver-base image
+      - my-webserver  # This image is based on the my-webserver image
 
     # --- For build-time ---
     image: papsite-base  # Name the built image
@@ -84,7 +84,7 @@ services:
   reverse-proxy:
     # --- Static definitions ---
     depends_on:  # Images to build before this
-      - mywebserver-base  # This image is based on the mywebserver-base image
+      - my-webserver  # This image is based on the my-webserver image
     # restart: always
 
     # --- For build-time ---
@@ -208,7 +208,7 @@ services:
   fileserver:
     # --- Static definitions ---
     depends_on:  # Images to build before this
-      - mywebserver-base  # This image is based on the mywebserver-base image
+      - my-webserver  # This image is based on the my-webserver image
     # restart: always
 
     # --- For build-time ---
@@ -231,7 +231,7 @@ services:
   ai-server:
     # --- Static definitions ---
     depends_on:  # Images to build before this
-      - myclimate-base  # This image is based on the myclimate-base image
+      - my-climate  # This image is based on the my-climate image
     # restart: always
 
     # --- For build-time ---
@@ -261,7 +261,7 @@ services:
   zettelbot:
     # --- Static definitions ---
     depends_on:  # Images to build before this
-      - myclimate-base  # This image is based on the myclimate-base image
+      - my-climate  # This image is based on the my-climate image
     # restart: always
 
     # --- For build-time ---
@@ -285,7 +285,7 @@ services:
   schaluppenbot:
     # --- Static definitions ---
     depends_on:  # Images to build before this
-      - myclimate-base  # This image is based on the myclimate-base image
+      - my-climate  # This image is based on the my-climate image
     # restart: always
 
     # --- For build-time ---
@@ -309,7 +309,7 @@ services:
   alpacabot:
     # --- Static definitions ---
     depends_on:  # Images to build before this
-      - myclimate-base  # This image is based on the myclimate-base image
+      - my-climate  # This image is based on the my-climate image
     # restart: always
 
     # --- For build-time ---
@@ -335,7 +335,7 @@ services:
   eheboostbot:
     # --- Static definitions ---
     depends_on:  # Images to build before this
-      - myclimate-base  # This image is based on the myclimate-base image
+      - my-climate  # This image is based on the my-climate image
     # restart: always
 
     # --- For build-time ---
