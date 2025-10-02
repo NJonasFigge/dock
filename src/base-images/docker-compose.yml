@@ -19,7 +19,7 @@ services:
   #   makes me feel well.
   myclimate-base:
     # --- For build-time ---
-    image: my-climate:latest  # Name the built image
+    image: my-climate  # Name the built image
     build:
       context: my-climate  # Build in here, also use this Dockerfile
 
@@ -27,10 +27,6 @@ services:
   # === The "My Webserver" base image ===
   # - This image is the basis for all webserver images. It installs and configures a webserver (nginx + cgiwrap)
   mywebserver-base:
-    # --- Static definitions ---
-    depends_on:  # Services to start before this
-      - myclimate-base  # This image is based on the myclimate-base image
-
     # --- For build-time ---
     image: my-webserver  # Name the built image
     build:
@@ -39,11 +35,7 @@ services:
 
   # === The "Papsite" base image ===
   # - This image is the basis for all papsite images. It installs and configures everything needed to run a papsite.
-  papsite-base:
-    # --- Static definitions ---
-    depends_on:  # Services to start before this
-      - mywebserver-base  # This image is based on the mywebserver-base image
-
+  papsite:
     # --- For build-time ---
     image: papsite-base  # Name the built image
     build:

@@ -43,8 +43,8 @@ build-base: prepare-build-base down
   		$(DC_BASE) build papsite-base
 
 buildover-base: prepare-build-base down
-	$(DC_BASE) build --no-cache my-climate && \
-  		$(DC_BASE) build --no-cache my-webserver && \
+	$(DC_BASE) build --no-cache myclimate-base && \
+  		$(DC_BASE) build --no-cache mywebserver-base && \
   		$(DC_BASE) build --no-cache papsite-base
 
 build: prepare-build-base down
