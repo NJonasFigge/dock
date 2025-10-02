@@ -29,7 +29,8 @@ help:
 .PHONY: papsite-base-context build up vup down restart logs clean exec shell
 
 papsite-base-context:
-	@if echo "$(SERVICES)" | grep -q "papsite"; then \
+	# If 'SERVICES' contains 'papsite' or is empty
+	@if [ -z "$(SERVICES)" ] || echo "$(SERVICES)" | grep -qw "papsite"; then \
 		cp system-setup/config.fish src/_base/papsite/; \
 		cp -r starship-utils src/_base/papsite/; \
 		echo "Successfully prepared build context of papsite-base image"; \
