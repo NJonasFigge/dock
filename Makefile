@@ -26,21 +26,16 @@ help:
 	@echo "  browse         - Open log browser (with shell spawning capabilities) for all running containers"
 	@echo "  iup            - 'Interactive up': Start all services and open log browser"
 
-.PHONY: papsite-base-context build up vup down restart logs clean exec shell
+.PHONY: context build up vup down restart logs clean exec shell
 
-papsite-base-context:
-	@if [ -z "$(SERVICES)" ] || echo "$(SERVICES)" | grep -qw "papsite"; then \
-		cp system-setup/config.fish src/_base/papsite-base/; \
-		cp -r starship-utils src/_base/papsite-base/; \
-		echo "Successfully prepared build context of papsite-base image"; \
-	else \
-		echo "Skipping preparation of papsite-base image as SERVICES does not contain 'papsite'"; \
-	fi
+context:
+	cp system-setup/config.fish src/_base/papsite-base/
+	cp -r starship-utils src/_base/papsite-base/
 
-build: papsite-base-context down
+build: context down
 	$(DC) build $(SERVICES)
 
-buildover: papsite-base-context down
+buildover: context down
 	$(DC) build --no-cache $(SERVICES)
 
 up:
