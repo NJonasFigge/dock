@@ -109,11 +109,12 @@ class Container:
     @property
     def most_urgent_unseen_color(self):
         color_order = [ANSICODES.RED_FG, ANSICODES.YELLOW_FG, ANSICODES.BLUE_FG, ANSICODES.GREEN_FG,
-                       ANSICODES.GRAY_FG, None]
+                       ANSICODES.GRAY_FG, '']
         unseen_colors = [ll.color for ll in self._log_lines[self._log_shown_until:]]
         for color in color_order:
             if color in unseen_colors:
                 return color
+        return ''  # No unseen lines
 
     def _poll_logs(self):
         while isinstance(self._logging_process, subprocess.Popen) and self._logging_process.stdout is not None:
