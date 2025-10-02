@@ -1,7 +1,11 @@
 
 # - This Docker Compose file is used to build the base images for the main services.
-#   Build this BEFORE starting the main service images and build it in SEQUENTIAL mode:
-#   `docker-compose build --no-parallel`. (This is because some images depend on others being built first.)
+#   It is crucial to follow these two steps for the system to work as expected:
+#       1. Build these images BEFORE starting the main services
+#       2. Build these images one after another, since docker compose does not handle build order automatically:
+#           - 1st: myclimate-base
+#           - 2nd: mywebserver-base
+#           - 3rd: papsite-base
 
 
 name: build-base-images  # Name of this Docker Compose setup

@@ -1,7 +1,7 @@
 #! /usr/bin/make
 
 # Variables
-DC_BASE := docker compose -f src/base-images/docker-compose.yml --no-parallel
+DC_BASE := docker compose -f src/base-images/docker-compose.yml
 DC_MAIN := docker compose -f src/services/docker-compose.yml
 
 # Defaults
@@ -38,10 +38,14 @@ prepare-build-base:
 	cp -r src/starship-utils src/base-images/my-climate/
 
 build-base: prepare-build-base down
-	$(DC_BASE) build $(SERVICES)
+	$(DC_BASE) build my-climate && \
+  		$(DC_BASE) build my-webserver && \
+  		$(DC_BASE) build papsite-base
 
 buildover-base: prepare-build-base down
-	$(DC_BASE) build --no-cache $(SERVICES)
+	$(DC_BASE) build --no-cache my-climate && \
+  		$(DC_BASE) build --no-cache my-webserver && \
+  		$(DC_BASE) build --no-cache papsite-base
 
 build: prepare-build-base down
 	$(DC_MAIN) build $(SERVICES)
