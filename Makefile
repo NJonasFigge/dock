@@ -30,8 +30,8 @@ help:
 
 papsite-base-context:
 	@if [ -z "$(SERVICES)" ] || echo "$(SERVICES)" | grep -qw "papsite"; then \
-		cp system-setup/config.fish src/_base/papsite/; \
-		cp -r starship-utils src/_base/papsite/; \
+		cp system-setup/config.fish src/_base/papsite-base/; \
+		cp -r starship-utils src/_base/papsite-base/; \
 		echo "Successfully prepared build context of papsite-base image"; \
 	else \
 		echo "Skipping preparation of papsite-base image as SERVICES does not contain 'papsite'"; \
