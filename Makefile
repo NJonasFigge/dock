@@ -30,7 +30,7 @@ help:
 
 context:
 	cp system-setup/config.fish src/_base/papsite-base/
-	cp -r starship-utils src/_base/papsite-base/
+	cp -r starship-utils src/_base/my-climate/
 
 build: context down
 	$(DC) build $(SERVICES)
