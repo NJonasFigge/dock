@@ -34,7 +34,7 @@ services:
     # --- For build-time ---
     image: my-climate  # Name the built image
     build:
-      context: ./_base/myclimate-base  # Build in here, also use this Dockerfile
+      context: ./_base/my-climate  # Build in here, also use this Dockerfile
 
 
   # === The "My Webserver" base image ===
@@ -47,7 +47,7 @@ services:
     # --- For build-time ---
     image: my-webserver  # Name the built image
     build:
-      context: ./_base/mywebserver-base  # Build in here, also use this Dockerfile
+      context: ./_base/my-webserver  # Build in here, also use this Dockerfile
 
 
   # === The "Papsite" base image ===
