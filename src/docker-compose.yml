@@ -287,8 +287,6 @@ services:
     depends_on:  # Images to build before this
       - myclimate-base  # This image is based on the myclimate-base image
     # restart: always
-    depends_on:
-      - fileserver  # Needs access to the family storage
 
     # --- For build-time ---
     build:
