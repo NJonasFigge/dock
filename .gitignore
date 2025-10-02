@@ -1,7 +1,7 @@
 .idea
 
 # --- Authentication details ---
-src/papsite/auth/*
+src/_base/papsite-base/auth/*
 src/fileserver/.htpasswd
 
 # --- Prebuilt venvs ---

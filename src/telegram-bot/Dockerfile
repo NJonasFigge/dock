@@ -1,41 +1,33 @@
 
-FROM python:3.12-slim
-WORKDIR /app
+# === BASE IMAGE ===
+
+# - Use the my-climate base image
+FROM my-climate:latest
+
 
 # === ARGUMENTS ===
 
 # - PROMPTHUE defines which hue (0-360) the prompt shall have. Defaults to an ugly pink.
 ARG PROMPTHUE="310"
 
-# === LAYERS ===
-
 # - REPO defines which git repo the telegram bot is in
 ARG REPO=""
 ENV REPO="$REPO"
 
-# - Deploy entrypoint script (which will deploy the site on runtime)
-COPY entrypoint.sh /app/entrypoint.sh
-RUN chmod +x /app/entrypoint.sh
 
-# - Install fish
-RUN apt-get update && \
-    apt-get install -y fish openssh-client git && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+# === ACTIVATE CUSTOM STARSHIP CONFIGURATION ===
 
-# - Deploy fish configuration
-RUN mkdir -p /root/.config/fish
-COPY config.fish /root/.config/fish/
-
-# - Install starship and configure it
-RUN curl -sS https://starship.rs/install.sh | sh -s -- -y
-COPY utils utils
+# - Generate starship configuration with the given prompt hue inside the .config folder of the root user
 RUN python utils/generate_starship_toml.py $PROMPTHUE -o /root/.config/starship.toml --good-spacers
 
-# - Add github and bitbucket to known ssh hosts
-RUN mkdir -p /root/.ssh && \
-    ssh-keyscan github.com >> /root/.ssh/known_hosts && \
-    ssh-keyscan bitbucket.org >> /root/.ssh/known_hosts
+
+# === SET ENTRYPOINT ===
+
+# - Deploy entrypoint script (which will pull the bot repo and then installs and runs it)
+COPY entrypoint.sh /app/
+
+# - Make entrypoint script runnable
+RUN chmod +x /app/entrypoint.sh
 
 # - Set entrypoint script
 ENTRYPOINT ["/app/entrypoint.sh"]

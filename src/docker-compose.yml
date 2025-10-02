@@ -1,27 +1,82 @@
 
 name: dock
 
+
 networks:
   papsite-live-net:  # Connects reverse-proxy with papsite-live
     name: papsite-live-net
     driver: bridge
+
   papsite-stage-net:  # Connects reverse-proxy with papsite-stage
     name: papsite-stage-net
     driver: bridge
+
   papsite-devtest-net:  # Connects reverse-proxy with papsite-devtest
     name: papsite-devtest-net
     driver: bridge
+
   fileserver-net:  # Connects reverse-proxy with fileserver
     name: fileserver-net
     driver: bridge
+
   ai-net:  # Connects alpacabot with ai-server
     name: ai-net
     driver: bridge
 
 
 services:
+  # ################################################ MY BASE IMAGES ####################################################
 
-  # ############################################ WEBHOSTING INTERFACE ##################################################
+  # === The "My Climate" base image ===
+  # - This image is the basis for all other images. It installs some basic packages and does some initial setup that
+  #   makes me feel well.
+  myclimate-base:
+    # --- For build-time ---
+    image: my-climate  # Name the built image
+    build:
+      context: ./_base/myclimate-base  # Build in here, also use this Dockerfile
+
+    # --- For runtime ---
+    profiles:  # Define profiles that this service belongs to - only start if one of these profiles is active
+      - never  # This service should never be started, it's just a base image
+
+
+  # === The "My Webserver" base image ===
+  # - This image is the basis for all webserver images. It installs and configures a webserver (nginx + cgiwrap)
+  mywebserver-base:
+    # --- Static definitions ---
+    depends_on:  # Images to build before this
+      - myclimate-base  # This image is based on the myclimate-base image
+
+    # --- For build-time ---
+    image: my-webserver  # Name the built image
+    build:
+      context: ./_base/mywebserver-base  # Build in here, also use this Dockerfile
+
+    # --- For runtime ---
+    profiles:  # Define profiles that this service belongs to - only start if one of these profiles is active
+      - never  # This service should never be started, it's just a base image
+
+
+  # === The "Papsite" base image ===
+  # - This image is the basis for all papsite images. It installs and configures everything needed to run a papsite.
+  papsite-base:
+    # --- Static definitions ---
+    depends_on:  # Images to build before this
+      - mywebserver-base  # This image is based on the mywebserver-base image
+
+    # --- For build-time ---
+    image: papsite-base  # Name the built image
+    build:
+      context: ./_base/papsite-base  # Build in here, also use this Dockerfile
+
+    # --- For runtime ---
+    profiles:  # Define profiles that this service belongs to - only start if one of these profiles is active
+      - never  # This service should never be started, it's just a base image
+
+
+
+  # ############################################### REVERSE PROXY ######################################################
 
   # === THE REVERSE PROXY SERVICE ===
   # - This container's main task is to take requests from the www and serve the correct content. It does not include
@@ -29,11 +84,6 @@ services:
   reverse-proxy:
     # --- Static definitions ---
     # restart: always
-    depends_on:  # Services that should start before this
-      - papsite-live
-      - papsite-stage
-      - papsite-devtest
-      - fileserver
 
     # --- For build-time ---
     build:
@@ -52,6 +102,8 @@ services:
     ports:  # Exposed container ports (mapping "<actual_server_port>:<container_port>")
       - "80:80"    # HTTP
       - "443:443"  # HTTPS
+
+
 
   # ################################################### PAPSITES #######################################################
 
@@ -81,6 +133,7 @@ services:
     environment:  # Environment variables that are only necessary when running
       IS_LIVE: true  # Activates live mode
 
+
   # === THE STAGED PAPSITE ===
   # - This container will clone the papsite repo's main branch, render the contents, deploy them to a certain
   #   directory and serve that directory to the reverse proxy.
@@ -104,6 +157,7 @@ services:
     volumes:
       - ./papsite/venvs/stage-venv:/app/venv  # Pre-supply a virtualenv (that might be updated by the container)
       - ./dot-ssh:/root/.ssh:ro  # - For fetching git repos via SSH
+
 
   # === THE DEVTEST PAPSITE ===
   # - This container will clone an arbitrary branch of the papsite repo, render the contents, deploy them to a certain
@@ -131,6 +185,8 @@ services:
     environment:  # Environment variables that are only necessary when running
       BRANCH: nginx
 
+
+
   # ############################################### BACKEND SERVERS ####################################################
 
   # === THE FILESERVER ===
@@ -152,6 +208,7 @@ services:
       - fileserver-net
     expose:  # Won't publish ports to the host machine, only between services
       - "80"   # HTTP
+
 
   # === THE AI-SERVER ===
   # - This container will run an LLM service.
@@ -177,6 +234,8 @@ services:
     # environment:  # Environment variables that are only necessary when running
     #   MODEL_PATH: /models/ggml-model-q4_0.bin  # Path to the model to be used
 
+
+
   # ############################################### TELEGRAM BOTS ######################################################
 
   # === The Zettelbot ===
@@ -200,6 +259,7 @@ services:
     environment:  # Environment variables that are only necessary when running
       REPO: "git@github.com:NJonasFigge/Zettelbot.git"
 
+
   # === The SchaluppenBot ===
   # - This container will clone and run the main branch of the zettelbot repo.
   schaluppenbot:
@@ -222,6 +282,7 @@ services:
       - ./dot-ssh:/root/.ssh:ro  # - For fetching git repos via SSH
     environment:  # Environment variables that are only necessary when running
       REPO: "git@github.com:NJonasFigge/SchaluppenBot.git"
+
 
   # === The AlpacaBot ===
   # - This container will clone and run the main branch of the zettelbot repo.
@@ -247,6 +308,7 @@ services:
       - ./dot-ssh:/root/.ssh:ro  # - For fetching git repos via SSH
     environment:  # Environment variables that are only necessary when running
       REPO: "git@github.com:NJonasFigge/AlpacaBot.git"
+
 
   # === The EheBoostBot ===
   # - This container will clone and run the main branch of the zettelbot repo.

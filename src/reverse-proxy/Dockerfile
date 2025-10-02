@@ -1,31 +1,23 @@
 
-FROM nginx:alpine
-WORKDIR /app
+# === BASE IMAGE ===
+
+# - Use the my-webserver base image
+FROM my-webserver:latest
+
 
 # === ARGUMENTS ===
 
 # - PROMPTHUE defines which hue (0-360) the prompt shall have. Defaults to an ugly pink.
 ARG PROMPTHUE="310"
 
-# === LAYERS ===
 
-# - Install required packages
-RUN apk add --no-cache git bash fcgiwrap spawn-fcgi openssh-client python3 py3-pip make
+# === ACTIVATE CUSTOM STARSHIP CONFIGURATION ===
 
-# - Make "python" point to python3
-RUN ln -sf python3 /usr/bin/python
-
-# - Deploy nginx configuration file
-COPY nginx.conf /etc/nginx/nginx.conf
-
-# - Install fish
-RUN apk add --no-cache fish && mkdir -p /root/.config/fish
-COPY config.fish /root/.config/fish/
-
-# - Install starship and configure it
-RUN curl -sS https://starship.rs/install.sh | sh -s -- -y
-COPY utils utils
+# - Generate starship configuration with the given prompt hue inside the .config folder of the root user
 RUN python utils/generate_starship_toml.py $PROMPTHUE -o /root/.config/starship.toml --good-spacers
 
-# - Entry by starting the nginx server
+
+# === SET COMMAND ===
+
+# - Start nginx server in foreground (so that the container doesn't exit)
 CMD ["nginx", "-g", "daemon off;"]
