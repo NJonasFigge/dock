@@ -29,7 +29,7 @@ help:
 .PHONY: context build up vup down restart logs clean exec shell
 
 context:
-	cp system-setup/config.fish src/_base/papsite-base/
+	cp system-setup/config.fish src/_base/my-climate/
 	cp -r starship-utils src/_base/my-climate/
 
 build: context down
