@@ -10,32 +10,32 @@ SERVICES ?= $(SERVICE)
 .PHONY: help
 help:
 	@echo "Available targets:"
-	@echo "  context        - Prepare build context by copying required files from system-setup to service directories"
-	@echo "  build          - Build all Docker services"
-	@echo "                   You can restrict services with SERVICES='service1 service2', also in targets"
-	@echo "                   'up', 'logs' and buildover"
-	@echo "  buildover      - Build all Docker services without using cache"
-	@echo "  up             - Start all services in detached mode"
-	@echo "  down           - Stop all services"
-	@echo "  restart        - Recreate containers"
-	@echo "  logs           - Follow logs of all services"
-	@echo "  vup            - 'Verbose up': Start all services and open logs"
-	@echo "  clean          - Remove all containers, images, volumes, networks"
-	@echo "  exec           - Run a command in a service: make exec SERVICE=<service> CMD='<command>'"
-	@echo "  shell          - Open a shell in a service: make shell SERVICE=<service>"
-	@echo "  browse         - Open log browser (with shell spawning capabilities) for all running containers"
-	@echo "  iup            - 'Interactive up': Start all services and open log browser"
+	@echo "  myclimate-context  - Prepare build context of my-climate image (base for all other images)"
+	@echo "  build              - Build all Docker services"
+	@echo "                       You can restrict services with SERVICES='service1 service2', also in targets"
+	@echo "                       'up', 'logs' and buildover"
+	@echo "  buildover          - Build all Docker services without using cache"
+	@echo "  up                 - Start all services in detached mode"
+	@echo "  down               - Stop all services"
+	@echo "  restart            - Recreate containers"
+	@echo "  logs               - Follow logs of all services"
+	@echo "  vup                - 'Verbose up': Start all services and open logs"
+	@echo "  clean              - Remove all containers, images, volumes, networks"
+	@echo "  exec               - Run a command in a service: make exec SERVICE=<service> CMD='<command>'"
+	@echo "  shell              - Open a shell in a service: make shell SERVICE=<service>"
+	@echo "  browse             - Open log browser (with shell spawning capabilities) for all running containers"
+	@echo "  iup                - 'Interactive up': Start all services and open log browser"
 
-.PHONY: context build up vup down restart logs clean exec shell
+.PHONY: myclimate-context build up vup down restart logs clean exec shell
 
-context:
+myclimate-context:
 	cp system-setup/config.fish src/_base/my-climate/
 	cp -r starship-utils src/_base/my-climate/
 
-build: context down
+build: myclimate-context down
 	$(DC) build $(SERVICES)
 
-buildover: context down
+buildover: myclimate-context down
 	$(DC) build --no-cache $(SERVICES)
 
 up:
