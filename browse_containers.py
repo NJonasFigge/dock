@@ -144,6 +144,9 @@ class Browser:
     def from_running_containers(update_interval: float = 0.3):
         ps_output = subprocess.run(["docker", "ps", "-q"], capture_output=True, text=True)
         containers = [Container.from_id(cid) for cid in ps_output.stdout.strip().splitlines()]
+        if len(containers) == 0:
+            print("No running containers found.")
+            exit()
         return Browser(containers, update_interval)
 
     @staticmethod
@@ -155,15 +158,16 @@ class Browser:
                            if line.removeprefix('  ') == line.strip()  # Second level indent only
                            and line.endswith(':') and not line.strip().startswith('#')]
         containers = [Container.from_name(name) for name in container_names]
+        if len(containers) == 0:
+            print("No containers found in docker-compose.yml.")
+            exit()
         return Browser(containers, update_interval)
 
     def __init__(self, containers: list[Container], update_interval: float = 0.3):
+        assert len(containers) > 0, "At least one container must be provided."
         self._containers = containers
         self._update_interval = update_interval
         self._start_time = dt.datetime.now()
-        if len(self._containers) == 0:
-            print("No running containers found.")
-            exit()
         self._active_tab_id = 0
         self._instruction_lines = [' Instructions: [A] ↔ [D]  - Switch tabs (containers)',
                                    '               [Space]    - Execute a command this container',
