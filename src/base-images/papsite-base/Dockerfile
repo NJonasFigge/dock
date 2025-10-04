@@ -38,7 +38,7 @@ RUN chmod +x /app/inject-banner.sh
 # === PREPARE CGI SCRIPTS ===
 
 # - Deploy all cgi scripts to a temporary directory
-COPY build-cgi /tmp/
+COPY build-cgi /tmp/build-cgi
 RUN ls -l /tmp/build-cgi
 
 # - Make all cgi scripts runnable
