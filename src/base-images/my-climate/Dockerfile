@@ -64,3 +64,9 @@ RUN curl -sS https://starship.rs/install.sh | sh -s -- -y
 
 # - Configure starship
 COPY starship-utils /app/
+
+
+# === SET WORKING DIRECTORY ===
+
+# - Set working directory to /app
+WORKDIR /app
