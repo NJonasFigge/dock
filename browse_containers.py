@@ -11,6 +11,9 @@ from time import sleep
 from functools import cached_property
 
 
+YML = Path(__file__).parent / 'src/services/docker-compose.yml'
+
+
 class ANSICODES:
     LIGHT_GRAY_BG = '\033[48;5;250m'
     DARK_GRAY_BG = '\033[48;5;240m'
@@ -124,8 +127,7 @@ class Container:
     def start_collecting_logs(self):
         if isinstance(self._logging_process, subprocess.Popen):
             raise RuntimeError("Logging already started.")
-        yml = Path(__file__).parent / 'src/docker-compose.yml'
-        self._logging_process = subprocess.Popen(["docker", "compose", "-f", str(yml), "logs", "-f",
+        self._logging_process = subprocess.Popen(["docker", "compose", "-f", str(YML), "logs", "-f",
                                                   self.name, "--no-log-prefix"],
                                                  stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
         self._log_polling_thread = Thread(target=self._poll_logs, daemon=True)
@@ -152,8 +154,7 @@ class Browser:
 
     @staticmethod
     def from_yml_listed_containers(update_interval: float = 0.3):
-        yml = Path(__file__).parent / 'src/docker-compose.yml'
-        yml_text = yml.read_text()
+        yml_text = YML.read_text()
         services_text = yml_text.split('services:')[1]
         container_names = [line.removesuffix(':').strip() for line in services_text.splitlines()
                            if line.removeprefix('  ') == line.strip()  # Second level indent only
@@ -310,6 +311,7 @@ class Browser:
         thread = self._printer_thread
         self._printer_thread = None
         thread.join(timeout=1.)
+
 
 if __name__ == "__main__":
     browser = Browser.from_yml_listed_containers()
