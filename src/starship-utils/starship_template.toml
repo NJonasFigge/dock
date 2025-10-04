@@ -83,7 +83,7 @@ format = '[ $symbol ($version) ]($style)'
 symbol = ""
 style = "fg:%<c5>% bg:%<c2>%"
 pyenv_version_name = false
-format = '[ via $symbol $virtualenv]($style)'
+format = '[ via $symbol $virtualenv ]($style)'
 
 [time]
 disabled = false
@@ -93,4 +93,4 @@ format = '[  $time ]($style)'
 
 [cmd_duration]
 style = "fg:%<c5>% bg:%<c0>%"
-format = "[took $duration]($style)"
+format = "[ took $duration ]($style)"
