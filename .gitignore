@@ -2,7 +2,7 @@
 
 # --- Context preparations
 src/base-images/my-climate/config.fish
-src/base-images/my-climate/utils
+src/base-images/my-climate/starship-utils
 
 # --- Authentication details ---
 src/base-images/papsite-base/auth/*
