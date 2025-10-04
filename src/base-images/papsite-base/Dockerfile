@@ -8,7 +8,7 @@ FROM my-webserver:latest
 # === PREPARE NGINX PASSWORD PROTECTION TOOLS ===
 
 # - Deploy auth files
-COPY auth /etc/nginx/
+COPY auth /etc/nginx/auth
 
 # - Deploy activation script
 COPY add-auth.sh /app/

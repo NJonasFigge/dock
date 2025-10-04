@@ -17,7 +17,7 @@ RUN apt-get update && \
 RUN rm /etc/nginx/sites-enabled/default
 
 # - Deploy custom nginx configuration
-COPY nginx.conf /etc/nginx/sites-available/my-webserver.conf
+COPY nginx.conf /etc/nginx/sites-available/papierschiffdieband.de.conf
 
 
 # === SETUP CGI-RELATED PACKAGES ===
