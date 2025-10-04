@@ -17,6 +17,15 @@ ARG PROMPTHUE="310"
 RUN ln -sf /usr/share/zoneinfo/Europe/Berlin /etc/localtime
 
 
+# === INSTALL BASIC PACKAGES CLIENT ===
+
+# - Install curl and make
+RUN apt-get update && \
+    apt-get install -y curl make && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+
 # === SETUP SSH CLIENT ===
 
 # - Install ssh client
