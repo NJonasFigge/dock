@@ -153,7 +153,7 @@ if __name__ == "__main__":
         template = template.replace('%<', '{').replace('>%', '}')
         # - Prepare substitutions
         substitutions = palette.as_format_dict
-        substitutions['user_cmd'] = str(Path(__file__).parent / 'beautiful_user.sh')
+        substitutions['user_cmd'] = str(Path(__file__).parent.resolve() / 'beautiful_user.sh')
         # - Format template
         starship_toml_content = template.format(**substitutions)
         # - Un-escape curly braces
