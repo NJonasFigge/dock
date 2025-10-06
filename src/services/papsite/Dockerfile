@@ -22,6 +22,12 @@ ARG FIXEDBRANCH=""
 ENV FIXEDBRANCH="$FIXEDBRANCH"
 
 
+# === DEPLOY NGINX CONFIGURATION ===
+
+# - Deploy custom nginx configuration
+COPY nginx.conf /etc/nginx/nginx.conf
+
+
 # === ACTIVATE NGINX PASSWORD PROTECTION ===
 
 # - Run the add-auth script to deploy the htpasswd files and configure nginx

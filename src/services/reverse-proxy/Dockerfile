@@ -12,6 +12,12 @@ WORKDIR /app
 ARG PROMPTHUE="310"
 
 
+# === DEPLOY NGINX CONFIGURATION ===
+
+# - Deploy custom nginx configuration
+COPY nginx.conf /etc/nginx/nginx.conf
+
+
 # === ACTIVATE CUSTOM STARSHIP CONFIGURATION ===
 
 # - Generate starship configuration with the given prompt hue inside the .config folder of the root user

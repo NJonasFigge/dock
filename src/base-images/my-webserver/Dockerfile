@@ -16,9 +16,6 @@ RUN apt-get update && \
 # - Remove default nginx configuration
 RUN rm /etc/nginx/sites-enabled/default
 
-# - Deploy custom nginx configuration
-COPY nginx.conf /etc/nginx/nginx.conf
-
 
 # === SETUP CGI-RELATED PACKAGES ===
 
