@@ -21,7 +21,7 @@ RUN ln -sf /usr/share/zoneinfo/Europe/Berlin /etc/localtime
 
 # - Install curl and make
 RUN apt-get update && \
-    apt-get install -y curl make && \
+    apt-get install -y bash curl make && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
