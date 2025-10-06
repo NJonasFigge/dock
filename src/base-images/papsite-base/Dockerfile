@@ -14,6 +14,7 @@ COPY auth /etc/nginx/auth
 COPY add-auth.sh ./
 
 # - Make activation script runnable
+RUN ls -la ./
 RUN chmod +x add-auth.sh
 
 
