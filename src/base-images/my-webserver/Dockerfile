@@ -13,11 +13,14 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
+# - Deploy custom nginx configuration
+COPY nginx.conf /etc/nginx/sites-available/papierschiffdieband.de.conf
+
 # - Remove default nginx configuration
 RUN rm /etc/nginx/sites-enabled/default
 
-# - Deploy custom nginx configuration
-COPY nginx.conf /etc/nginx/sites-available/papierschiffdieband.de.conf
+# - Enable custom nginx configuration
+RUN ln -s /etc/nginx/sites-available/papierschiffdieband.de.conf /etc/nginx/sites-enabled/
 
 
 # === SETUP CGI-RELATED PACKAGES ===
