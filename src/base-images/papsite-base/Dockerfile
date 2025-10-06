@@ -3,6 +3,7 @@
 
 # - Use the my-webserver base image
 FROM my-webserver:latest
+WORKDIR /app
 
 
 # === PREPARE NGINX PASSWORD PROTECTION TOOLS ===
@@ -14,7 +15,6 @@ COPY auth /etc/nginx/auth
 COPY add-auth.sh ./
 
 # - Make activation script runnable
-RUN ls -la ./
 RUN chmod +x add-auth.sh
 
 

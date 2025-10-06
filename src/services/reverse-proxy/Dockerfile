@@ -3,6 +3,7 @@
 
 # - Use the my-webserver base image
 FROM my-webserver:latest
+WORKDIR /app
 
 
 # === ARGUMENTS ===

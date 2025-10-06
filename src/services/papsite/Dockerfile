@@ -3,6 +3,7 @@
 
 # - Use the papsite base image
 FROM papsite-base:latest
+WORKDIR /app
 
 
 # === ARGUMENTS ===

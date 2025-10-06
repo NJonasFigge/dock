@@ -3,6 +3,7 @@
 
 # - Use the my-climate base image
 FROM my-climate:latest
+WORKDIR /app
 
 
 # === ARGUMENTS ===
