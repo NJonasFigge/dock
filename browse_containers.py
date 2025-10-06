@@ -91,6 +91,7 @@ class Container:
     def __init__(self, cid: str, name: str):
         self._cid = cid
         self._name = name
+        self._is_running = True
         self._logging_process: subprocess.Popen = NotImplemented  # Process pulling logs
         self._log_polling_thread: Thread = NotImplemented  # Thread processing log lines
         self._log_lines: list[LogLine] = []
@@ -102,12 +103,8 @@ class Container:
     def name(self): return self._name
     @property
     def num_unseen_lines(self): return len(self._log_lines) - self._log_shown_until
-
-    def get_log_tail(self, n: int) -> list[LogLine]:
-        start = max(0, len(self._log_lines) - n)
-        for i, (line, color) in enumerate(zip(self._log_lines[start:], self._log_lines[start:])):
-            yield line
-            self._log_shown_until = start + i + 1
+    @property
+    def is_running(self): return self._is_running
 
     @property
     def most_urgent_unseen_color(self):
@@ -120,9 +117,24 @@ class Container:
         return ''  # No unseen lines
 
     def _poll_logs(self):
+        last_ps_call = dt.datetime.fromtimestamp(0)
         while isinstance(self._logging_process, subprocess.Popen) and self._logging_process.stdout is not None:
+            # - Break if container is not running anymore
+            if (dt.datetime.now() - last_ps_call).total_seconds() > 2:
+                last_ps_call = dt.datetime.now()
+                ps_output = subprocess.run(["docker", "ps", "-q", "-f", f"id={self.cid}"],
+                                           capture_output=True, text=True)
+                if ps_output.stdout.strip() == '':
+                    self._is_running = False
+                    break
             for line in self._logging_process.stdout:
                 self._log_lines.append(LogLine(dt.datetime.now(), line.strip()))
+
+    def get_log_tail(self, n: int) -> list[LogLine]:
+        start = max(0, len(self._log_lines) - n)
+        for i, (line, color) in enumerate(zip(self._log_lines[start:], self._log_lines[start:])):
+            yield line
+            self._log_shown_until = start + i + 1
 
     def start_collecting_logs(self):
         if isinstance(self._logging_process, subprocess.Popen):
@@ -133,7 +145,7 @@ class Container:
         self._log_polling_thread = Thread(target=self._poll_logs, daemon=True)
         self._log_polling_thread.start()
 
-    def stop_collectng_logs(self):
+    def stop_collecting_logs(self):
         if isinstance(self._logging_process, subprocess.Popen):
             self._logging_process.terminate()
             self._logging_process = NotImplemented
@@ -221,7 +233,7 @@ class Browser:
         return ''.join(tabs)
 
     def _print(self):
-        with (self._print_pause(is_in_print_function=True)):
+        with self._print_pause(is_in_print_function=True):
             terminal_width = os.get_terminal_size().columns
             print(ANSICODES.CLEAR_SCREEN, end='')
             print(self.tabs_bar, end='\n\r')
@@ -255,6 +267,9 @@ class Browser:
                 line = log_line.colorized + appendix  # Pad to full width
                 print(line, end='\n\r')
                 current_timestamp = log_line.timestamp
+            if not self.active_tab_container.is_running:
+                s = ' stopped '.center(terminal_width, '-')
+                print(ANSICODES.RED_FG + s + ANSICODES.RESET, end='\n\r')
             self._last_updated_tabs_bar = dt.datetime.now()
 
     def _printer_loop(self):
@@ -307,7 +322,7 @@ class Browser:
                     self._print()
                 case _: pass  # Ignore other keys
         for container in self._containers:
-            container.stop_collectng_logs()
+            container.stop_collecting_logs()
         thread = self._printer_thread
         self._printer_thread = None
         thread.join(timeout=1.)

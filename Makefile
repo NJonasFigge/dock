@@ -26,8 +26,8 @@ help:
 	@echo ""
 	@echo "More targets:"
 	@echo "  clean               - Remove all containers, images, volumes, networks"
-	@echo "  buildover           - Build all Docker services without using cache"
 	@echo "  build-base          - Build all base images (used in all other images)"
+	@echo "  buildover           - Build all Docker services without using cache"
 	@echo "  buildover-base      - Build all base images without using cache"
 	@echo "  prepare-build-base  - Prepare building base images (also done before calling the build-base target)"
 
