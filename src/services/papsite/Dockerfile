@@ -49,4 +49,4 @@ RUN python starship-utils/generate_starship_toml.py $PROMPTHUE -o /root/.config/
 # === SET ENTRYPOINT ===
 
 # - Set entrypoint script
-ENTRYPOINT ["entrypoint.sh"]
+ENTRYPOINT ["/app/entrypoint.sh"]
