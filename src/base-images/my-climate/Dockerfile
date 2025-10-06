@@ -3,6 +3,7 @@
 
 # - Use the official lightweight Python image
 FROM python:3.12-slim
+WORKDIR /app
 
 
 # === ARGUMENTS ===
@@ -76,4 +77,4 @@ COPY config.fish fish/
 RUN curl -sS https://starship.rs/install.sh | sh -s -- -y
 
 # - Configure starship
-COPY starship-utils /app/starship-utils
+COPY starship-utils starship-utils

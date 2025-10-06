@@ -25,7 +25,7 @@ RUN python starship-utils/generate_starship_toml.py $PROMPTHUE -o /root/.config/
 # === SET ENTRYPOINT ===
 
 # - Deploy entrypoint script (which will pull the bot repo and then installs and runs it)
-COPY entrypoint.sh ./
+COPY entrypoint.sh .
 
 # - Make entrypoint script runnable
 RUN chmod +x entrypoint.sh
