@@ -1,6 +1,7 @@
 #! /usr/bin/make
 
-.PHONY: help
+
+# ------------------------------------------- CONFIGURABLE VARIABLES ---------------------------------------------------
 
 # - Set fish installation and usage to true, if not specified otherwise
 KEEPBASH ?= false
@@ -10,21 +11,42 @@ PROMPTHUE ?= 210
 STARSHIPARGS = --good-spacers --saturation-bounds .0 .2 --quiet
 
 
+# ------------------------------------------------- HELP TARGET --------------------------------------------------------
+
+.PHONY: help
+
 help:
-	@echo "Available targets:"
-	@echo "  docker               - Install Docker and Docker Compose (if not existing)"
+	@echo "Main targets:"
+	@echo "  all                  - Set up everything"
+	@echo "  required             - Set up all functionally required parts (ssh, docker, authentication)"
+	@echo "Targets for required parts:"
 	@echo "  ssh                  - Install OpenSSH client"
-	@echo "  auth                 - Set up authentication files (if not existing)"
-	@echo "  reauth               - Recreate authentication files (will remove existing ones)"
-	@echo "  tmux                 - Install and configure tmux"
+	@echo "  docker               - Install Docker and Docker Compose (if not existing)"
+	@echo "Environmental targets:"
 	@echo "  cheatsheets          - Copy cheatsheets to the home directory"
+	@echo "  python-is-python3    - Ensure that 'python' points to 'python3' (creates symlink if not existing)"
+	@echo "User shell targets:"
 	@echo "  shell                - Set up the shell (Fish by default or Bash, if KEEPBASH=false)"
+	@echo "  tmux                 - Install and configure tmux"
+	@echo "Beauty targets:"
 	@echo "  starship-toml        - Install starship prompt (if not existing) and generate configuration"
 	@echo "  starship-activation  - Activate starship prompt in the chosen shell"
-	@echo "  all                  - Set up all of the above"
-	@echo "  required             - Set up functionally required things (which are ssh, docker and auth)"
 
-.PHONY: all required tmux docker auth reauth tmux cheatsheets shell starship
+
+# -------------------------------------------------- MAIN TARGETS ------------------------------------------------------
+
+.PHONY: all required
+
+all: ssh docker tmux cheatsheets shell starship-toml starship-activation
+required: ssh docker
+
+
+# -------------------------------------------- TARGETS FOR REQUIRED PARTS ----------------------------------------------
+
+.PHONY: ssh docker
+
+ssh:
+	sudo apt install -y openssh-client
 
 docker:
 	@if [ ! -e /usr/bin/docker ]; then \
@@ -44,40 +66,9 @@ docker:
 	fi
 
 
-ssh:
-	sudo apt install -y openssh-client
+# --------------------------------------------- ENVIRONMENTAL TARGETS --------------------------------------------------
 
-auth:
-	@if [ ! -e /usr/bin/htpasswd ]; then \
-  		sudo apt install apache2-utils; \
-	fi
-	@if [ ! -e ../services/papsite/auth/devs.htpasswd ]; then \
-		echo "--- USER INTERACTION REQUIRED ---"; \
-		echo "Please set Papsite-Devs password for user 'jonas':"; \
-		htpasswd -c ../services/papsite/auth/devs.htpasswd jonas; \
-		echo "Please set Papsite-Devs password for user 'tim':"; \
-		htpasswd ../services/papsite/auth/devs.htpasswd tim; \
-	fi
-	@if [ ! -e ../services/papsite/auth/testers.htpasswd ]; then \
-		echo "Please set Papsite-Testers password for user 'betatester':"; \
-		htpasswd -c ../services/papsite/auth/testers.htpasswd betatester; \
-	fi
-	@if [ ! -e ../services/webdav/.htpasswd ]; then \
-		echo "Please set WebDAV password for user 'jonasundchristine':"; \
-		htpasswd -c ../services/webdav/.htpasswd jonasundchristine; \
-	fi
-
-reauth:
-	rm -f ../services/papsite/auth/devs.htpasswd
-	rm -f ../services/papsite/auth/testers.htpasswd
-	rm -f ../services/webdav/auth/.htpasswd
-	$(MAKE) auth
-
-tmux:
-	sudo apt update
-	sudo apt install tmux
-	cp ./.tmux.conf ~/
-	cp ./.tmux.help ~/
+.PHONY: cheatsheets python-is-python3
 
 cheatsheets:
 	cp -r ./cheatsheets ~/
@@ -89,12 +80,16 @@ python-is-python3:
 	else \
 		echo "Python is already installed."; \
 	fi
-
 	@if [ ! -e /usr/bin/python ]; then \
 		sudo ln -s /usr/bin/python3 /usr/bin/python; \
 	else \
 		echo "'python' already points to 'python3'."; \
 	fi
+
+
+# ----------------------------------------------- USER SHELL TARGETS ---------------------------------------------------
+
+.PHONY: shell tmux
 
 shell:
 ifeq ($(KEEPBASH),false)
@@ -108,6 +103,17 @@ else
 	cp ./.bash_aliases ~/.bash_aliases
 endif
 
+tmux:
+	sudo apt update
+	sudo apt install tmux
+	cp ./.tmux.conf ~/
+	cp ./.tmux.help ~/
+
+
+# --------------------------------------------------- BEAUTY TARGETS ---------------------------------------------------
+
+.PHONY: starship-toml starship-activation
+
 starship-toml: python-is-python3
 	@if [ ! -e /usr/local/bin/starship ]; then \
   		curl -sS https://starship.rs/install.sh | sh; \
@@ -120,7 +126,3 @@ ifeq ($(KEEPBASH),true)
 else
 	echo 'starship init fish | source' >> ~/.config/fish/config.fish
 endif
-
-all: ssh docker auth tmux cheatsheets shell starship-toml starship-activation
-
-required: ssh docker auth

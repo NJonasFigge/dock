@@ -1,57 +1,94 @@
 #! /usr/bin/make
 
+
+# ---------------------------------------------- CONFIGURABLE VARIABLES ------------------------------------------------
+
 # Variables
 DC_BASE := docker compose -f src/base-images/docker-compose.yml
 DC_MAIN := docker compose -f src/services/docker-compose.yml
 
 # Defaults
 SERVICES ?= $(SERVICE)
+BUILD_OPTIONS ?=
 
-# Default target
+
+# --------------------------------------------------- HELP TARGET ------------------------------------------------------
+
 .PHONY: help
+
 help:
-	@echo "Hottest targets:"
+	@echo "Building targets:"
+	@echo "  prepare-build-base  - Prepare building base images (also done before calling the build-base target)"
+	@echo "  build-base          - Build all base images (which are used in all other images)"
+	@echo "                        You can use BUILD_OPTIONS='--no-cache' to build without cache, also in target"
+	@echo "                        'build'"
 	@echo "  build               - Build all Docker services"
 	@echo "                        You can restrict services with SERVICES='service1 service2', also in targets"
 	@echo "                        'up', 'logs', 'buildover' and 'restart'"
+	@echo "  clean               - Remove all containers, images, volumes, networks"
+	@echo "Service management targets:"
 	@echo "  up                  - Start all services in detached mode"
 	@echo "  down                - Stop all services"
-	@echo "  restart             - Stop and start all services"
-	@echo "  logs                - Follow logs of all services"
-	@echo "  browse              - Open log browser (with shell spawning capabilities) for all running containers"
-	@echo "  vup                 - 'Verbose up': Start all services and open logs"
-	@echo "  iup                 - 'Interactive up': Start all services and open log browser"
+	@echo "  logs                - Follow logs of all services (also check out the 'browse' target below for"
+	@echo "						   interactive log browsing)"
 	@echo "  exec                - Run a command in a service: make exec SERVICE=<service> CMD='<command>'"
 	@echo "  shell               - Open a shell in a service: make shell SERVICE=<service>"
-	@echo ""
-	@echo "More targets:"
-	@echo "  clean               - Remove all containers, images, volumes, networks"
-	@echo "  build-base          - Build all base images (used in all other images)"
-	@echo "  buildover           - Build all Docker services without using cache"
-	@echo "  buildover-base      - Build all base images without using cache"
-	@echo "  prepare-build-base  - Prepare building base images (also done before calling the build-base target)"
+	@echo "  browse              - Open log browser (with shell spawning capabilities) for all running containers"
+	@echo "Shortcut targets:"
+	@echo "  restart             - Equivalent to 'make down | up'"
+	@echo "  vup                 - 'Verbose up': Equivalent to 'make up logs'"
+	@echo "  iup                 - 'Interactive up': Equivalent to 'make up browse'"
 
-.PHONY: prepare-build-base build up vup down restart logs clean exec shell
 
-prepare-build-base:
+# ------------------------------------------------ BUILDING TARGETS ----------------------------------------------------
+
+.PHONY: prepare-build-base build-base build clean
+
+auth:
+	@if [ ! -e /usr/bin/htpasswd ]; then \
+  		sudo apt install apache2-utils; \
+	fi
+	@if [ ! -e src/base-images/papsite-base/auth/devs.htpasswd ]; then \
+		echo "--- USER INTERACTION REQUIRED ---"; \
+		echo "Please set Papsite devs password for user 'jonas':"; \
+		htpasswd -c src/base-images/papsite-base/auth/devs.htpasswd jonas; \
+		echo "Please set Papsite devs password for user 'tim':"; \
+		htpasswd src/base-images/papsite-base/auth/devs.htpasswd tim; \
+	fi
+	@if [ ! -e src/base-images/papsite-base/auth/testers.htpasswd ]; then \
+		echo "Please set Papsite testers password for user 'betatester':"; \
+		htpasswd -c src/base-images/papsite-base/auth/testers.htpasswd betatester; \
+	fi
+	@if [ ! -e src/services/fileserver/.htpasswd ]; then \
+		echo "Please set fileserver password for user 'jonasundchristine':"; \
+		htpasswd -c src/services/fileserver/.htpasswd jonasundchristine; \
+	fi
+
+re-auth:
+	rm -f src/base-images/papsite-base/auth/devs.htpasswd
+	rm -f src/base-images/papsite-base/auth/testers.htpasswd
+	rm -f src/services/fileserver/.htpasswd
+	$(MAKE) auth
+
+prepare-build-base: auth
 	cp src/system-setup/config.fish src/base-images/my-climate/
 	cp -r src/starship-utils src/base-images/my-climate/
 
 build-base: prepare-build-base down
-	$(DC_BASE) build my-climate && \
-  		$(DC_BASE) build my-webserver && \
-  		$(DC_BASE) build papsite-base
+	$(DC_BASE) build $(BUILD_OPTIONS) myclimate-base && \
+  		$(DC_BASE) build $(BUILD_OPTIONS) mywebserver-base && \
+  		$(DC_BASE) build $(BUILD_OPTIONS) papsite-base
 
-buildover-base: prepare-build-base down
-	$(DC_BASE) build --no-cache myclimate-base && \
-  		$(DC_BASE) build --no-cache mywebserver-base && \
-  		$(DC_BASE) build --no-cache papsite-base
+build: down
+	$(DC_MAIN) build $(BUILD_OPTIONS) $(SERVICES)
 
-build: prepare-build-base down
-	$(DC_MAIN) build $(SERVICES)
+clean:
+	$(DC_MAIN) down --rmi all --volumes --remove-orphans
 
-buildover: prepare-build-base down
-	$(DC_MAIN) build --no-cache $(SERVICES)
+
+# ----------------------------------------- SERVICE MANAGEMENT TARGETS -------------------------------------------------
+
+.PHONY: up down logs exec shell browse
 
 up:
 	$(DC_MAIN) up -d $(SERVICES)
@@ -63,15 +100,8 @@ down:
 	  	echo "No running containers."; \
 	fi
 
-restart: down up
-
 logs:
 	$(DC_MAIN) logs -f $(SERVICES) || true  # || true to avoid error when exiting via Ctrl+C
-
-vup: up logs  # vup for verbose up
-
-clean:
-	$(DC_MAIN) down --rmi all --volumes --remove-orphans
 
 exec: up
 ifndef SERVICE
@@ -97,4 +127,26 @@ endif
 browse:
 	@python browse_containers.py
 
+
+# ------------------------------------------------ SHORTCUT TARGETS ----------------------------------------------------
+
+.PHONY: restart vup iup
+
+restart: down up
+vup: up logs  # vup for verbose up
 iup: up browse  # iup for interactive up
+
+
+# ---------------------------------------------- SYSTEM SETUP TARGETS --------------------------------------------------
+
+.PHONY: system-full system-minimal
+
+system-full:
+	@echo "Starting full system setup..."
+	$(MAKE) -C src/system-setup all
+	@echo "Full system setup completed. Please restart your terminal session to apply all changes."
+
+system-minimal:
+	@echo "Starting minimal system setup..."
+	$(MAKE) -C src/system-setup required
+	@echo "Minimal system setup completed. Please restart your terminal session to apply all changes."
