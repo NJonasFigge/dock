@@ -46,9 +46,6 @@ RUN chmod 700 /root/.ssh && \
 RUN ssh-keyscan github.com >> /root/.ssh/known_hosts && \
     ssh-keyscan bitbucket.org >> /root/.ssh/known_hosts
 
-# - Test ssh connection to github
-RUN ssh -T git@github.com
-
 
 # === SETUP GIT ===
 
