@@ -2,7 +2,7 @@
 
 # - Set to exit on error
 set -e
-trap 'echo "An error occurred in entrypoint.sh!"; bash' ERR
+trap 'echo "An error occurred in entrypoint.sh!"' ERR
 
 # - Deploy the correct version of papsite
 /app/deploy.sh

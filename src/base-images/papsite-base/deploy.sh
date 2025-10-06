@@ -5,7 +5,6 @@ export REPO="git@bitbucket.org:papierschiff-content/papsite.git"
 export DEPLOY_TARGET=/usr/share/nginx/html
 export VENV_DIR=/app/venv
 export IS_LIVE=${IS_LIVE:-false}
-export GIT_SSH_COMMAND="ssh -o StrictHostKeyChecking=no"
 
 # - If FIXEDBRANCH is set, override BRANCH
 if [ -n "$FIXEDBRANCH" ]; then
@@ -20,7 +19,7 @@ fi
 
 # - Set to exit on error
 set -e
-trap 'echo "An error occurred in deploy.sh!"; bash' ERR
+trap 'echo "An error occurred in deploy.sh!"' ERR
 
 # - Clean clone target
 rm -rf /app/papsite

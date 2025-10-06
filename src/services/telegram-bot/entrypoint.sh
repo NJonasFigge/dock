@@ -5,7 +5,7 @@ export VENV_DIR=/app/venv
 
 # - Set to exit on error
 set -e
-trap 'echo "An error occurred in entrypoint script!"; bash' ERR
+trap 'echo "An error occurred in entrypoint script!"' ERR
 
 # - Clone branch to "bot" folder
 echo "Cloning main branch of repo: $REPO"
