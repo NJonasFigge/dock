@@ -51,4 +51,4 @@ RUN chmod +x /tmp/build-cgi/*
 COPY entrypoint.sh  /usr/local/bin/
 
 # - Make entrypoint script runnable
-RUN chmod +x entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh

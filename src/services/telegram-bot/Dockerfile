@@ -28,7 +28,7 @@ RUN python starship-utils/generate_starship_toml.py $PROMPTHUE -o /root/.config/
 COPY entrypoint.sh /usr/local/bin/
 
 # - Make entrypoint script runnable
-RUN chmod +x entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
 
 # - Set entrypoint script
 ENTRYPOINT ["entrypoint.sh"]
