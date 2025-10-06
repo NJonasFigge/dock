@@ -132,17 +132,18 @@ class Container:
     def _poll_logs(self):
         last_ps_call = dt.datetime.fromtimestamp(0)
         while isinstance(self._logging_process, subprocess.Popen) and self._logging_process.stdout is not None:
+            for line in self._logging_process.stdout:
+                self._log_lines.append(LogLine(dt.datetime.now(), line.strip()))
             # - Break if container is not running anymore
             if (dt.datetime.now() - last_ps_call).total_seconds() > 2:
-                last_ps_call = dt.datetime.now()
                 ps_output = subprocess.run(["docker", "ps", "-q", "-f", f"id={self.cid}"],
                                            capture_output=True, text=True)
                 if ps_output.stdout.strip() == '':
                     self._is_running = False
                     self._log_lines.append(StoppedLogLine(dt.datetime.now()))
                     break
-            for line in self._logging_process.stdout:
-                self._log_lines.append(LogLine(dt.datetime.now(), line.strip()))
+                else:
+                    last_ps_call = dt.datetime.now()
 
     def get_log_tail(self, n: int) -> list[LogLine]:
         start = max(0, len(self._log_lines) - n)
