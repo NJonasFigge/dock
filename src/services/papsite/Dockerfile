@@ -24,7 +24,7 @@ ENV FIXEDBRANCH="$FIXEDBRANCH"
 # === ACTIVATE NGINX PASSWORD PROTECTION ===
 
 # - Run the add-auth script to deploy the htpasswd files and configure nginx
-RUN /app/add-auth.sh "$ACCESS"
+RUN add-auth.sh "$ACCESS"
 
 
 # === DEPLOY REQUESTED CGI SCRIPTS ===
@@ -48,4 +48,4 @@ RUN python starship-utils/generate_starship_toml.py $PROMPTHUE -o /root/.config/
 # === SET ENTRYPOINT ===
 
 # - Set entrypoint script
-ENTRYPOINT ["/app/entrypoint.sh"]
+ENTRYPOINT ["entrypoint.sh"]

@@ -5,12 +5,6 @@
 FROM my-climate:latest
 
 
-# === BASE IMAGE ===
-
-# - Use the my-climate base image
-FROM my-climate:latest
-
-
 # === ARGUMENTS ===
 
 # - PROMPTHUE defines which hue (0-360) the prompt shall have. Defaults to an ugly pink.
@@ -26,4 +20,4 @@ RUN python starship-utils/generate_starship_toml.py $PROMPTHUE -o /root/.config/
 # === SET COMMAND ===
 
 # - Open shell
-CMD [ "fish" ]
+CMD ["fish"]
