@@ -75,6 +75,21 @@ class LogLine:
             return ''
 
 
+class StoppedLogLine(LogLine):
+    def __init__(self, timestamp: dt.datetime):
+        super().__init__(timestamp, 'stopped')
+
+    @property
+    def color(self): return ANSICODES.RED_FG
+    @property
+    def raw(self): return self._text
+
+    @property
+    def colorized(self):
+        terminal_width = os.get_terminal_size().columns
+        return self.color + f' {self.raw} '.center(terminal_width - 10, '-') + ANSICODES.RESET
+
+
 class Container:
     @staticmethod
     def from_id(cid: str):
@@ -126,6 +141,7 @@ class Container:
                                            capture_output=True, text=True)
                 if ps_output.stdout.strip() == '':
                     self._is_running = False
+                    self._log_lines.append(StoppedLogLine(dt.datetime.now()))
                     break
             for line in self._logging_process.stdout:
                 self._log_lines.append(LogLine(dt.datetime.now(), line.strip()))
@@ -245,8 +261,9 @@ class Browser:
                             f'{self._start_time.strftime("%Y-%m-%d %H:%M:%S")}').ljust(terminal_width)
             print(ANSICODES.LIGHT_GRAY_BG + ANSICODES.BLACK_FG + started_line + ANSICODES.RESET, end='\n\r')
             print(ANSICODES.DARK_GRAY_BG + instructions + ANSICODES.RESET, end='\n\r')
+            log_lines = self.active_tab_container.get_log_tail(self._max_log_lines)
             current_timestamp: dt.datetime = NotImplemented
-            for log_line in self.active_tab_container.get_log_tail(self._max_log_lines):
+            for log_line in log_lines:
                 appendix = ''
                 if current_timestamp is NotImplemented or (current_timestamp.date() != log_line.timestamp.date()
                                                            and current_timestamp.hour != log_line.timestamp.hour
@@ -267,9 +284,6 @@ class Browser:
                 line = log_line.colorized + appendix  # Pad to full width
                 print(line, end='\n\r')
                 current_timestamp = log_line.timestamp
-            if not self.active_tab_container.is_running:
-                s = ' stopped '.center(terminal_width, '-')
-                print(ANSICODES.RED_FG + s + ANSICODES.RESET, end='\n\r')
             self._last_updated_tabs_bar = dt.datetime.now()
 
     def _printer_loop(self):
