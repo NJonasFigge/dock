@@ -29,6 +29,7 @@ COPY entrypoint.sh .
 
 # - Make entrypoint script runnable
 RUN chmod +x entrypoint.sh
+RUN ls -la && false
 
 # - Set entrypoint script
 ENTRYPOINT ["/app/entrypoint.sh"]
