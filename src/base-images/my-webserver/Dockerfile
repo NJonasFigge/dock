@@ -17,6 +17,13 @@ RUN apt-get update && \
 RUN rm /etc/nginx/sites-enabled/default
 
 
+# === Deploy oops-site ===
+
+# - Copy oops-site files to nginx oops-html folder
+RUN mkdir -p /usr/share/nginx/oops-html
+COPY oops.html /usr/share/nginx/oops-html/
+
+
 # === SETUP CGI-RELATED PACKAGES ===
 
 # - Install fcgiwrap and spawn-fcgi
