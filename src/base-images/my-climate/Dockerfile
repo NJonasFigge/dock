@@ -37,6 +37,11 @@ RUN apt-get update && \
 # - Deploy ssh keys (for accessing private repos)
 COPY dot-ssh /root/.ssh
 
+# - Set permissions
+RUN chmod 700 /root/.ssh && \
+    chmod 600 /root/.ssh/id_ed25519 && \
+    chmod 600 /root/.ssh/id_ed25519.pub && \
+
 # - Add github and bitbucket to known ssh hosts
 RUN ssh-keyscan github.com >> /root/.ssh/known_hosts && \
     ssh-keyscan bitbucket.org >> /root/.ssh/known_hosts
