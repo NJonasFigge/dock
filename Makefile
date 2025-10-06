@@ -75,8 +75,8 @@ prepare-build-base: auth
 	cp -r src/starship-utils src/base-images/my-climate/
 
 build-base: prepare-build-base down
-	$(DC_BASE) build $(BUILD_OPTIONS) myclimate-base && \
-  		$(DC_BASE) build $(BUILD_OPTIONS) mywebserver-base && \
+	$(DC_BASE) build $(BUILD_OPTIONS) my-climate && \
+  		$(DC_BASE) build $(BUILD_OPTIONS) my-webserver && \
   		$(DC_BASE) build $(BUILD_OPTIONS) papsite-base
 
 build: down
