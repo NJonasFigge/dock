@@ -81,13 +81,11 @@ class StoppedLogLine(LogLine):
 
     @property
     def color(self): return ANSICODES.RED_FG
-    @property
-    def raw(self): return self._text
 
     @property
-    def colorized(self):
+    def raw(self):
         terminal_width = os.get_terminal_size().columns
-        return self.color + f' {self.raw} '.center(terminal_width - 10, '-') + ANSICODES.RESET
+        return f' {self._text} '.center(terminal_width - 10, '-')
 
 
 class Container:
@@ -279,10 +277,9 @@ class Browser:
                               + ANSICODES.RESET, end='\n\r')
                         appendix = ''
                     else:
-                        appendix = (' ' * padding_size + ANSICODES.LIGHT_GRAY_BG + ANSICODES.BLACK_FG + time_string
-                                    + ANSICODES.RESET)
-                line = log_line.colorized + appendix  # Pad to full width
-                print(line, end='\n\r')
+                        appendix = (' ' * padding_size
+                                    + ANSICODES.LIGHT_GRAY_BG + ANSICODES.BLACK_FG + time_string + ANSICODES.RESET)
+                print(log_line.colorized + appendix, end='\n\r')
                 current_timestamp = log_line.timestamp
             self._last_updated_tabs_bar = dt.datetime.now()
 
