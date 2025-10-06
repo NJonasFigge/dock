@@ -271,3 +271,24 @@ services:
       - ./telegram-bot/venvs/eheboostbot-venv:/app/venv  # Pre-supply a virtualenv (that might be updated by the container)
     environment:  # Environment variables that are only necessary when running
       REPO: "git@github.com:NJonasFigge/EheBoostBot.git"
+
+
+  # === The EheBoostBot ===
+  # - This container will clone and run the main branch of the zettelbot repo.
+  zabbixbot:
+    # --- Static definitions ---
+    # restart: always
+
+    # --- For build-time ---
+    build:
+      context: telegram-bot  # Build in here, also use this Dockerfile
+      args:
+        PROMPTHUE: 340  # Prompt color hue (0-360), 340 = pink-red
+
+    # --- For runtime ---
+    container_name: zabbixbot
+    hostname: zabbixbot  # "Computer name" from within container
+    volumes:
+      - ./telegram-bot/venvs/zabbixbot-venv:/app/venv  # Pre-supply a virtualenv (that might be updated by the container)
+    environment:  # Environment variables that are only necessary when running
+      REPO: "git@github.com:NJonasFigge/ZabbixBot.git"

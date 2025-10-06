@@ -220,7 +220,7 @@ class Browser:
         self._print_pause = PrintPause
 
     @property
-    def _max_log_lines(self): return os.get_terminal_size().lines - 12 + (5 if self._is_instructions_minimized else 0)
+    def _max_log_lines(self): return os.get_terminal_size().lines - 20 + (5 if self._is_instructions_minimized else 0)
 
     @property
     def active_tab_container(self): return self._containers[self._active_tab_id]
