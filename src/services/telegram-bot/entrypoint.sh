@@ -10,7 +10,7 @@ trap 'echo "An error occurred in entrypoint script!"' ERR
 # - Clone branch to "bot" folder
 echo "Cloning main branch of repo: $REPO"
 cd /app
-git clone -b "$BRANCH" "$REPO" bot
+git clone "$REPO" bot
 
 # - Install and run bot
 cd bot
