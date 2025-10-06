@@ -24,6 +24,8 @@ ENV FIXEDBRANCH="$FIXEDBRANCH"
 
 # === ACTIVATE NGINX PASSWORD PROTECTION ===
 
+RUN ls -la && false
+
 # - Run the add-auth script to deploy the htpasswd files and configure nginx
 RUN add-auth.sh "$ACCESS"
 
