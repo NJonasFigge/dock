@@ -66,9 +66,8 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 # - Deploy fish configuration
-WORKDIR /root/.config
-RUN mkdir fish || true
-COPY config.fish fish/
+RUN mkdir /root/.config/fish || true
+COPY config.fish /root/.config/fish/
 
 
 # === SETUP STARSHIP ===
