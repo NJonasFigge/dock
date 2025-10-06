@@ -48,7 +48,7 @@ RUN chmod +x /tmp/build-cgi/*
 # === PREPARE ENTRYPOINT SCRIPT ===
 
 # - Deploy entrypoint script (which will deploy the website on runtime)
-COPY entrypoint.sh .
+COPY entrypoint.sh  /usr/local/bin/
 
 # - Make entrypoint script runnable
 RUN chmod +x entrypoint.sh
