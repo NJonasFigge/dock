@@ -12,10 +12,15 @@ WORKDIR /app
 ARG PROMPTHUE="310"
 
 
-# === SETUP TIMEZONE ===
+# === SETUP TIMEZONE AND LOCALE ===
 
 # - Set timezone to Berlin
 RUN ln -sf /usr/share/zoneinfo/Europe/Berlin /etc/localtime
+
+# - Add locale "de_DE.UTF-8" (e.g. for german weekdays)
+RUN apt-get update && apt-get install -y locales \
+    && sed -i '/de_DE.UTF-8/s/^# //g' /etc/locale.gen \
+    && locale-gen
 
 
 # === INSTALL BASIC PACKAGES CLIENT ===
