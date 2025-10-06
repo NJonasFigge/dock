@@ -34,6 +34,16 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
+# - Deploy ssh keys (for accessing private repos)
+COPY dot-ssh /root/.ssh
+
+# - Add github and bitbucket to known ssh hosts
+RUN ssh-keyscan github.com >> /root/.ssh/known_hosts && \
+    ssh-keyscan bitbucket.org >> /root/.ssh/known_hosts
+
+# - Test ssh connection to github
+RUN ssh -T git@github.com
+
 
 # === SETUP GIT ===
 
@@ -42,14 +52,6 @@ RUN apt-get update && \
     apt-get install -y git && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
-
-# - Deploy ssh keys (for accessing private repos)
-COPY dot-ssh /root/.ssh
-
-# - Add github and bitbucket to known ssh hosts
-RUN mkdir -p /root/.ssh && \
-    ssh-keyscan github.com >> /root/.ssh/known_hosts && \
-    ssh-keyscan bitbucket.org >> /root/.ssh/known_hosts
 
 
 # === SETUP FISH ===
