@@ -117,7 +117,7 @@ shell: up
 ifndef SERVICE
 	$(error SERVICE is not set. Usage: make shell SERVICE=<service>)
 endif
-	@if [ $(DC_MAIN) run -t --entrypoint "which fish" $(SERVICE) >/dev/null 2>&1 ]; then \
+	@if [ $(DC_MAIN) exec -T $(SERVICE) which fish &> /dev/null ]; then \
 		echo "Opening fish shell in service '$(SERVICE)'..."; \
 		$(DC_MAIN) exec -it $(SERVICE) fish; \
 	else \
@@ -129,7 +129,7 @@ enter:
 ifndef SERVICE
 	$(error SERVICE is not set. Usage: make enter SERVICE=<service>)
 endif
-	@if [ $(DC_MAIN) run -t --entrypoint "which fish" $(SERVICE) >/dev/null 2>&1 ]; then \
+	@if [ $(DC_MAIN) exec -T $(SERVICE) which fish &> /dev/null ]; then \
 		echo "Opening fish shell in service '$(SERVICE)'..."; \
 		$(DC_MAIN) run -it --entrypoint fish $(SERVICE); \
 	else \
