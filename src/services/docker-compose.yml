@@ -157,6 +157,8 @@ services:
       - fileserver-net
     expose:  # Won't publish ports to the host machine, only between services
       - "80"   # HTTP
+    volumes:  # Todo: Change to a real storage location
+      - ./papsite/venvs/devtest-venv:/var/webdav  # Pre-supply a virtualenv (that might be updated by the container)
 
 
   # === THE AI-SERVER ===
