@@ -33,6 +33,7 @@ help:
 	@echo "						   interactive log browsing)"
 	@echo "  exec                - Run a command in a service: make exec SERVICE=<service> CMD='<command>'"
 	@echo "  shell               - Open a shell in a service: make shell SERVICE=<service>"
+	@echo "  enter               - Open a shell in a service, skipping its entrypoint: make enter SERVICE=<service>"
 	@echo "  browse              - Open log browser (with shell spawning capabilities) for all running containers"
 	@echo "Shortcut targets:"
 	@echo "  restart             - Equivalent to 'make down | up'"
@@ -116,12 +117,25 @@ shell: up
 ifndef SERVICE
 	$(error SERVICE is not set. Usage: make shell SERVICE=<service>)
 endif
-	@if [ -e /usr/bin/fish ]; then \
+	# Check if fish shell is available inside the service, otherwise fallback to bash
+	@if [ $(DC_MAIN) exec $(shell $(DC_MAIN) ps -q $(SERVICE)) which fish >/dev/null 2>&1 ]; then \
 		echo "Opening fish shell in service '$(SERVICE)'..."; \
 		$(DC_MAIN) exec -it $(SERVICE) fish; \
 	else \
 		echo "Opening bash shell in service '$(SERVICE)'..."; \
 		$(DC_MAIN) exec -it $(SERVICE) bash; \
+	fi
+
+enter:
+ifndef SERVICE
+	$(error SERVICE is not set. Usage: make enter SERVICE=<service>)
+endif
+	@if [ $(DC_MAIN) exec $(shell $(DC_MAIN) ps -q $(SERVICE)) which fish >/dev/null 2>&1 ]; then \
+		echo "Opening fish shell in service '$(SERVICE)'..."; \
+		$(DC_MAIN) run -it --entrypoint fish $(SERVICE); \
+	else \
+		echo "Opening bash shell in service '$(SERVICE)'..."; \
+		$(DC_MAIN) run -it --entrypoint bash $(SERVICE); \
 	fi
 
 browse:
