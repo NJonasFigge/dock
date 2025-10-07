@@ -318,7 +318,8 @@ class Browser:
         self._printer_thread.start()  # Start log updating thread after initial screen print
         while True:
             key = _get_keypress()
-            input(f'Got "{key}" [acknowledge with Enter]')
+            with self._print_pause():
+                input(f'Got "{key}" [acknowledge with Enter]')
             match key:
                 case 'q':
                     print(f"\n{ANSICODES.GRAY_FG}Exiting...{ANSICODES.RESET}")
