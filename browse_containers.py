@@ -312,14 +312,16 @@ class Browser:
         with self._print_pause():
             subprocess.run(["make", "shell", "SERVICE=" + self.active_tab_container.name])
 
+    def enter_active_tab_with_shell(self):
+        with self._print_pause():
+            subprocess.run(["make", "enter", "SERVICE=" + self.active_tab_container.name])
+
     def start(self):
         for container in self._containers:
             container.start_collecting_logs()
         self._printer_thread.start()  # Start log updating thread after initial screen print
         while True:
             key = _get_keypress()
-            with self._print_pause():
-                input(f'Got {repr(key)} [acknowledge with Enter]')
             match key:
                 case 'q':
                     print(f"\n{ANSICODES.GRAY_FG}Exiting...{ANSICODES.RESET}")
@@ -338,6 +340,9 @@ class Browser:
                     self._print()
                 case '\r':  # Enter
                     self.open_shell_in_active_tab()  # Blocking call
+                    self._print()
+                case '\n':  # Ctrl + Enter
+                    self.enter_active_tab_with_shell()  # Blocking call
                     self._print()
                 case _: pass  # Ignore other keys
         for container in self._containers:
