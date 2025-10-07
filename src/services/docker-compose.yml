@@ -18,6 +18,10 @@ networks:
     name: papsite-devtest-net
     driver: bridge
 
+  oops-net:
+    name: oops-net
+    driver: bridge
+
   fileserver-net:  # Connects reverse-proxy with fileserver
     name: fileserver-net
     driver: bridge
@@ -50,6 +54,7 @@ services:
       - papsite-live-net
       - papsite-stage-net
       - papsite-devtest-net
+      - oops-net
       - fileserver-net
     ports:  # Exposed container ports (mapping "<actual_server_port>:<container_port>")
       - "80:80"    # HTTP
@@ -133,6 +138,23 @@ services:
       - ./papsite/venvs/devtest-venv:/app/venv  # Pre-supply a virtualenv (that might be updated by the container)
     environment:  # Environment variables that are only necessary when running
       BRANCH: nginx
+
+
+  # === THE OOPS DEFAULT SITE ===
+  # - This container will serve a default page for when no other papsite server is running..
+  oops:
+    # --- For build-time ---
+    build:
+      context: oops  # Build in here, also use this Dockerfile
+
+    # --- For runtime ---
+    container_name: oops
+    hostname: oops  # "Computer name" from within container
+    networks:
+      - oops-net
+    expose: # Won't publish ports to the host machine, only between services
+      - "80"   # HTTP
+      - "443"  # HTTPS
 
 
 
