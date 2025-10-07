@@ -280,7 +280,8 @@ class Browser:
                     time_string = f' {time_string} '
                     padding_size = terminal_width - len(time_string) - len(log_line.raw)
                     if padding_size < 0:  # Just give it its own line before the log line
-                        print(ANSICODES.LIGHT_GRAY_BG + ANSICODES.BLACK_FG + time_string.rjust(terminal_width)
+                        padding_size = terminal_width - len(time_string)
+                        print(' ' * padding_size + ANSICODES.LIGHT_GRAY_BG + ANSICODES.BLACK_FG + time_string
                               + ANSICODES.RESET, end='\n\r')
                         appendix = ''
                     else:
