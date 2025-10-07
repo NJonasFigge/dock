@@ -5,10 +5,11 @@ import tty
 import termios
 import subprocess
 import datetime as dt
+from argparse import ArgumentParser
+from functools import cached_property
 from pathlib import Path
 from threading import Thread
 from time import sleep
-from functools import cached_property
 
 
 YML = Path(__file__).parent / 'src/services/docker-compose.yml'
@@ -171,21 +172,25 @@ class Container:
 
 class Browser:
     @staticmethod
-    def from_running_containers(update_interval: float = 0.3):
+    def from_running_containers(select_by_names: list[str] = None, update_interval: float = 0.3):
         ps_output = subprocess.run(["docker", "ps", "-q"], capture_output=True, text=True)
         containers = [Container.from_id(cid) for cid in ps_output.stdout.strip().splitlines()]
+        if select_by_names is not None:
+            containers = [c for c in containers if c.name in select_by_names]
         if len(containers) == 0:
             print("No running containers found.")
             exit()
         return Browser(containers, update_interval)
 
     @staticmethod
-    def from_yml_listed_containers(update_interval: float = 0.3):
+    def from_yml_listed_containers(select_by_names: list[str] = None, update_interval: float = 0.3):
         yml_text = YML.read_text()
         services_text = yml_text.split('services:')[1]
         container_names = [line.removesuffix(':').strip() for line in services_text.splitlines()
                            if line.removeprefix('  ') == line.strip()  # Second level indent only
                            and line.endswith(':') and not line.strip().startswith('#')]
+        if select_by_names is not None:
+            container_names = [cn for cn in container_names if cn in select_by_names]
         containers = [Container.from_name(name) for name in container_names]
         if len(containers) == 0:
             print("No containers found in docker-compose.yml.")
@@ -341,5 +346,17 @@ class Browser:
 
 
 if __name__ == "__main__":
-    browser = Browser.from_yml_listed_containers()
+    parser = ArgumentParser(description='Browse Docker container logs.')
+    # A list of container names as first positional arguments, might be empty
+    parser.add_argument('containers', nargs='*',
+                        help='Names of containers to show (default: all in docker-compose.yml).')
+    parser.add_argument('-r', '--running', action='store_true',
+                        help='Only show containers if running (default: false).')
+    args = parser.parse_args()
+
+    select_by_names = args.containers if len(args.containers) > 0 else None
+    if args.running:
+        browser = Browser.from_running_containers(select_by_names=select_by_names)
+    else:
+        browser = Browser.from_yml_listed_containers(select_by_names=select_by_names)
     browser.start()

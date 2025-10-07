@@ -125,7 +125,7 @@ endif
 	fi
 
 browse:
-	@python browse_containers.py
+	@python browse_containers.py $(SERVICES)
 
 
 # ------------------------------------------------ SHORTCUT TARGETS ----------------------------------------------------
