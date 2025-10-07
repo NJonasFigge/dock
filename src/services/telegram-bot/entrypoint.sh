@@ -15,4 +15,5 @@ git clone "$REPO" bot
 # - Install and run bot
 cd bot
 make install
-make run
+echo "Bot setup complete. Activate the bot by uncommenting the 'make run' in 'entrypoint.sh' (and removing this text)."
+# make run
