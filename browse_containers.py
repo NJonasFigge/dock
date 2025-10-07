@@ -319,7 +319,7 @@ class Browser:
         while True:
             key = _get_keypress()
             with self._print_pause():
-                input(f'Got "{key}" [acknowledge with Enter]')
+                input(f'Got {repr(key)} [acknowledge with Enter]')
             match key:
                 case 'q':
                     print(f"\n{ANSICODES.GRAY_FG}Exiting...{ANSICODES.RESET}")
