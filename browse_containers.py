@@ -203,11 +203,12 @@ class Browser:
         self._update_interval = update_interval
         self._start_time = dt.datetime.now()
         self._active_tab_id = 0
-        self._instruction_lines = [' Instructions: [A] ↔ [D]  - Switch tabs (containers)',
-                                   '               [Space]    - Execute a command this container',
-                                   '               [Enter]    - Open a shell in this container',
-                                   '               [I]        - Minimize these instructions',
-                                   '               [Q]        - Quit this browser']
+        self._instruction_lines = [' Instructions: [A] ↔ [D]     - Switch tabs (containers)',
+                                   '               [Space]       - Execute a command this container',
+                                   '               [Enter]       - Open a shell in this container',
+                                   '               [Ctrl+Enter]  - Enter this container with a shell',
+                                   '               [I]           - Minimize these instructions',
+                                   '               [Q]           - Quit this browser']
         self._is_instructions_minimized = True
         self._printer_thread: Thread = Thread(target=self._printer_loop, daemon=True)
         self._last_updated_tabs_bar: dt.datetime = dt.datetime.fromtimestamp(0)
