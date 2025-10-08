@@ -1,8 +1,8 @@
 
 # === BASE IMAGE ===
 
-# - Use the my-webserver base image
-FROM my-webserver:latest
+# - Use the my-climate base image
+FROM my-climate:latest
 WORKDIR /app
 
 
@@ -12,19 +12,30 @@ WORKDIR /app
 ARG PROMPTHUE="310"
 
 
-# === DEPLOY NGINX CONFIGURATION ===
+# === SETUP APACHE2 AND WEBDAV MODULES ===
 
-# - Deploy custom nginx configuration
-COPY nginx.conf /etc/nginx/nginx.conf
+# - Install apache2 and the required modules for WebDAV
+RUN apt-get update && apt-get install -y \
+    apache2 \
+    apache2-utils \
+    libapache2-mod-dav \
+    libapache2-mod-dav-fs \
+    && rm -rf /var/lib/apt/lists/*
+
+# - Enable the required apache2 modules
+RUN a2enmod dav dav_fs auth_basic
 
 
 # === ACTIVATE PASSWORD PROTECTION ===
 
-# - Create auth directory
-RUN mkdir -p /etc/nginx/auth
-
 # - Deploy htpasswd file
-COPY .htpasswd /etc/nginx/auth/
+COPY .htpasswd /etc/apache2/.htpasswd
+
+
+# === CONFIGURE APACHE2 FOR WEBDAV ===
+
+# - Copy the apache2 configuration file for WebDAV into the sites-available folder
+COPY dav.conf /etc/apache2/sites-available/000-default.conf
 
 
 # === ACTIVATE CUSTOM STARSHIP CONFIGURATION ===
