@@ -5,6 +5,13 @@ if status is-interactive
 end
 
 
+################################################### GREETING ###########################################################
+
+function fish_greeting
+    echo "Welcome to the fishy side of $HOSTNAME, $(whoami). Have a good swim! 🐟"
+end
+
+
 ################################################# MY ALIASES ###########################################################
 
 # - Poweruser utils
