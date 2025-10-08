@@ -18,8 +18,6 @@ ARG PROMPTHUE="310"
 RUN apt-get update && apt-get install -y \
     apache2 \
     apache2-utils \
-    libapache2-mod-dav \
-    libapache2-mod-dav-fs \
     && rm -rf /var/lib/apt/lists/*
 
 # - Enable the required apache2 modules
@@ -52,5 +50,5 @@ RUN mkdir -p /var/webdav && \
 
 # === SET COMMAND ===
 
-# - Start nginx server in foreground (so that the container doesn't exit)
-CMD ["nginx", "-g", "daemon off;"]
+# - Start apache server in foreground (so that the container doesn't exit)
+CMD ["apachectl", "-D", "FOREGROUND"]
