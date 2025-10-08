@@ -43,6 +43,8 @@ RUN python starship-utils/generate_starship_toml.py $PROMPTHUE -o /root/.config/
 
 
 # === PREPARE WEBDAV DIRECTORY ===
+
+# - Create a directory for webdav files
 RUN mkdir -p /var/webdav && \
     chown www-data:www-data /var/webdav && \
     chmod 755 /var/webdav
