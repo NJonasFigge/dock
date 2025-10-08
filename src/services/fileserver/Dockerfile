@@ -48,6 +48,14 @@ RUN mkdir -p /var/webdav && \
     chmod 755 /var/webdav
 
 
+# === PREPARE LOG DIRECTORY ===
+
+# - Create a log directory for webdav logs
+RUN mkdir -p /var/log/webdav && \
+    chown www-data:www-data /var/log/webdav && \
+    chmod 755 /var/log/webdav
+
+
 # === SET COMMAND ===
 
 # - Start apache server in foreground (so that the container doesn't exit)
