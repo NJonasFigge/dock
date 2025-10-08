@@ -35,5 +35,3 @@ curl <url> | lynx -stdin
 + `cl` - Clear the terminal
 + `nxtd` - Go to the next directory (extends the `popd`/`pushd`/`dirs` commands)
 + `richer` - (see above)
-
-+ `m`
