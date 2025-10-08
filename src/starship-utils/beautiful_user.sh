@@ -1,9 +1,9 @@
 #! /bin/bash
 
 if [ "$(whoami)" = root ];
-    then echo -e "󱢼\u200B";
+    then echo -e "󱢼 ";
 elif [ "$(whoami)" = jonas ];
-    then echo -e "󰬑\u200B";
+    then echo -e "󰬑 ";
 else
     whoami;
 fi
