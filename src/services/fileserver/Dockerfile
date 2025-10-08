@@ -35,6 +35,9 @@ COPY .htpasswd /etc/apache2/.htpasswd
 # - Copy the apache2 configuration file for WebDAV into the sites-available folder
 COPY dav.conf /etc/apache2/sites-available/000-default.conf
 
+# - Set the ServerName to localhost to avoid warning messages
+RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
+
 
 # === ACTIVATE CUSTOM STARSHIP CONFIGURATION ===
 
