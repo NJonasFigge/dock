@@ -9,8 +9,8 @@ end
 
 function fish_greeting
     echo ""
-    echo "🐟🐟🐟"
-    echo "Welcome to the fishy side of $hostname, $(whoami). Have a good swim!"
+    echo " 🐟 Hello, $(whoami)! 🐟"
+    echo " Welcome to the fishy side of $hostname. Have a good swim!"
 end
 
 
