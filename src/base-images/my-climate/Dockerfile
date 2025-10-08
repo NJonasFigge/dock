@@ -82,3 +82,9 @@ RUN curl -sS https://starship.rs/install.sh | sh -s -- -y
 
 # - Configure starship
 COPY starship-utils ./starship-utils
+
+
+# === INSTALL RICH ===
+
+# - Install rich for pretty terminal outputs
+RUN pip install rich-cli
