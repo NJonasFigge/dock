@@ -10,8 +10,8 @@ It's name is derived from the nautical theme of my projects.
 - **papsite-live**: The current live Papierschiff website.
 - **papsite-stage**: A staging version of the Papierschiff website for testing changes before going live.
 - **papsite-devtest**: A development and testing version of the Papierschiff website.
-- **webdav**: A WebDAV server for file storage and sharing.
-- **alpaca**: A service for hosting LLMs (Large Language Models).
+- **fileserver**: A WebDAV server for access to the family files.
+- **ai-server**: A service for hosting LLMs (Large Language Models).
 - **zettelbot**: A Telegram bot for making lists and notes.
 - **schaluppenbot**: A Telegram bot for tracking tasks and to-dos inside the folder "Schaluppe".
 - **alpacabot**: A Telegram bot for interacting with the Alpaca API.
@@ -55,10 +55,10 @@ git clone https://github.com/NjonasFigge/dock.git
 
 ### 3. Set up the rest of your system (to the extend of your liking)
 
-The `system-setup/Makefile` contains various setup steps for your system. To install all of them, run:
+The `src/system-setup/Makefile` contains various setup steps for your system. To install all of them, run:
 
 ```bash
-cd dock/system-setup
+cd src/system-setup
 make all
 ```
 
