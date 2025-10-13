@@ -4,22 +4,12 @@
 This repo contains the source code for the "Dock", my personal docker compose setup for various services I use.
 It's name is derived from the nautical theme of my projects.
 
-## Services
 
-- **reverse-proxy**: A reverse proxy using Nginx to manage and route traffic to various services.
-- **papsite-live**: The current live Papierschiff website.
-- **papsite-stage**: A staging version of the Papierschiff website for testing changes before going live.
-- **papsite-devtest**: A development and testing version of the Papierschiff website.
-- **fileserver**: A WebDAV server for access to the family files.
-- **ai-server**: A service for hosting LLMs (Large Language Models).
-- **zettelbot**: A Telegram bot for making lists and notes.
-- **schaluppenbot**: A Telegram bot for tracking tasks and to-dos inside the folder "Schaluppe".
-- **alpacabot**: A Telegram bot for interacting with the Alpaca API.
-- **eheboostbot**: A Telegram bot providing tips in relationships.
 
 ## Setup Instructions
 
 The following steps outline how to set up and run the services in this repository on a fresh Linux system.
+
 
 ### 1. Prerequisites
 
@@ -47,11 +37,13 @@ sudo apt-get install make
 
 Log out and log back in to activate the changes.
 
+
 ### 2. Clone this repository
 
 ```bash
 git clone https://github.com/NjonasFigge/dock.git 
 ```
+
 
 ### 3. Set up the rest of your system (to the extend of your liking)
 
@@ -69,3 +61,72 @@ make required
 ```
 
 You can set `KEEPBASH=true` to skip fish shell related steps, if you don't use fish.
+
+
+
+## Services Overview
+
+### List of all services
+
+- **reverse-proxy**: A reverse proxy using Nginx to manage and route traffic to various services.
+- **papsite-live**: The current live Papierschiff website.
+- **papsite-stage**: A staging version of the Papierschiff website for testing changes before going live.
+- **papsite-devtest**: A development and testing version of the Papierschiff website.
+- **fileserver**: A WebDAV server for access to the family files.
+- **ai-server**: A service for hosting LLMs (Large Language Models).
+- **zettelbot**: A Telegram bot for making lists and notes.
+- **schaluppenbot**: A Telegram bot for tracking tasks and to-dos inside the folder "Schaluppe".
+- **alpacabot**: A Telegram bot for interacting with the Alpaca API.
+- **eheboostbot**: A Telegram bot providing tips in relationships.
+
+
+### User access diagram
+
+```mermaid
+flowchart TD
+    USER([User]):::external
+    TELEGRAMAPP{{Telegram App}}:::external
+    BROWSER{{Browser}}:::external
+    TELEGRAMSERVER{{Telegram Server}}:::external
+    subgraph MYHOME["My Home"]
+        ROUTER{{Router}}
+        subgraph SERVER["My Server"]
+            MOUNTEDDRIVES[("Mounted Drives")]:::sensitive
+            subgraph DOCK["The Dock"]
+                REVERSEPROXY["Reverse Proxy (Nginx)"]:::unprotected
+                PAPSITELIVE["Papierschiff Website (Live)"]:::unprotected
+                PAPSITESTAGE["Papierschiff Website (Stage)"]
+                PAPSITEDEVTEST["Papierschiff Website (Dev/Test)"]
+                FILESERVER["File Server (WebDAV)"]
+                ZETTELBOT["Zettelbot"]
+                SCHALUPPENBOT["SchaluppenBot"]
+                ALPACABOT["AlpacaBot"]
+                EHEBOOSTBOT["EheboostBot"]
+                AISERVER["AI Server (LLMs)"]
+            end
+        end
+    end
+    
+    USER --> BROWSER
+        BROWSER --🧱--> ROUTER
+            ROUTER --> REVERSEPROXY
+                REVERSEPROXY --> PAPSITELIVE
+                REVERSEPROXY --🔒---> PAPSITESTAGE
+                REVERSEPROXY --🔒----> PAPSITEDEVTEST
+                REVERSEPROXY --🔒-----> FILESERVER
+    USER --> TELEGRAMAPP
+        TELEGRAMAPP --> TELEGRAMSERVER
+            TELEGRAMSERVER --🔒---> ZETTELBOT
+            TELEGRAMSERVER --🔒----> EHEBOOSTBOT
+            TELEGRAMSERVER --🔒--------> SCHALUPPENBOT
+            TELEGRAMSERVER --🔒-----> ALPACABOT
+                ALPACABOT ---> AISERVER
+
+    FILESERVER --👓🖊️--> MOUNTEDDRIVES
+    SCHALUPPENBOT --👓--> MOUNTEDDRIVES
+    AISERVER --👓---> MOUNTEDDRIVES
+    
+    classDef external fill:#333333;
+    classDef unprotected fill:#463054;
+    classDef sensitive fill:#882222;
+```
