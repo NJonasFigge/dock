@@ -1,0 +1,19 @@
+# This is a crontab file for scheduling backup tasks using rsync.
+# It is designed to run daily at 2 AM and synchronize data from the source directories
+# on the Pazifik_2TB drive to the corresponding directories on the Indik_1TB drive.
+#
+# Each line represents a separate rsync command for different directories.
+# The options used in the rsync command are:
+# -a: Archive mode, which preserves permissions, timestamps, symbolic links, etc.
+# -v: Verbose mode, which provides detailed output of the transfer process.
+# -h: Human-readable output, making file sizes easier to read.
+# -u: Update mode, which skips files that are newer on the destination.
+# --progress: Displays progress during transfer.
+#
+# Output from each command is appended to a specific log file (e.g., /var/log/rsync_schaluppe.log)
+# for monitoring purposes, and any errors are redirected to the same log file.
+#
+# m h dom mon dow command
+0 2 * * * rsync -avhu --progress /var/data/Pazifik_2TB/Schaluppe/ /var/data/Indik_1TB/Schaluppe/ >> /var/log/rsync_schaluppe.log 2>&1
+0 2 * * * rsync -avhu --progress /var/data/Pazifik_2TB/Fregatte/ /var/data/Indik_1TB/Fregatte/ >> /var/log/rsync_fregatte.log 2>&1
+0 2 * * * rsync -avhu --progress /var/data/Pazifik_2TB/Schatzinsel/ /var/data/Indik_1TB/Schatzinsel/ >> /var/log/rsync_schatzinsel.log 2>&1

@@ -2,7 +2,7 @@
 # - This Docker Compose file is used to build and run the main services. Building this assumes that the base images
 #   have already been built and are up to date.
 
-name: run-services
+name: dock
 
 
 networks:
@@ -157,8 +157,8 @@ services:
       - fileserver-net
     expose:  # Won't publish ports to the host machine, only between services
       - "80"   # HTTP
-    volumes:  # Todo: Change to a real storage location
-      - ./papsite/venvs/devtest-venv:/var/webdav  # Pre-supply a virtualenv (that might be updated by the container)
+    volumes:
+      - /mnt/data/Pazifik_2TB:/var/webdav
 
 
   # === THE AI-SERVER ===
@@ -227,6 +227,7 @@ services:
     hostname: schaluppenbot  # "Computer name" from within container
     volumes:
       - ./telegram-bot/venvs/schaluppenbot-venv:/app/venv  # Pre-supply a virtualenv (that might be updated by the container)
+      - /mnt/data/Pazifik_2TB/Schaluppe:/var/Schaluppe  # Volume for the Schaluppe files
     environment:  # Environment variables that are only necessary when running
       REPO: "git@github.com:NJonasFigge/SchaluppenBot.git"
 
@@ -294,3 +295,25 @@ services:
       - ./telegram-bot/venvs/zabbixbot-venv:/app/venv  # Pre-supply a virtualenv (that might be updated by the container)
     environment:  # Environment variables that are only necessary when running
       REPO: "git@github.com:NJonasFigge/ZabbixBot.git"
+
+
+
+  # ############################################### MISCELLANEOUS ######################################################
+
+  # === THE BACKUP MAKER SERVICE ===
+  # - This container will make backups between the mounted volumes using rsync.
+  backup-maker:
+    # --- Static definitions ---
+    # restart: always
+
+    # --- For build-time ---
+    build:
+      context: backup-maker  # Build in here, also use this Dockerfile
+      args:
+        PROMPTHUE: 280  # Prompt color hue (0-360), 280 = purple
+
+    # --- For runtime ---
+    container_name: backup-maker
+    hostname: backup-maker  # "Computer name" from within container
+    volumes:
+      - /mnt/data:/var/data

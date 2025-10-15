@@ -18,7 +18,7 @@ In releaes, I want to replace this file by a `releasenotes.md` file, containing 
 (Managed in `src/system-setup/`)
 
 - [x] ❗ Automatically mount external drives (e.g., using `fstab`, maybe something on reboot)
-- [ ] ❗ Set up automatic backups (e.g., using `rsync`) → Separate service?
+- [x] ❗ Set up automatic backups (e.g., using `rsync`) → Separate service?
 - [ ] ❕ Set up firewall (e.g., using `ufw`)? Or is router enough?
 - [ ] ❕ Set up network monitoring (e.g., using `nethogs` or `iftop` per container)
 
