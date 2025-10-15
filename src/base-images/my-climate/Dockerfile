@@ -23,11 +23,11 @@ RUN apt-get update && apt-get install -y locales \
     && locale-gen
 
 
-# === INSTALL BASIC PACKAGES CLIENT ===
+# === INSTALL BASIC PACKAGES ===
 
-# - Install curl and make
+# - Install bash, curl, make and nano
 RUN apt-get update && \
-    apt-get install -y bash curl make && \
+    apt-get install -y bash curl make nano && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
@@ -88,3 +88,12 @@ COPY starship-utils ./starship-utils
 
 # - Install rich for pretty terminal outputs
 RUN pip install rich-cli
+
+
+# === ADD ABOUT FILE FUNCTIONALITY ===
+
+# - Deploy about file
+COPY about-this-service.md /app/about-this-service.md
+
+# - Add "about" alias
+RUN echo "alias about='rich about --pager /app/about-this-service.md'" >> /root/.config/fish/config.fish

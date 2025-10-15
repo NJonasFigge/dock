@@ -36,6 +36,16 @@ RUN chmod 0644 /etc/cron.d/backup-maker-cron
 RUN crontab /etc/cron.d/backup-maker-cron
 
 
+# === EXTEND ABOUT FILE ===
+
+# - Deploy about file extension
+COPY about-this-service.md /tmp/about-this-service-extension.md
+
+# - Append to about file
+RUN cat /tmp/about-this-service-extension.md >> /app/about-this-service.md && \
+    rm /tmp/about-this-service-extension.md
+
+
 # === SET KEEPALIVE SCRIPT ===
 
 # - Add the keepalive script to the image

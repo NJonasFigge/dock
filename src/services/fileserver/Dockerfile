@@ -61,6 +61,16 @@ RUN mkdir -p /var/log/webdav && \
     chmod 755 /var/log/webdav
 
 
+# === EXTEND ABOUT FILE ===
+
+# - Deploy about file extension
+COPY about-this-service.md /tmp/about-this-service-extension.md
+
+# - Append to about file
+RUN cat /tmp/about-this-service-extension.md >> /app/about-this-service.md && \
+    rm /tmp/about-this-service-extension.md
+
+
 # === SET COMMAND ===
 
 # - Start apache server in foreground (so that the container doesn't exit)

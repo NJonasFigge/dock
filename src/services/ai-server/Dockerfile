@@ -18,6 +18,16 @@ ARG PROMPTHUE="310"
 RUN python starship-utils/generate_starship_toml.py $PROMPTHUE -o /root/.config/starship.toml --good-spacers
 
 
+# === EXTEND ABOUT FILE ===
+
+# - Deploy about file extension
+COPY about-this-service.md /tmp/about-this-service-extension.md
+
+# - Append to about file
+RUN cat /tmp/about-this-service-extension.md >> /app/about-this-service.md && \
+    rm /tmp/about-this-service-extension.md
+
+
 # === SET COMMAND ===
 
 # - Open shell

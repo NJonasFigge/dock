@@ -23,4 +23,14 @@ RUN rm /etc/nginx/sites-enabled/default
 RUN apt-get update && \
     apt-get install -y fcgiwrap spawn-fcgi && \
     apt-get clean && \
-    rm -rf /var/lib/apt/lists/* \
+    rm -rf /var/lib/apt/lists/*
+
+
+# === EXTEND ABOUT FILE ===
+
+# - Deploy about file extension
+COPY about-this-service.md /tmp/about-this-service-extension.md
+
+# - Append to about file
+RUN cat /tmp/about-this-service-extension.md >> /app/about-this-service.md && \
+    rm /tmp/about-this-service-extension.md

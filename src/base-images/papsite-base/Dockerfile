@@ -52,3 +52,13 @@ COPY entrypoint.sh  /usr/local/bin/
 
 # - Make entrypoint script runnable
 RUN chmod +x /usr/local/bin/entrypoint.sh
+
+
+# === EXTEND ABOUT FILE ===
+
+# - Deploy about file extension
+COPY about-this-service.md /tmp/about-this-service-extension.md
+
+# - Append to about file
+RUN cat /tmp/about-this-service-extension.md >> /app/about-this-service.md && \
+    rm /tmp/about-this-service-extension.md
