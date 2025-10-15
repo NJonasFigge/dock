@@ -96,4 +96,4 @@ RUN pip install rich-cli
 COPY about-this-service.md /app/about-this-service.md
 
 # - Add "about" alias
-RUN echo "alias about='rich about --pager /app/about-this-service.md'" >> /root/.config/fish/config.fish
+RUN echo "alias about='rich --pager /app/about-this-service.md'" >> /root/.config/fish/config.fish
