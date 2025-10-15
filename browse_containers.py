@@ -34,6 +34,8 @@ def _get_keypress():
     fd = sys.stdin.fileno()
     # - Save original terminal settings
     old_settings = termios.tcgetattr(fd)
+    # - Hide cursor
+    print('\033[?25l', end='', flush=True)
     try:
         # - Set terminal to raw mode to capture keypresses immediately
         tty.setraw(fd)
@@ -42,6 +44,8 @@ def _get_keypress():
     finally:
         # - Restore original terminal settings
         termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+        # - Show cursor again
+        print('\033[?25h', end='', flush=True)
     return key
 
 
@@ -74,6 +78,11 @@ class LogLine:
             return ANSICODES.GRAY_FG
         else:
             return ''
+
+    @property
+    def num_wraps(self):
+        terminal_width = os.get_terminal_size().columns
+        return (len(self.raw) // terminal_width) + (1 if len(self.raw) % terminal_width > 0 else 0)
 
 
 class StoppedLogLine(LogLine):
@@ -152,6 +161,19 @@ class Container:
             yield line
             self._log_shown_until = start + i + 1
 
+    def get_log_tail_for_terminal_height(self, num_ui_lines: int = 10) -> list[LogLine]:
+        terminal_height = os.get_terminal_size().lines
+        height_available = terminal_height - num_ui_lines
+        n = 0
+        total_wraps = 0
+        for line in reversed(self._log_lines):
+            line_wraps = line.num_wraps
+            if total_wraps + line_wraps > height_available - 10:
+                break
+            total_wraps += line_wraps
+            n += 1
+        return self.get_log_tail(n)
+
     def start_collecting_logs(self):
         if isinstance(self._logging_process, subprocess.Popen):
             raise RuntimeError("Logging already started.")
@@ -226,7 +248,10 @@ class Browser:
         self._print_pause = PrintPause
 
     @property
-    def _max_log_lines(self): return os.get_terminal_size().lines - 20 + (5 if self._is_instructions_minimized else 0)
+    def _max_log_lines(self):
+        terminal_width = os.get_terminal_size().columns
+        terminal_height = os.get_terminal_size().lines
+        return os.get_terminal_size().lines - 20 + (5 if self._is_instructions_minimized else 0)
 
     @property
     def active_tab_container(self): return self._containers[self._active_tab_id]
@@ -266,7 +291,8 @@ class Browser:
                             f'{self._start_time.strftime("%Y-%m-%d %H:%M:%S")}').ljust(terminal_width)
             print(ANSICODES.LIGHT_GRAY_BG + ANSICODES.BLACK_FG + started_line + ANSICODES.RESET, end='\n\r')
             print(ANSICODES.DARK_GRAY_BG + instructions + ANSICODES.RESET, end='\n\r')
-            log_lines = self.active_tab_container.get_log_tail(self._max_log_lines)
+            num_ui_lines = 4 + (5 if self._is_instructions_minimized else 0)
+            log_lines = self.active_tab_container.get_log_tail_for_terminal_height(num_ui_lines=num_ui_lines)
             current_timestamp: dt.datetime = NotImplemented
             for log_line in log_lines:
                 appendix = ''
