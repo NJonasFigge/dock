@@ -15,11 +15,11 @@ ARG PROMPTHUE="310"
 RUN python starship-utils/generate_starship_toml.py $PROMPTHUE -o /root/.config/starship.toml --good-spacers
 
 
-# === INSTALL RSYNC ===
+# === INSTALL DEPENDENCIES ===
 
-# - Install rsync
+# - Install rsync and cron
 RUN apt-get update && \
-    apt-get install -y rsync && \
+    apt-get install -y rsync cron && \
     rm -rf /var/lib/apt/lists/* && \
     apt-get clean
 
